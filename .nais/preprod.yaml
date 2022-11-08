@@ -1,0 +1,49 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: bidrag-reisekostnad-api
+  namespace: bidrag
+  labels:
+    team: bidrag
+spec:
+  image: {{ image }}
+  port: 8090
+  leaderElection: true
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_15
+        databases:
+          - name: reisekostnad
+  liveness:
+    path: /internal/health
+    initialDelay: 50
+    failureThreshold: 10
+  readiness:
+    path: /internal/health
+    initialDelay: 50
+    failureThreshold: 10
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      memory: 2048Mi
+      cpu: "2"
+    requests:
+      memory: 1024Mi
+      cpu: 200m
+  ingresses:
+    - https://bidrag-reisekostnad-api.dev.intern.nav.no
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: preprod, nais
+    - name: JAVA_TOOL_OPTIONS
+      value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+  azure.application.enabled: true
+  secureLogs.enabled: true
+  tokenx.enabled: true
+  kafka.pool: nav-dev

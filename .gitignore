@@ -27,3 +27,4 @@ build/
 *.pdf
 test_VS_decrypt_*
 *.pdf
+dependencies.txt

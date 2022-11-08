@@ -1,0 +1,21 @@
+version: 2
+registries:
+  familie-felles:
+    type: maven-repository
+    url: https://maven.pkg.github.com/navikt/biodrag-reisekostnad-api
+    username: x-access-token
+    password: ${{secrets.PAT}}
+
+updates:
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    registries:
+      - bidrag-person-hendelse
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10

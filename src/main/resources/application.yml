@@ -1,1 +1,13 @@
+springdoc:
+  packages-to-scan: { no.nav.bidrag.reisekostnad.api}
+  show-login-endpoint: true
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+---
+spring.config.activate.on-profile: gcp
 
+no.nav.security.jwt.issuer:
+  tokenx:
+    discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
+    accepted_audience: ${TOKEN_X_CLIENT_ID}

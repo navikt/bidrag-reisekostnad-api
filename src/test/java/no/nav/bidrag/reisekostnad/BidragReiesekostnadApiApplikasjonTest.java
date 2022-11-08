@@ -1,10 +1,10 @@
-package no.nav.bidrag.reisekostnader.bidragreiesekostnaderapi;
+package no.nav.bidrag.reisekostnad;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BidragReiesekostnaderApiApplicationTests {
+class BidragReiesekostnadApiApplikasjonTest {
 
 	@Test
 	void contextLoads() {
