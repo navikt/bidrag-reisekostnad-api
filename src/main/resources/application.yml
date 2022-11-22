@@ -2,6 +2,18 @@ spring:
   flyway:
     enabled: false
     locations: classpath:/db/migration
+  jpa:
+    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    database: postgresql
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?user=${DB_USERNAME}&password=${DB_PASSWORD}
+    hikari:
+      idle-timeout: 10001
+      max-lifetime: 30001
+      connectionTimeout: 1000
+      maximum-pool-size: 10
+      minimum-idle: 1
 
 springdoc:
   packages-to-scan: { no.nav.bidrag.reisekostnad.api}
@@ -32,6 +44,3 @@ no.nav.security.jwt:
   tokenx:
     discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
     accepted_audience: ${TOKEN_X_CLIENT_ID}
-
-
-
