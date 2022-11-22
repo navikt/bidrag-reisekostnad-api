@@ -19,6 +19,12 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           cache: 'maven'
+      - uses: actions/cache@v2.1.5
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - uses: navikt/bidrag-maven/setup@v7
         with:
           repositories: maven-central=https://repo.maven.apache.org/maven2,github-packages=https://maven.pkg.github.com/navikt/maven-release
