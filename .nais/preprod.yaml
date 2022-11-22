@@ -9,6 +9,15 @@ spec:
   image: {{ image }}
   port: 8090
   leaderElection: true
+  azure:
+    application:
+      enabled: true
+  secureLogs:
+    enabled: true
+  tokenx:
+    enabled: true
+  kafka:
+    pool: nav-dev
   gcp:
     sqlInstances:
       - type: POSTGRES_14
@@ -47,7 +56,3 @@ spec:
       value: dev-fss.bidrag.bidrag-person
     - name: BIDRAG_PERSON_URL
       value: https://bidrag-person.dev.intern.nav.no
-  azure.application.enabled: true
-  secureLogs.enabled: true
-  tokenx.enabled: true
-  kafka.pool: nav-dev
