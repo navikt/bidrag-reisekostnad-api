@@ -1,13 +1,37 @@
+spring:
+  flyway:
+    enabled: false
+    locations: classpath:/db/migration
+
 springdoc:
   packages-to-scan: { no.nav.bidrag.reisekostnad.api}
   show-login-endpoint: true
   swagger-ui:
     path: /swagger-ui.html
     url: /v3/api-docs
----
-spring.config.activate.on-profile: gcp
 
-no.nav.security.jwt.issuer:
+integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
+
+AZURE_BASE: https://login.microsoftonline.com/
+
+no.nav.security.jwt:
+  common:
+    token-endpoint-url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+  client.registration:
+    bidrag-person:
+      token-endpoint-url: ${no.nav.security.jwt.common.token-endpoint-url}
+      grant-type: client_credentials
+      scope: api://${BIDRAG_PERSON_SCOPE}/.default
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
+  issuer.aad:
+    discovery_url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
+    accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
   tokenx:
     discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
     accepted_audience: ${TOKEN_X_CLIENT_ID}
+
+
+

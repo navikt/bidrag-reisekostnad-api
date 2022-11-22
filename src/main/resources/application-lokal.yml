@@ -1,0 +1,35 @@
+wiremock.server:
+  port: 0
+  files: classpath:/wiremock/__files
+  stubs: classpath:/wiremock/mappings
+
+AZURE_APP_TENANT_ID: tokenx
+AZURE_BASE: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
+
+no.nav.security.jwt:
+  client.registration:
+    bidrag-person:
+      token-endpoint-url: ${AZURE_BASE}
+  expirythreshold: 1
+  issuer:
+    tokenx:
+      discoveryurl: ${AZURE_BASE}/.well-known/openid-configuration
+      accepted_audience: aud-localhost
+      cookie_name: localhost-idtoken
+
+spring:
+  main.allow-bean-definition-overriding: true
+  ### H2 ###
+  flyway.enabled: false
+  datasource.type: com.zaxxer.hikari.HikariDataSource
+  datasource.url: jdbc:h2:mem:default
+  spring.datasource.initialization-mode: always
+  data.jpa.repositories.bootstrap-mode: default
+  h2.console.enabled: true
+  jpa.hibernate.ddl-auto: create-drop
+  jpa.database-platform: org.hibernate.dialect.H2Dialect
+
+#### Mocks
+WIREMOCK_URL: http://localhost:${wiremock.server.port}
+BIDRAG_PERSON_URL: ${WIREMOCK_URL}
+

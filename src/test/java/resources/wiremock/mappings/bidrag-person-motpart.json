@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/bidrag-person/motpartbarnrelasjon",
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "personident": "12345678910"
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{ \"person\": { \"ident\":\"12345678910\", \"fornavn\": \"Gråtass\", \"foedselsdato\": \"{{now offset='-40 years' format='yyyyMMdd'}}\" }, \"personensMotpartBarnRelasjon\": [{ \"motpart\": { \"ident\": \"11111122222\", \"fornavn\": \"Streng\", \"foedselsdato\": \"{{now offset='-38 years' format='yyyyMMdd'}}\" }, \"fellesBarn\": [{ \"ident\": \"33333355555\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years' format='yyyyMMdd'}}\" }, { \"ident\": \"77777700000\", \"fornavn\": \"Grus\", \"foedselsdato\": \"{{now offset='-16 years' format='yyyyMMdd'}}\" }]}]}",
+    "transformers": ["response-template"],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

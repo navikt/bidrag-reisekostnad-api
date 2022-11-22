@@ -13,7 +13,7 @@ spec:
     sqlInstances:
       - type: POSTGRES_15
         databases:
-          - name: reisekostnad
+          - name: reisekostnad-preprod
   liveness:
     path: /internal/health
     initialDelay: 50
@@ -40,9 +40,13 @@ spec:
     - https://bidrag-reisekostnad-api.dev.intern.nav.no
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: preprod, nais
+      value: preprod, i-sky
     - name: JAVA_TOOL_OPTIONS
       value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    - name: BIDRAG_PERSON_SCOPE
+      value: dev-fss.bidrag.bidrag-person
+    - name: BIDRAG_PERSON_URL
+      value: https://bidrag-person.dev.intern.nav.no
   azure.application.enabled: true
   secureLogs.enabled: true
   tokenx.enabled: true

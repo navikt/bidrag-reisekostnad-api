@@ -1,22 +1,31 @@
 package no.nav.bidrag.reisekostnad.api;
 
-import static no.nav.bidrag.reisekostnad.BidragReisekostnadApiKonfigurasjon.ISSUER_TOKENX;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.ISSUER_TOKENX;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.bidrag.reisekostnad.BidragReisekostnadApiKonfigurasjon;
-import no.nav.bidrag.reisekostnad.api.dto.BrukerinformasjonDto;
+import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
+import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselMotpartBarnDto;
+import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
+import no.nav.bidrag.reisekostnad.api.dto.ut.NyForespørselRespons;
+import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostadApiTjeneste;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -29,13 +38,13 @@ public class ReisekostadApiKontroller {
   @Autowired
   private ReisekostadApiTjeneste reisekostadApiTjeneste;
   @Autowired
-  private BidragReisekostnadApiKonfigurasjon.OidcTokenSubjectExtractor oidcTokenSubjectExtractor;
+  private Applikasjonskonfig.OidcTokenSubjectExtractor oidcTokenSubjectExtractor;
 
   @GetMapping(value = "/brukerinformasjon")
-  @Operation(description = "Avgjør foreldrerolle til person. Henter ventende farskapserklæringer. Henter nyfødte barn",
+  @Operation(description = "Hente familierelasjoner for pålogget person samt evnt aktive fordelingsforespørsler",
       security = {@SecurityRequirement(name = "bearer-key")})
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Ingen feil ved bestemming av rolle"),
+      @ApiResponse(responseCode = "200", description = "Ingen feil ved henting av brukerinformasjon"),
       @ApiResponse(responseCode = "400", description = "Ugyldig fødselsnummer"),
       @ApiResponse(responseCode = "401", description = "Sikkerhetstoken mangler, er utløpt, eller av andre årsaker ugyldig"),
       @ApiResponse(responseCode = "404", description = "Fant ikke fødselsnummer"),
@@ -44,9 +53,87 @@ public class ReisekostadApiKontroller {
   public ResponseEntity<BrukerinformasjonDto> henteBrukerinformasjon() {
     log.info("Henter brukerinformasjon");
     var personident = oidcTokenSubjectExtractor.hentPaaloggetPerson();
-    BidragReisekostnadApiKonfigurasjon.SIKKER_LOGG.info("Henter brukerinformasjon for person med ident {}", personident);
-    var brukerinformasjon = reisekostadApiTjeneste.henteBrukerinformasjon(personident);
-    return new ResponseEntity<>(brukerinformasjon, HttpStatus.OK);
+    SIKKER_LOGG.info("Henter brukerinformasjon for person med ident {}", personident);
+    var respons = reisekostadApiTjeneste.henteBrukerinformasjon(personident);
+    var statuskode = respons.getResponseEntity().getStatusCode();
+    SIKKER_LOGG.info("Hent brukerinformasjonstjenesten svarte med httpkode {} person med ident {}", statuskode, personident);
+    return new ResponseEntity<>(respons.getResponseEntity().getBody(), statuskode);
   }
 
+  @Deprecated
+  @PostMapping("/forespoersel/ny")
+  @Operation(description = "Opprette forespørsel om fordeling av reisekostnader",
+      security = {@SecurityRequirement(name = "bearer-key")})
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Forespørsel opprettet"),
+      @ApiResponse(responseCode = "400", description = "Feil opplysninger oppgitt"),
+      @ApiResponse(responseCode = "401", description = "Sikkerhetstoken mangler, er utløpt, eller av andre årsaker ugyldig"),
+      @ApiResponse(responseCode = "404", description = "Fant ikke fødselsnummer eller navn"),
+      @ApiResponse(responseCode = "500", description = "Serverfeil"),
+      @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
+  public ResponseEntity<NyForespørselRespons> oppretteForespørselOmFordelingAvReisekostnader(
+      @Valid @RequestBody NyForespørselMotpartBarnDto nyForespørselMotpartBarnDto) {
+    log.info("Oppretter forespørsel om fordeling av reisekostnader");
+    var personidentHovedpart = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson med ident {}", personidentHovedpart);
+    var respons = reisekostadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedpart, nyForespørselMotpartBarnDto);
+    return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
+  }
+
+  @PostMapping("/forespoersel/barn")
+  @Operation(description = "Opprette forespørsel om fordeling av reisekostnader",
+      security = {@SecurityRequirement(name = "bearer-key")})
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Forespørsel opprettet"),
+      @ApiResponse(responseCode = "400", description = "Feil opplysninger oppgitt"),
+      @ApiResponse(responseCode = "401", description = "Sikkerhetstoken mangler, er utløpt, eller av andre årsaker ugyldig"),
+      @ApiResponse(responseCode = "404", description = "Fant ikke fødselsnummer eller navn"),
+      @ApiResponse(responseCode = "500", description = "Serverfeil"),
+      @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
+  public ResponseEntity<Void> oppretteForespørselOmFordelingAvReisekostnader(@Valid @RequestBody NyForespørselDto nyForespørselDto) {
+    log.info("Oppretter forespørsel om fordeling av reisekostnader for et sett med barn");
+    var personidentHovedpart = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson med ident {}", personidentHovedpart);
+    var respons = reisekostadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedpart,
+        nyForespørselDto.getPersonidenterBarn());
+    return new ResponseEntity<>(respons.getResponseEntity().getStatusCode());
+  }
+
+  @PutMapping("/forespoersel/samtykke")
+  @Operation(description = "Oppdatere forespørsel med motparts samtykke til fordeling av reisekostnader",
+      security = {@SecurityRequirement(name = "bearer-key")})
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Forespørsel oppdatert uten feil"),
+      @ApiResponse(responseCode = "400", description = "Feil opplysninger oppgitt"),
+      @ApiResponse(responseCode = "401", description = "Sikkerhetstoken mangler, er utløpt, eller av andre årsaker ugyldig"),
+      @ApiResponse(responseCode = "404", description = "Fant ikke forespørsel"),
+      @ApiResponse(responseCode = "500", description = "Serverfeil"),
+      @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
+  public ResponseEntity<Void> giSamtykkeTilFordelingAvReisekostnader(
+      @Parameter(name = "id_forespørsel", description = "ID til forespørsel som skal oppdateres") @RequestParam(name = "id_forespørsel", defaultValue = "-1") int idForespørsel) {
+    log.info("Gi samtykke til fordeling av reisekostnader (forespørsel med id {})", idForespørsel);
+    var personidentPåloggetBruker = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    SIKKER_LOGG.info("Person med ident {} samtykker til at NAV skal fordele reisekostnader.", personidentPåloggetBruker);
+    var respons = reisekostadApiTjeneste.oppdatereForespørselMedSamtykke(idForespørsel, personidentPåloggetBruker);
+    return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
+  }
+
+  @PutMapping("/forespoersel/trekke")
+  @Operation(description = "Trekke forespørsel om fordeling av reisekostnader",
+      security = {@SecurityRequirement(name = "bearer-key")})
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Forespørsel trukket uten feil"),
+      @ApiResponse(responseCode = "400", description = "Feil opplysninger oppgitt"),
+      @ApiResponse(responseCode = "401", description = "Sikkerhetstoken mangler, er utløpt, eller av andre årsaker ugyldig"),
+      @ApiResponse(responseCode = "404", description = "Fant ikke forespørsel"),
+      @ApiResponse(responseCode = "500", description = "Serverfeil"),
+      @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
+  public ResponseEntity<Void> trekkeForespørsel(
+      @Parameter(name = "id_forespørsel", description = "ID til forespørsel som skal trekkes") @RequestParam(name = "id_forespørsel", defaultValue = "-1") int idForespørsel) {
+    log.info("Trekke forespørsel (id: {}) om fordeling av reisekostnader", idForespørsel);
+    var personidentPåloggetBruker = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    SIKKER_LOGG.info("Person med ident {} ønsker å trekke forespørsel om fordeling av reisekostnader.", personidentPåloggetBruker);
+    var respons = reisekostadApiTjeneste.trekkeForespørsel(idForespørsel, personidentPåloggetBruker);
+    return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
+  }
 }

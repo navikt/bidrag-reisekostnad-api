@@ -30,7 +30,7 @@ public class Oppgavebestilling {
   private int id;
 
   @OneToOne
-  private Søknad søknad;
+  private Forespørsel forespørsel;
 
   @OneToOne
   private Forelder forelder;

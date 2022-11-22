@@ -3,7 +3,6 @@ package no.nav.bidrag.reisekostnad.database.datamodell;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,24 +20,24 @@ import org.hibernate.annotations.NaturalId;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Barn implements Serializable {
+public class Barn implements Person, Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
   @NaturalId
-  private String foedselsnummer;
+  private String personident;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-  private Søknad søknad;
+  @ManyToOne(cascade = CascadeType.PERSIST)
+  private Forespørsel forespørsel;
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
     result =
-        prime * result + (foedselsnummer == null ? 0 : foedselsnummer.hashCode());
+        prime * result + (personident == null ? 0 : personident.hashCode());
 
     return result;
   }
@@ -56,17 +55,17 @@ public class Barn implements Serializable {
     }
     final Barn other = (Barn) obj;
 
-    if (foedselsnummer == null) {
-      return other.foedselsnummer == null;
+    if (personident == null) {
+      return other.personident == null;
     }
 
-    return other.foedselsnummer != null ? foedselsnummer.equals(other.foedselsnummer) : false;
+    return other.personident != null ? personident.equals(other.personident) : false;
   }
 
   @Override
   public String toString() {
-    if (foedselsnummer != null) {
-      return "Barn med fødselsnummer som starter med: " + foedselsnummer.substring(0, 6);
+    if (personident != null) {
+      return "Barn med personident som starter med: " + personident.substring(0, 6);
     }
     return "Objektet mangler data";
   }

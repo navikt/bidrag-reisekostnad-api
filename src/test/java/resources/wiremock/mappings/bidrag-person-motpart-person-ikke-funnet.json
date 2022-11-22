@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/bidrag-person/motpartbarnrelasjon",
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "personident": "00000001231"
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": 404,
+    "body": "{}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
