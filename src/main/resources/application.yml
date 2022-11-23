@@ -1,7 +1,7 @@
 spring:
   config.activate.on-profile: i-sky
   cloud.gcp.sql.database-name: ${DB_NAVN}
-  cloud.gcp.sql.instance-connection-name: ${DB_URL}
+  cloud.gcp.sql.instance-connection-name: ${POSTGRES_CONNECTION_NAME}
   flyway:
     enabled: false
     locations: classpath:/db/migration

@@ -68,3 +68,5 @@ spec:
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_PASSWORD}
     - name: DB_URL
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_URL}
+    - name: POSTGRES_CONNECTION_NAME
+      value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
