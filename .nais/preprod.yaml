@@ -28,6 +28,7 @@ spec:
       - type: POSTGRES_14
         databases:
           - name: reisekostnad-preprod
+            envVarPrefix: DB
   liveness:
     path: /internal/health
     initialDelay: 60
