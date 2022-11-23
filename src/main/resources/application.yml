@@ -14,7 +14,7 @@ spring:
     username: ${DB_BRUKERNAVN}
     password: ${DB_PASSORD}
     type: com.zaxxer.hikari.HikariDataSource
-    url: ${DB_URL}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAVN}?user=${DB_BRUKERNAVN}&password=${DB_PASSORD}
     hikari:
       idle-timeout: 10001
       max-lifetime: 30001
