@@ -27,7 +27,6 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
 @Slf4j
-@Profile(Profil.LOKAL)
 @AutoConfigureWireMock(port = 0)
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 @EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
@@ -39,16 +38,13 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 public class BidragReisekostnadApiLokalTestapplikasjon {
 
   public static void main(String... args) {
-
-    String[] profiles = args.length < 1 ? new String[]{Profil.LOKAL} : args;
     SpringApplication app = new SpringApplication(BidragReisekostnadApiLokalTestapplikasjon.class);
-    app.setAdditionalProfiles(profiles);
     app.run(args);
   }
 }
 
 @Configuration
-@Profile(Profil.LOKAL)
+@Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
 @EnableMockOAuth2Server
 @AutoConfigureWireMock(port = 0)
 class LokalTestkonfig {

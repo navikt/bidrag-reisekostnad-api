@@ -1,0 +1,74 @@
+spring:
+  config.activate.on-profile: lokal-h2, lokal-postgres
+  cloud.gcp:
+    secretmanager.enabled: false
+    sql.enabled: false
+  main.allow-bean-definition-overriding: true
+  datasource.type: com.zaxxer.hikari.HikariDataSource
+
+wiremock.server:
+  port: 0
+  stubs: classpath:/mappings
+
+AZURE_APP_TENANT_ID: tokenx
+AZURE_BASE: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
+
+no.nav.security.jwt:
+  client.registration:
+    bidrag-person:
+      token-endpoint-url: ${AZURE_BASE}
+      grant-type: client_credentials
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
+  expirythreshold: 1
+  issuer:
+    tokenx:
+      discoveryurl: ${AZURE_BASE}/.well-known/openid-configuration
+      accepted_audience: aud-localhost
+      cookie_name: localhost-idtoken
+
+integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
+
+#### Mocks
+WIREMOCK_URL: http://localhost:${wiremock.server.port}
+BIDRAG_PERSON_URL: ${WIREMOCK_URL}
+
+---
+spring:
+  config.activate.on-profile: lokal-h2
+  ### H2 ###
+  flyway.enabled: false
+  datasource.url: jdbc:h2:mem:default
+  spring.datasource.initialization-mode: always
+  data.jpa.repositories.bootstrap-mode: default
+  h2.console.enabled: true
+  jpa.hibernate.ddl-auto: create-drop
+  jpa.database-platform: org.hibernate.dialect.H2Dialect
+
+---
+
+### POSTGRES ###
+spring:
+  config.activate.on-profile: lokal-postgres
+  # Oppsett for flyway med hikari og postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reisekostnad
+    databaseName: reisekostnad
+    portNumber: 5432
+    serverName: localhost
+    hikari:
+      idle-timeout: 10001
+      max-lifetime: 30001
+      connectionTimeout: 1000
+      maximum-pool-size: 10
+      minimum-idle: 1
+  flyway:
+    enabled: true
+    flyway.locations: classpath:/db/migration
+  jpa:
+    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
