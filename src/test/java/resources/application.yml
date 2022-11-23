@@ -3,6 +3,7 @@ spring:
   cloud.gcp:
     secretmanager.enabled: false
     sql.enabled: false
+    sql.database-name: reisekostnad
   main.allow-bean-definition-overriding: true
   datasource.type: com.zaxxer.hikari.HikariDataSource
 
