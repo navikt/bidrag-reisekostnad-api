@@ -41,7 +41,7 @@ public class Barn implements Person, Serializable {
 
     return result;
   }
-
+  
   @Override
   public boolean equals(final Object obj) {
     if (this == obj) {
