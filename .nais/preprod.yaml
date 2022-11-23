@@ -56,3 +56,7 @@ spec:
       value: dev-fss.bidrag.bidrag-person
     - name: BIDRAG_PERSON_URL
       value: https://bidrag-person.dev.intern.nav.no
+    - name: DBNAVN
+      value: reisekostnad-preprod
+    - name: POSTGRESURL
+      value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
