@@ -25,11 +25,11 @@ spec:
           - name: reisekostnad-preprod
   liveness:
     path: /internal/health
-    initialDelay: 50
+    initialDelay: 60
     failureThreshold: 10
   readiness:
     path: /internal/health
-    initialDelay: 50
+    initialDelay: 60
     failureThreshold: 10
   prometheus:
     enabled: true
