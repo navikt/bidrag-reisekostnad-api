@@ -38,7 +38,7 @@ import org.springframework.test.context.ActiveProfiles;
 @DisplayName("ReisekostnadApiKontrollerTest")
 @ActiveProfiles(Profil.TEST)
 @EnableMockOAuth2Server
-@AutoConfigureWireMock(stubs = "file:src/test/java/resources/wiremock/mappings", port = 0)
+@AutoConfigureWireMock(stubs = "file:src/test/java/resources/mappings", port = 0)
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {BidragReisekostnadApiTestapplikasjon.class, Testkonfig.class})
 public class ReisekostnadApiKontrollerTest {

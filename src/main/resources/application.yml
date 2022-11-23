@@ -1,4 +1,5 @@
 spring:
+  config.activate.on-profile: i-sky
   flyway:
     enabled: false
     locations: classpath:/db/migration
@@ -14,6 +15,8 @@ spring:
       connectionTimeout: 1000
       maximum-pool-size: 10
       minimum-idle: 1
+
+---
 
 springdoc:
   packages-to-scan: { no.nav.bidrag.reisekostnad.api}

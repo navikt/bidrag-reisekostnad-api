@@ -1,7 +1,6 @@
 wiremock.server:
   port: 0
-  files: classpath:/wiremock/__files
-  stubs: classpath:/wiremock/mappings
+  stubs: classpath:/mappings
 
 AZURE_APP_TENANT_ID: tokenx
 AZURE_BASE: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
@@ -18,6 +17,9 @@ no.nav.security.jwt:
       cookie_name: localhost-idtoken
 
 spring:
+  cloud.gcp:
+    secretmanager.enabled: false
+    sql.enabled: false
   main.allow-bean-definition-overriding: true
   ### H2 ###
   flyway.enabled: false

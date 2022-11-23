@@ -13,6 +13,9 @@ no.nav.security.jwt:
       cookie_name: localhost-idtoken
 
 spring:
+  cloud.gcp:
+    secretmanager.enabled: false
+    sql.enabled: false
   main.allow-bean-definition-overriding: true
   ### H2 ###
   flyway.enabled: false
@@ -21,8 +24,11 @@ spring:
   spring.datasource.initialization-mode: always
   data.jpa.repositories.bootstrap-mode: default
   h2.console.enabled: true
-  jpa.hibernate.ddl-auto: create-drop
-  jpa.database-platform: org.hibernate.dialect.H2Dialect
+  jpa:
+    hibernate.ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
 
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
