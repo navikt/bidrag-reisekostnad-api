@@ -56,6 +56,8 @@ spec:
       value: dev-fss.bidrag.bidrag-person
     - name: BIDRAG_PERSON_URL
       value: https://bidrag-person.dev.intern.nav.no
+    - name: POSTGRES_CONNECTION_NAME
+      value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
     - name: DB_HOST
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_HOST}
     - name: DB_PORT
@@ -68,5 +70,3 @@ spec:
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_PASSWORD}
     - name: DB_URL
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_URL}
-    - name: POSTGRES_CONNECTION_NAME
-      value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
