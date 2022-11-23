@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Profile;
 
 @Slf4j
 @Configuration
-@EnableOAuth2Client
+@EnableOAuth2Client(cacheEnabled = true)
 @EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
 @io.swagger.v3.oas.annotations.security.SecurityScheme(
     bearerFormat = "JWT",

@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 @Slf4j
-@EnableOAuth2Client(cacheEnabled = true)
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 public class BidragReiesekostnadApiApplikasjon {

@@ -4,7 +4,7 @@ spring:
   cloud.gcp.sql.instance-connection-name: ${POSTGRES_CONNECTION_NAME}
   flyway:
     enabled: false
-    locations: classpath:/db/migration
+    locations: classpath:/db/migrering
   jpa:
     hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
     properties:
