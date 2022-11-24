@@ -34,7 +34,7 @@ public class BidragPersonkonsument {
   private final RestTemplate restTemplate;
   private final RestTemplate clientCredentialsRestTemplate;
 
-  public static final String FORMAT_FØDSELSDATO = "yyyyMMdd";
+  public static final String FORMAT_FØDSELSDATO = "yyyy-MM-dd";
 
   @Autowired
   public BidragPersonkonsument(@Qualifier("bidrag-person") RestTemplate restTemplate, @Qualifier("bidrag-person-azure-client-credentials") RestTemplate clientCredentialsRestTemplate) {

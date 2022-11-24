@@ -101,7 +101,7 @@ public class Mapper {
       return false;
     }
 
-    var personensFødselsdato = LocalDate.parse(barn.getFoedselsdato(), DateTimeFormatter.ofPattern("yyyyMMdd"));
+    var personensFødselsdato = LocalDate.parse(barn.getFoedselsdato(), DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
     return personensFødselsdato.isBefore(LocalDate.now().plusDays(1).minusYears(15));
   }
 
@@ -111,7 +111,7 @@ public class Mapper {
       return false;
     }
 
-    var personensFødselsdato = LocalDate.parse(barn.getFoedselsdato(), DateTimeFormatter.ofPattern("yyyyMMdd"));
+    var personensFødselsdato = LocalDate.parse(barn.getFoedselsdato(), DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
     return personensFødselsdato.isAfter(LocalDate.now().minusYears(15));
   }
 
