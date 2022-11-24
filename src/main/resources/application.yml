@@ -40,6 +40,10 @@ springdoc:
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 
 AZURE_BASE: https://login.microsoftonline.com/
+
+---
+spring:
+  config.activate.on-profile: i-sky
 no.nav.security.jwt:
   common:
     token-endpoint-url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
