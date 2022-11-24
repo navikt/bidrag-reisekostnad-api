@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Profile;
 @EnableSecurityConfiguration
 public class Applikasjonskonfig {
 
-  public static final String ISSUER_TOKENX = "tokenx";
+  public static final String ISSUER_TOKENX = "idporten";
   public static final Logger SIKKER_LOGG = LoggerFactory.getLogger("secureLogger");
 
   @Bean

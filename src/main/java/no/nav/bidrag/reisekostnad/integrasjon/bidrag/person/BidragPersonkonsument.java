@@ -44,7 +44,7 @@ public class BidragPersonkonsument {
 
   @UserCacheable(CACHE_FAMILIE)
   public Optional<HentFamilieRespons> hentFamilie(String personident) {
-    var forespørsel = HentPersoninfoForespørsel.builder().personident(personident).build();
+    var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
 
     try {
       var person = hentPersoninfo(personident);
@@ -67,7 +67,7 @@ public class BidragPersonkonsument {
 
   @UserCacheable(CACHE_PERSON)
   public Optional<HentPersoninfoRespons> hentPersoninfo(String personident) {
-    var forespørsel = HentPersoninfoForespørsel.builder().personident(personident).build();
+    var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
     var hentPersoninfo = restTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_PERSONINFO, HttpMethod.POST,
         new HttpEntity<>(forespørsel),
         HentPersoninfoRespons.class);

@@ -11,6 +11,6 @@ import javax.validation.constraints.NotNull;
 public class HentPersoninfoForespørsel {
 
   @NotNull
-  String personident;
+  String ident;
 
 }
