@@ -102,11 +102,15 @@ public class ReisekostadApiTjeneste {
     return HttpResponse.from(HttpStatus.CREATED, respons);
   }
 
-  public HttpResponse<Void> oppdatereForespørselMedSamtykke(int idForespørsel, String personident) {
+  public HttpResponse<Void> oppdatereForespørselMedSamtykke(int idForespørsel, String personidentMotpart) {
+    // Kaster Valideringsfeil dersom forespørsel ikke finnes eller oppdatering av samtykke  feiler
+    databasetjeneste.giSamtykke(idForespørsel, personidentMotpart);
     return HttpResponse.from(HttpStatus.OK, null);
   }
 
-  public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personident) {
+  public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personidentHovedpart) {
+    // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
+    databasetjeneste.deaktivereForespørsel(idForespørsel, personidentHovedpart);
     return HttpResponse.from(HttpStatus.OK, null);
   }
 

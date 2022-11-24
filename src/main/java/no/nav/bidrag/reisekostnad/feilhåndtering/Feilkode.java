@@ -3,6 +3,9 @@ package no.nav.bidrag.reisekostnad.feilhåndtering;
 public enum Feilkode {
 
   DATABASEFEIL("Feil ved lesing fra eller skriving til database"),
+
+  VALIDERING_DEAKTIVERE_HOVEDPART("Fant ingen aktive forespørsler knyttet til oppgitt hovedpart."),
+  VALIDERING_SAMTYKKE_MOTPART("Fant ingen aktive forespørsler knyttet til oppgitt motpart. Samtykke ikke oppdatert."),
   PDL_PERSON_IKKE_FUNNET("Fant ikke person i PDL"),
   PDL_FEIL("En feil oppstod ved henting av data fra PDL"),
   VALIDERING_NY_FOREPØRSEL("Feil ved validering av ny forespørsel"),

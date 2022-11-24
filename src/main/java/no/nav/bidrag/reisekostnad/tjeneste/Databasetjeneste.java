@@ -23,7 +23,6 @@ public class Databasetjeneste {
   private BarnDao barnDao;
   private ForelderDao forelderDao;
   private ForespørselDao forespørselDao;
-
   private Mapper mapper;
 
   @Autowired
@@ -60,5 +59,32 @@ public class Databasetjeneste {
     var lagretForespørsel = forespørselDao.save(nyForespørsel);
 
     return lagretForespørsel.getId();
+  }
+
+  @Transactional
+  public void giSamtykke(int idForespørsel, String personident) {
+    log.info("Samtykker til fordeling av reisekostnader i forespørsel med id {}", idForespørsel);
+    var forespørsel = forespørselDao.henteAktivForespørsel(idForespørsel);
+    if (forespørsel.isPresent() && personident.equals(forespørsel.get().getMotpart().getPersonident())) {
+      var nå = LocalDateTime.now();
+      SIKKER_LOGG.info("Motpart (ident: {}) samtykker til fordeling av reisekostnader relatert til forespørsel id {}", personident, idForespørsel);
+      forespørsel.get().setSamtykket(nå);
+    } else {
+      log.warn("Fant ikke forespørsel med id {}. Får ikke gitt samtykke.", idForespørsel);
+      throw new Valideringsfeil(Feilkode.VALIDERING_SAMTYKKE_MOTPART);
+    }
+  }
+
+  @Transactional
+  public void deaktivereForespørsel(int idForespørsel, String personidentHovedpart) {
+    log.info("Deaktiverer forespørsel med id {}", idForespørsel);
+    var forespørsel = forespørselDao.henteAktivForespørsel(idForespørsel);
+    if (forespørsel.isPresent() && personidentHovedpart.equals(forespørsel.get().getHovedpart().getPersonident())) {
+      var nå = LocalDateTime.now();
+      SIKKER_LOGG.info("Hovedpart (ident: {}) deaktiverer forespørsel med id {}", personidentHovedpart, idForespørsel);
+      forespørsel.get().setDeaktivert(nå);
+    } else {
+      throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_HOVEDPART);
+    }
   }
 }

@@ -8,18 +8,32 @@ metadata:
 spec:
   image: {{ image }}
   leaderElection: true
+  azure:
+    application:
+      enabled: true
+  secureLogs:
+    enabled: true
+  tokenx:
+    enabled: true
+  kafka:
+    pool: nav-dev
   gcp:
+    permissions:
+      - resource:
+          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+          kind: Project
+        role: roles/cloudsql.client
     sqlInstances:
       - type: POSTGRES_14
         databases:
           - name: reisekostnad-prod
   liveness:
-    path: /internal/health
-    initialDelay: 50
+    path: /internal/actuator/health
+    initialDelay: 60
     failureThreshold: 10
   readiness:
-    path: /internal/health
-    initialDelay: 50
+    path: /internal/actuator/health
+    initialDelay: 60
     failureThreshold: 10
   prometheus:
     enabled: true
@@ -44,7 +58,3 @@ spec:
       value: prod-fss.bidrag.bidrag-person
     - name: BIDRAG_PERSON_URL
       value: https://bidrag-person.intern.nav.no
-  azure.application.enabled: true
-  secureLogs.enabled: true
-  tokenx.enabled: true
-  kafka.pool: nav-prod
