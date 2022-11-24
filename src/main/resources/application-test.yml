@@ -1,13 +1,27 @@
 AZURE_APP_TENANT_ID: tokenx
+TOKEN_X_CLIENT_ID: tokenx
 AZURE_BASE: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
+TOKEN_X_WELL_KNOWN_URL: http://localhost:${mock-oauth2-server.port}/tokenx
 
 no.nav.security.jwt:
   client.registration:
     bidrag-person:
       token-endpoint-url: ${AZURE_BASE}
+      grant-type: client_credentials
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
+    bidrag-person_tokenx:
+      token-endpoint-url: ${AZURE_BASE}
+      grant-type: client_credentials
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
   expirythreshold: 1
   issuer:
-    tokenx:
+    idporten:
       discoveryurl: ${AZURE_BASE}/.well-known/openid-configuration
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken

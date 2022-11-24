@@ -1,5 +1,4 @@
 package no.nav.bidrag.reisekostnad.konfigurasjon.cache
-
 import no.nav.bidrag.reisekostnad.konfigurasjon.Tokeninfo
 import no.nav.bidrag.reisekostnad.model.SYSTEMBRUKER_ID
 import org.springframework.cache.interceptor.SimpleKeyGenerator

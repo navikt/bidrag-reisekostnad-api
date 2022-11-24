@@ -40,6 +40,10 @@ springdoc:
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 
 AZURE_BASE: https://login.microsoftonline.com/
+
+---
+spring:
+  config.activate.on-profile: i-sky
 no.nav.security.jwt:
   common:
     token-endpoint-url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
@@ -65,6 +69,6 @@ no.nav.security.jwt:
     aad:
       discovery_url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
       accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
-    tokenx:
+    idporten:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}
