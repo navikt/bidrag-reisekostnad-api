@@ -56,7 +56,7 @@ no.nav.security.jwt:
         client-id: ${AZURE_APP_CLIENT_ID}
         client-secret: ${AZURE_APP_CLIENT_SECRET}
         client-auth-method: client_secret_basic
-      bidrag-person_tokenx:
+    bidrag-person_tokenx:
         well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
         token-exchange:
