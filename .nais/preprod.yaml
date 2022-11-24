@@ -75,3 +75,9 @@ spec:
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_PASSWORD}
     - name: DB_URL
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_URL}
+  accessPolicy:
+    inbound:
+      rules:
+        - application: debug-dings
+          namespace: plattformsikkerhet
+          cluster: dev-gcp
