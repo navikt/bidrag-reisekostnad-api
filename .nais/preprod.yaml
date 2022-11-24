@@ -81,3 +81,6 @@ spec:
         - application: debug-dings
           namespace: plattformsikkerhet
           cluster: dev-gcp
+        - application: bidrag-reisekostnad-ui
+          namespace: bidrag
+          cluster: dev-gcp
