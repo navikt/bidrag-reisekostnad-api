@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class,  ManagementWebSecurityAutoConfiguration.class})
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 public class BidragReiesekostnadApiApplikasjon {
-
 	public static void main(String[] args) {
 		SpringApplication.run(BidragReiesekostnadApiApplikasjon.class, args);
 	}

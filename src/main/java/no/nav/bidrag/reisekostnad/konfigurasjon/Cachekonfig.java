@@ -1,7 +1,6 @@
 package no.nav.bidrag.reisekostnad.konfigurasjon;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import java.util.concurrent.TimeUnit;
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.CacheEvictBeforeWorkingHours;
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.UserCacheKey;
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.UserCacheKeyGenerator;
@@ -36,7 +35,7 @@ public class Cachekonfig {
   }
 
   @Bean(UserCacheKey.GENERATOR_BEAN)
-  public KeyGenerator userKeyGenerator(TokenInfoManager tokenInfoManager) {
+  public KeyGenerator userKeyGenerator(Tokeninfo tokenInfoManager) {
     return new UserCacheKeyGenerator(tokenInfoManager);
   }
 }

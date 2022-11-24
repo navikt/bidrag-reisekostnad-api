@@ -150,7 +150,6 @@ public class ReisekostnadApiKontrollerTest {
     }
 
     @Test
-    @Disabled
     void skalGiStatuskode500DersomKallMotBidragPersonFeilerMed500() {
 
       // given

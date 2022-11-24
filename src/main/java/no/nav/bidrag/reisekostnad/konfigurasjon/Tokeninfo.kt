@@ -6,7 +6,7 @@ import no.nav.bidrag.commons.security.utils.TokenUtils.fetchSubject
 import org.springframework.stereotype.Service
 
 @Service
-class TokenInfoManager(
+class Tokeninfo(
     private val oidcTokenManager: OidcTokenManager
 ) {
     fun erSystembruker(): Boolean {
