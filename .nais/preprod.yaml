@@ -7,7 +7,6 @@ metadata:
     team: bidrag
 spec:
   image: {{ image }}
-  port: 8090
   leaderElection: true
   azure:
     application:
@@ -30,11 +29,11 @@ spec:
           - name: reisekostnad-preprod
             envVarPrefix: DB
   liveness:
-    path: /internal/health
+    path: /internal/actuator/health
     initialDelay: 60
     failureThreshold: 10
   readiness:
-    path: /internal/health
+    path: /internal/actuator/health
     initialDelay: 60
     failureThreshold: 10
   prometheus:

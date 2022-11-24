@@ -5,4 +5,4 @@ LABEL maintainer="Team Bidrag" \
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75"
 COPY ./target/bidrag-reisekostnad-api.jar "app.jar"
 
-EXPOSE 8090
+EXPOSE 8080

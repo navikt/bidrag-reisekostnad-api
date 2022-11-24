@@ -7,7 +7,6 @@ metadata:
     team: bidrag
 spec:
   image: {{ image }}
-  port: 8090
   leaderElection: true
   gcp:
     sqlInstances:
