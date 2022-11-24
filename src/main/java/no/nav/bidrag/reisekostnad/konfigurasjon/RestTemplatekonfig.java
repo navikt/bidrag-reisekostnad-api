@@ -1,6 +1,8 @@
 package no.nav.bidrag.reisekostnad.konfigurasjon;
 
 import java.util.Optional;
+import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration;
+import no.nav.bidrag.commons.security.service.SecurityTokenService;
 import no.nav.bidrag.commons.web.CorrelationIdFilter;
 import no.nav.bidrag.commons.web.HttpHeaderRestTemplate;
 import no.nav.security.token.support.client.core.ClientProperties;
@@ -35,9 +37,22 @@ public class RestTemplatekonfig {
   public HttpHeaderRestTemplate bidragPersonRestTemplate(
       @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
       HttpHeaderRestTemplate httpHeaderRestTemplate,
-      ClientHttpRequestInterceptor accessTokenInterceptor) {
+      SecurityTokenService securityTokenService) {
 
-    httpHeaderRestTemplate.getInterceptors().add(accessTokenInterceptor);
+    httpHeaderRestTemplate.getInterceptors().add(securityTokenService.authTokenInterceptor("bidrag-person"));
+    httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
+    return httpHeaderRestTemplate;
+  }
+
+  @Bean
+  @Scope("prototype")
+  @Qualifier("bidrag-person-azure-client-credentials")
+  public HttpHeaderRestTemplate bidragPersonAzureCCRestTemplate(
+      @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
+      HttpHeaderRestTemplate httpHeaderRestTemplate,
+      SecurityTokenService securityTokenService
+  ) {
+    httpHeaderRestTemplate.getInterceptors().add(securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person"));
     httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
     return httpHeaderRestTemplate;
   }

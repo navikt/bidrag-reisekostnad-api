@@ -40,7 +40,6 @@ springdoc:
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 
 AZURE_BASE: https://login.microsoftonline.com/
-
 no.nav.security.jwt:
   common:
     token-endpoint-url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
@@ -53,6 +52,15 @@ no.nav.security.jwt:
         client-id: ${AZURE_APP_CLIENT_ID}
         client-secret: ${AZURE_APP_CLIENT_SECRET}
         client-auth-method: client_secret_basic
+      bidrag-person_tokenx:
+        well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
+        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+        token-exchange:
+          audience: ${BIDRAG_PERSON_SCOPE}
+        authentication:
+          client-id: ${TOKEN_X_CLIENT_ID}
+          client-jwk: ${TOKEN_X_PRIVATE_JWK}
+          client-auth-method: private_key_jwt
   issuer:
     aad:
       discovery_url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
