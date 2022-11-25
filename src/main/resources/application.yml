@@ -69,6 +69,6 @@ no.nav.security.jwt:
     aad:
       discovery_url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
       accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
-    idporten:
+    tokenx:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}

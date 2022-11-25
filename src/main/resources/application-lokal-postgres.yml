@@ -25,7 +25,7 @@ no.nav.security.jwt:
         client-auth-method: client_secret_basic
   expirythreshold: 1
   issuer:
-    idporten:
+    tokenx:
       discoveryurl: ${AZURE_BASE}/.well-known/openid-configuration
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
