@@ -18,7 +18,6 @@ import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -92,7 +91,6 @@ public class ReisekostnadApiKontrollerTest {
   }
 
   @Nested
-  @Disabled
   class HenteBrukerinformasjon {
 
     private final static String ENDEPUNKT_BRUKERINFORMASJON = KONTROLLERKONTEKST + "/brukerinformasjon";
@@ -154,7 +152,6 @@ public class ReisekostnadApiKontrollerTest {
     }
 
     @Test
-    @Disabled
     void skalGiStatuskode500DersomKallMotBidragPersonFeilerMed500() {
 
       // given

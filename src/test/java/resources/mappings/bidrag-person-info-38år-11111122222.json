@@ -4,7 +4,7 @@
     "url": "/bidrag-person/informasjon",
     "bodyPatterns": [
       {
-        "equalToJson": { "personident": "11111122222" }
+        "equalToJson": { "ident": "11111122222" }
       }
     ]
   },

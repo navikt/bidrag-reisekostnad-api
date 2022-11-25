@@ -46,7 +46,6 @@ public class BidragPersonkonsument {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
 
     try {
-      var person = hentPersoninfo(personident);
       var hentFamilieRespons = clientCredentialsRestTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_MOTPART_BARN_RELASJON, HttpMethod.POST,
           new HttpEntity<>(forespørsel),
           HentFamilieRespons.class);
