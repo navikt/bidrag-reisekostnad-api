@@ -41,7 +41,6 @@ public class BidragPersonkonsument {
     this.restTemplate = restTemplate;
     this.clientCredentialsRestTemplate = clientCredentialsRestTemplate;
   }
-
   @UserCacheable(CACHE_FAMILIE)
   public Optional<HentFamilieRespons> hentFamilie(String personident) {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
@@ -64,7 +63,6 @@ public class BidragPersonkonsument {
       }
     }
   }
-
   @UserCacheable(CACHE_PERSON)
   public Optional<HentPersoninfoRespons> hentPersoninfo(String personident) {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
