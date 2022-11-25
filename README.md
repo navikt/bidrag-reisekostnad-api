@@ -9,15 +9,17 @@ wiremock for bidrag-person-endepunktene /motpartBarnRelasjon og /informasjon. Fo
 NB! <b>lokal-postgres</b>-profilen krever at en Postgres-instans er tilgjengelig lokalt. 
 
 Flyt for testing av endepunktene brukerinformasjon
-    1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke: 
+
+     1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke: 
         http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
-    2. Trykk execute for brukerinformasjon-endepunktet
+     2. Trykk execute for brukerinformasjon-endepunktet
 
 Flyt for tedsting av forespoersel/ny-endepunktet fra lokal Swagger:
-    1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke:
+     
+     1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke:
         http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
-    2. Se test/java/resources/mapping/bidrag-person-*****.json for testpersoner som figurerer i eksisterende bidrag-person-mocker.
-    3. Bruk personidentene fra steg 2 til å opprette ny forespørse.
+     2. Se test/java/resources/mapping/bidrag-person-*****.json for testpersoner som figurerer i eksisterende bidrag-person-mocker.
+     3. Bruk personidentene fra steg 2 til å opprette ny forespørse.
 
 ##### Tips og trix
 

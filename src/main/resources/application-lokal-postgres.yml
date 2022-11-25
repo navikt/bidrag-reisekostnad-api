@@ -13,6 +13,7 @@ wiremock.server:
 
 AZURE_APP_TENANT_ID: tokenx
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
+BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
 
 no.nav.security.jwt:
   client.registration:
@@ -23,10 +24,20 @@ no.nav.security.jwt:
         client-id: ${AZURE_APP_CLIENT_ID}
         client-secret: ${AZURE_APP_CLIENT_SECRET}
         client-auth-method: client_secret_basic
+    bidrag-person_tokenx:
+      token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+      well-known-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}/.well-known/openid-configuration
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      token-exchange:
+        audience: ${BIDRAG_PERSON_SCOPE}
+      authentication:
+        client-id: x
+        client-secret: hysjhysj
+        client-auth-method: client_secret_basic
   expirythreshold: 1
   issuer:
     tokenx:
-      discoveryurl: ${AZURE_BASE}/.well-known/openid-configuration
+      discoveryurl: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}/.well-known/openid-configuration
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
 

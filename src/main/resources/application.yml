@@ -53,14 +53,14 @@ no.nav.security.jwt:
         client-secret: ${AZURE_APP_CLIENT_SECRET}
         client-auth-method: client_secret_basic
     bidrag-person_tokenx:
-        well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
-        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-        token-exchange:
-          audience: ${BIDRAG_PERSON_SCOPE}
-        authentication:
-          client-id: ${TOKEN_X_CLIENT_ID}
-          client-jwk: ${TOKEN_X_PRIVATE_JWK}
-          client-auth-method: private_key_jwt
+      well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      token-exchange:
+        audience: ${BIDRAG_PERSON_SCOPE}
+      authentication:
+        client-id: ${TOKEN_X_CLIENT_ID}
+        client-jwk: ${TOKEN_X_PRIVATE_JWK}
+        client-auth-method: private_key_jwt
   issuer:
     tokenx:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
