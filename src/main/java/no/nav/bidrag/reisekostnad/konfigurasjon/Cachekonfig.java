@@ -35,7 +35,7 @@ public class Cachekonfig {
   }
 
   @Bean(UserCacheKey.GENERATOR_BEAN)
-  public KeyGenerator userKeyGenerator(Tokeninfo tokenInfoManager) {
-    return new UserCacheKeyGenerator(tokenInfoManager);
+  public KeyGenerator userKeyGenerator() {
+    return new UserCacheKeyGenerator();
   }
 }

@@ -14,7 +14,7 @@ import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselMotpartBarnDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.NyForespørselRespons;
-import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig;
+import no.nav.bidrag.reisekostnad.konfigurasjon.Tokeninfo;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostadApiTjeneste;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,6 @@ public class ReisekostadApiKontroller {
 
   @Autowired
   private ReisekostadApiTjeneste reisekostadApiTjeneste;
-  @Autowired
-  private Applikasjonskonfig.OidcTokenSubjectExtractor oidcTokenSubjectExtractor;
 
   @GetMapping(value = "/brukerinformasjon")
   @Operation(description = "Hente familierelasjoner for pålogget person samt evnt aktive fordelingsforespørsler",
@@ -52,7 +50,7 @@ public class ReisekostadApiKontroller {
       @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
   public ResponseEntity<BrukerinformasjonDto> henteBrukerinformasjon() {
     log.info("Henter brukerinformasjon");
-    var personident = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    var personident = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Henter brukerinformasjon for person med ident {}", personident);
     var respons = reisekostadApiTjeneste.henteBrukerinformasjon(personident);
     var statuskode = respons.getResponseEntity().getStatusCode();
@@ -74,7 +72,7 @@ public class ReisekostadApiKontroller {
   public ResponseEntity<NyForespørselRespons> oppretteForespørselOmFordelingAvReisekostnader(
       @Valid @RequestBody NyForespørselMotpartBarnDto nyForespørselMotpartBarnDto) {
     log.info("Oppretter forespørsel om fordeling av reisekostnader");
-    var personidentHovedpart = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    var personidentHovedpart = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson med ident {}", personidentHovedpart);
     var respons = reisekostadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedpart, nyForespørselMotpartBarnDto);
     return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
@@ -92,7 +90,7 @@ public class ReisekostadApiKontroller {
       @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
   public ResponseEntity<Void> oppretteForespørselOmFordelingAvReisekostnader(@Valid @RequestBody NyForespørselDto nyForespørselDto) {
     log.info("Oppretter forespørsel om fordeling av reisekostnader for et sett med barn");
-    var personidentHovedpart = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    var personidentHovedpart = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson med ident {}", personidentHovedpart);
     var respons = reisekostadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedpart,
         nyForespørselDto.getPersonidenterBarn());
@@ -112,7 +110,7 @@ public class ReisekostadApiKontroller {
   public ResponseEntity<Void> giSamtykkeTilFordelingAvReisekostnader(
       @Parameter(name = "id_forespørsel", description = "ID til forespørsel som skal oppdateres") @RequestParam(name = "id_forespørsel", defaultValue = "-1") int idForespørsel) {
     log.info("Gi samtykke til fordeling av reisekostnader (forespørsel med id {})", idForespørsel);
-    var personidentPåloggetBruker = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    var personidentPåloggetBruker = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Person med ident {} samtykker til at NAV skal fordele reisekostnader.", personidentPåloggetBruker);
     var respons = reisekostadApiTjeneste.oppdatereForespørselMedSamtykke(idForespørsel, personidentPåloggetBruker);
     return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
@@ -131,7 +129,7 @@ public class ReisekostadApiKontroller {
   public ResponseEntity<Void> trekkeForespørsel(
       @Parameter(name = "id_forespørsel", description = "ID til forespørsel som skal trekkes") @RequestParam(name = "id_forespørsel", defaultValue = "-1") int idForespørsel) {
     log.info("Trekke forespørsel (id: {}) om fordeling av reisekostnader", idForespørsel);
-    var personidentPåloggetBruker = oidcTokenSubjectExtractor.hentPaaloggetPerson();
+    var personidentPåloggetBruker = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Person med ident {} ønsker å trekke forespørsel om fordeling av reisekostnader.", personidentPåloggetBruker);
     var respons = reisekostadApiTjeneste.trekkeForespørsel(idForespørsel, personidentPåloggetBruker);
     return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());

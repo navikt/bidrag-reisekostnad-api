@@ -39,17 +39,13 @@ springdoc:
 
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 
-AZURE_BASE: https://login.microsoftonline.com/
-
 ---
 spring:
   config.activate.on-profile: i-sky
 no.nav.security.jwt:
-  common:
-    token-endpoint-url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
   client.registration:
     bidrag-person:
-      token-endpoint-url: ${no.nav.security.jwt.common.token-endpoint-url}
+      token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
       grant-type: client_credentials
       scope: api://${BIDRAG_PERSON_SCOPE}/.default
       authentication:
@@ -66,9 +62,6 @@ no.nav.security.jwt:
           client-jwk: ${TOKEN_X_PRIVATE_JWK}
           client-auth-method: private_key_jwt
   issuer:
-    aad:
-      discovery_url: ${AZURE_BASE}/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
-      accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
-    idporten:
+    tokenx:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}
