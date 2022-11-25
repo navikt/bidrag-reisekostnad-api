@@ -440,7 +440,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<jvmTarget>16</jvmTarget>
+					<jvmTarget>17</jvmTarget>
 					<compilerPlugins>
 						<plugin>spring</plugin>
 						<plugin>jpa</plugin>
