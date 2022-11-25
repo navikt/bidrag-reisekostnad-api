@@ -1,12 +1,8 @@
 package no.nav.bidrag.reisekostnad.konfigurasjon;
 
-import java.util.Optional;
+import no.nav.bidrag.commons.security.service.SecurityTokenService;
 import no.nav.bidrag.commons.web.CorrelationIdFilter;
 import no.nav.bidrag.commons.web.HttpHeaderRestTemplate;
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RootUriTemplateHandler;
@@ -19,6 +15,18 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 @Configuration
 public class RestTemplatekonfig {
+
+  @Bean
+  @Profile(Profil.I_SKY)
+  public ClientHttpRequestInterceptor authTokenInterceptor(SecurityTokenService securityTokenService) {
+    return securityTokenService.authTokenInterceptor("bidrag-person");
+  }
+
+  @Bean
+  @Profile(Profil.I_SKY)
+  public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
+    return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person");
+  }
 
   @Bean
   @Scope("prototype")
@@ -35,29 +43,23 @@ public class RestTemplatekonfig {
   public HttpHeaderRestTemplate bidragPersonRestTemplate(
       @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
       HttpHeaderRestTemplate httpHeaderRestTemplate,
-      ClientHttpRequestInterceptor accessTokenInterceptor) {
+      ClientHttpRequestInterceptor authTokenInterceptor) {
 
-    httpHeaderRestTemplate.getInterceptors().add(accessTokenInterceptor);
+    httpHeaderRestTemplate.getInterceptors().add(authTokenInterceptor);
     httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
     return httpHeaderRestTemplate;
   }
 
   @Bean
-  @Profile({Profil.I_SKY, Profil.TEST})
-  public ClientHttpRequestInterceptor accessTokenInterceptor(
-      ClientConfigurationProperties clientConfigurationProperties,
-      OAuth2AccessTokenService oAuth2AccessTokenService
+  @Scope("prototype")
+  @Qualifier("bidrag-person-azure-client-credentials")
+  public HttpHeaderRestTemplate bidragPersonAzureCCRestTemplate(
+      @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
+      HttpHeaderRestTemplate httpHeaderRestTemplate,
+      ClientHttpRequestInterceptor clientCredentialsTokenInterceptor
   ) {
-
-    ClientProperties clientProperties =
-        Optional.ofNullable(clientConfigurationProperties.getRegistration().get("bidrag-person"))
-            .orElseThrow(() -> new RuntimeException("fant ikke oauth2-klientkonfig for bidrag-person"));
-
-    return (request, body, execution) -> {
-      OAuth2AccessTokenResponse response =
-          oAuth2AccessTokenService.getAccessToken(clientProperties);
-      request.getHeaders().setBearerAuth(response.getAccessToken());
-      return execution.execute(request, body);
-    };
+    httpHeaderRestTemplate.getInterceptors().add(clientCredentialsTokenInterceptor);
+    httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
+    return httpHeaderRestTemplate;
   }
 }

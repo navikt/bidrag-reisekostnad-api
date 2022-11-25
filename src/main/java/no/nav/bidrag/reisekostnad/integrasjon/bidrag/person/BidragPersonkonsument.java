@@ -12,6 +12,7 @@ import no.nav.bidrag.reisekostnad.feilhåndtering.Persondatafeil;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentPersoninfoForespørsel;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentPersoninfoRespons;
+import no.nav.bidrag.reisekostnad.konfigurasjon.cache.UserCacheable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,20 +32,21 @@ public class BidragPersonkonsument {
   public static final String ENDEPUNKT_PERSONINFO = "/informasjon";
   public static final String BIDRAG_PERSON_KONTEKSTROT = "/bidrag-person";
   private final RestTemplate restTemplate;
+  private final RestTemplate clientCredentialsRestTemplate;
 
-  public static final String FORMAT_FØDSELSDATO = "yyyyMMdd";
+  public static final String FORMAT_FØDSELSDATO = "yyyy-MM-dd";
 
   @Autowired
-  public BidragPersonkonsument(@Qualifier("bidrag-person") RestTemplate restTemplate) {
+  public BidragPersonkonsument(@Qualifier("bidrag-person") RestTemplate restTemplate, @Qualifier("bidrag-person-azure-client-credentials") RestTemplate clientCredentialsRestTemplate) {
     this.restTemplate = restTemplate;
+    this.clientCredentialsRestTemplate = clientCredentialsRestTemplate;
   }
-
-  @Cacheable(CACHE_FAMILIE)
+  @UserCacheable(CACHE_FAMILIE)
   public Optional<HentFamilieRespons> hentFamilie(String personident) {
-    var forespørsel = HentPersoninfoForespørsel.builder().personident(personident).build();
+    var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
 
     try {
-      var hentFamilieRespons = restTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_MOTPART_BARN_RELASJON, HttpMethod.POST,
+      var hentFamilieRespons = clientCredentialsRestTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_MOTPART_BARN_RELASJON, HttpMethod.POST,
           new HttpEntity<>(forespørsel),
           HentFamilieRespons.class);
       return Optional.of(hentFamilieRespons).map(ResponseEntity::getBody);
@@ -60,10 +62,9 @@ public class BidragPersonkonsument {
       }
     }
   }
-
-  @Cacheable(CACHE_PERSON)
+  @UserCacheable(CACHE_PERSON)
   public Optional<HentPersoninfoRespons> hentPersoninfo(String personident) {
-    var forespørsel = HentPersoninfoForespørsel.builder().personident(personident).build();
+    var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
     var hentPersoninfo = restTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_PERSONINFO, HttpMethod.POST,
         new HttpEntity<>(forespørsel),
         HentPersoninfoRespons.class);

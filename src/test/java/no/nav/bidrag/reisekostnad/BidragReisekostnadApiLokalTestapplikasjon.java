@@ -21,14 +21,13 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
 @Slf4j
 @Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
-@AutoConfigureWireMock(port = 0)
+@AutoConfigureWireMock(stubs = "file:src/test/java/resources/mappings", port = 0)
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 @EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"},
@@ -47,24 +46,32 @@ public class BidragReisekostnadApiLokalTestapplikasjon {
 @Configuration
 @Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
 @EnableMockOAuth2Server
-@AutoConfigureWireMock(port = 0)
+@AutoConfigureWireMock(stubs = "file:src/test/java/resources/mappings", port = 0)
 class Lokalkonfig {
 
   @Autowired
   private MockOAuth2Server mockOAuth2Server;
-
-  @Bean
-  @Primary
-  public ClientHttpRequestInterceptor accessTokenInterceptor() {
-    return (request, body, execution) -> {
-      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
-      return execution.execute(request, body);
-    };
-  }
 
   @Rule
   public WireMockRule wm = new WireMockRule(options()
       .extensions(new ResponseTemplateTransformer(false))
   );
 
+  @Bean
+  public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor() {
+    return (request, body, execution) -> {
+      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
+      return execution.execute(request, body);
+    };
+  }
+
+  @Bean
+  public ClientHttpRequestInterceptor authTokenInterceptor() {
+    return (request, body, execution) -> {
+      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
+      return execution.execute(request, body);
+    };
+  }
 }
+
+

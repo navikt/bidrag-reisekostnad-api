@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import lombok.Value;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon;
@@ -83,7 +84,9 @@ public class ReisekostnadApiKontrollerTest {
   }
 
   private String generereTesttoken(String personident) {
-    var token = mockOAuth2Server.issueToken("tokenx", personident, "aud-localhost");
+    var claims = new HashMap<String, Object>();
+    claims.put("idp", personident);
+    var token = mockOAuth2Server.issueToken("tokenx", personident, "aud-localhost", claims);
     return "Bearer " + token.serialize();
   }
 

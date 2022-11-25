@@ -12,12 +12,12 @@ wiremock.server:
   stubs: classpath:/mappings
 
 AZURE_APP_TENANT_ID: tokenx
-AZURE_BASE: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
+AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
 
 no.nav.security.jwt:
   client.registration:
     bidrag-person:
-      token-endpoint-url: ${AZURE_BASE}
+      token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
       grant-type: client_credentials
       authentication:
         client-id: ${AZURE_APP_CLIENT_ID}
@@ -26,7 +26,7 @@ no.nav.security.jwt:
   expirythreshold: 1
   issuer:
     tokenx:
-      discoveryurl: ${AZURE_BASE}/.well-known/openid-configuration
+      discoveryurl: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}/.well-known/openid-configuration
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
 

@@ -14,6 +14,7 @@
 	<name>bidrag-reiesekostnader-api</name>
 	<description>bidrag-reiesekostnader-api</description>
 	<properties>
+		<kotlin.version>1.7.20</kotlin.version>
 		<!-- bygg -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven.surefire.version>2.22.2</maven.surefire.version>
@@ -24,6 +25,7 @@
 		<!-- annet -->
 		<bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
 		<bidrag-commons-test.version>0.2.2</bidrag-commons-test.version>
+		<bidrag-commons.version>0.7.21</bidrag-commons.version>
 		<brukernotifikasjon-schemas.version>v2.5.2</brukernotifikasjon-schemas.version>
 		<checker-qual.version>3.19.0</checker-qual.version>
 		<classgraph.version>4.8.149</classgraph.version>
@@ -194,10 +196,19 @@
 				<artifactId>snappy-java</artifactId>
 				<version>${snappy-java.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>no.nav.bidrag</groupId>
+				<artifactId>bidrag-commons</artifactId>
+				<version>${bidrag-commons.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>no.nav.bidrag</groupId>
+			<artifactId>bidrag-commons</artifactId>
+		</dependency>
 		<!-- spring -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -276,7 +287,7 @@
 		<dependency>
 			<groupId>no.nav.bidrag</groupId>
 			<artifactId>bidrag-tilgangskontroll</artifactId>
-			<version>${bidrag-tilgangskontroll.version}</version>
+				<version>${bidrag-tilgangskontroll.version}</version>
 		</dependency>
 
 		<!-- datakilde -->
@@ -397,6 +408,62 @@
 	<build>
 		<finalName>bidrag-reisekostnad-api</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-maven-plugin</artifactId>
+				<version>${kotlin.version}</version>
+				<executions>
+					<execution>
+						<id>test-compile</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>test-compile</goal>
+						</goals>
+						<configuration>
+							<sourceDirs>
+								<source>src/test/kotlin</source>
+							</sourceDirs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>compile</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<sourceDirs>
+								<source>src/main/java</source>
+								<source>src/main/kotlin</source>
+							</sourceDirs>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<jvmTarget>17</jvmTarget>
+					<compilerPlugins>
+						<plugin>spring</plugin>
+						<plugin>jpa</plugin>
+					</compilerPlugins>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-allopen</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-noarg</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-noarg</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
