@@ -99,18 +99,18 @@ public class ReisekostnadApiKontrollerTest {
     @Test
     void skalHenteBrukerinformasjonForHovedpartMedFamilierelasjoner() {
 
-      // given
+      // gitt
       var hovedperson = TESTPERSON_GRÅTASS;
       httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
 
       var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
-      // when
+      // hvis
       var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
           BrukerinformasjonDto.class);
 
-      // then
+      // så
       assertAll(
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
           () -> assertThat(brukerinformasjon.getBody().getBrukersFornavn()).isEqualTo(hovedperson.getFornavn()),
@@ -136,35 +136,35 @@ public class ReisekostnadApiKontrollerTest {
     @Test
     void skalGiStatuskode404DersomPersondataMangler() {
 
-      // given
+      // gitt
       var hovedperson = TESTPERSON_IKKE_FUNNET;
       httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
 
       var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
-      // when
+      // hvis
       var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
           BrukerinformasjonDto.class);
 
-      // then
+      // så
       assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     void skalGiStatuskode500DersomKallMotBidragPersonFeilerMed500() {
 
-      // given
+      // gitt
       var hovedperson = TESTPERSON_SERVERFEIL;
       httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
       var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
-      // when
+      // hvis
       var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
           BrukerinformasjonDto.class);
 
-      // then
+      // så
       assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

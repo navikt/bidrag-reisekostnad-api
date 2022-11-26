@@ -44,7 +44,7 @@ public class Forelder implements Person, Serializable {
   @PreRemove
   private void fjerneHovedpart() {
     for (Forespørsel f : forespørslerHovdedpart) {
-     //
+      //
     }
   }
 

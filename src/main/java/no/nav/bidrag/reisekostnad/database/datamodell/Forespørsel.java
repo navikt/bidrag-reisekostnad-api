@@ -19,7 +19,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.validation.annotation.Validated;
 
 @Entity
 @Builder
@@ -55,7 +54,8 @@ public class Forespørsel implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + (barn == null ? 0 : barn.hashCode()) + (hovedpart == null ? 0 : hovedpart.hashCode()) + (motpart == null ? 0 : motpart.hashCode());
+    result = prime * result + (barn == null ? 0 : barn.hashCode()) + (hovedpart == null ? 0 : hovedpart.hashCode()) + (motpart == null ? 0
+        : motpart.hashCode());
 
     return result;
   }

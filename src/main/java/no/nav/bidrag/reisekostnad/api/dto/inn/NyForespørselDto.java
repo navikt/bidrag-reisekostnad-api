@@ -11,7 +11,8 @@ import org.springframework.validation.annotation.Validated;
 @Schema
 @Validated
 public class NyForespørselDto {
+
   @NotNull
-  @Parameter(description = "Personidenter til barn som reisekostnader skal fordeles for", example = "77777700000")
-  Set<String> personidenterBarn;
+  @Parameter(description = "Koder som identifiserer hvilke barn reisekostnader skal fordeles for", example = "e0TT/+3WKAEx1KaBSH+b+A==")
+  Set<String> identerBarn;
 }

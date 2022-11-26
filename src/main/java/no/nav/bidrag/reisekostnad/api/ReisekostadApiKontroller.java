@@ -11,9 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
-import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselMotpartBarnDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
-import no.nav.bidrag.reisekostnad.api.dto.ut.NyForespørselRespons;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Tokeninfo;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostadApiTjeneste;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
@@ -58,27 +56,7 @@ public class ReisekostadApiKontroller {
     return new ResponseEntity<>(respons.getResponseEntity().getBody(), statuskode);
   }
 
-  @Deprecated
   @PostMapping("/forespoersel/ny")
-  @Operation(description = "Opprette forespørsel om fordeling av reisekostnader",
-      security = {@SecurityRequirement(name = "bearer-key")})
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Forespørsel opprettet"),
-      @ApiResponse(responseCode = "400", description = "Feil opplysninger oppgitt"),
-      @ApiResponse(responseCode = "401", description = "Sikkerhetstoken mangler, er utløpt, eller av andre årsaker ugyldig"),
-      @ApiResponse(responseCode = "404", description = "Fant ikke fødselsnummer eller navn"),
-      @ApiResponse(responseCode = "500", description = "Serverfeil"),
-      @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
-  public ResponseEntity<NyForespørselRespons> oppretteForespørselOmFordelingAvReisekostnader(
-      @Valid @RequestBody NyForespørselMotpartBarnDto nyForespørselMotpartBarnDto) {
-    log.info("Oppretter forespørsel om fordeling av reisekostnader");
-    var personidentHovedpart = Tokeninfo.Companion.hentPaaloggetPerson();
-    SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson med ident {}", personidentHovedpart);
-    var respons = reisekostadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedpart, nyForespørselMotpartBarnDto);
-    return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
-  }
-
-  @PostMapping("/forespoersel/barn")
   @Operation(description = "Opprette forespørsel om fordeling av reisekostnader",
       security = {@SecurityRequirement(name = "bearer-key")})
   @ApiResponses(value = {
@@ -93,7 +71,7 @@ public class ReisekostadApiKontroller {
     var personidentHovedpart = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson med ident {}", personidentHovedpart);
     var respons = reisekostadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedpart,
-        nyForespørselDto.getPersonidenterBarn());
+        nyForespørselDto.getIdenterBarn());
     return new ResponseEntity<>(respons.getResponseEntity().getStatusCode());
   }
 

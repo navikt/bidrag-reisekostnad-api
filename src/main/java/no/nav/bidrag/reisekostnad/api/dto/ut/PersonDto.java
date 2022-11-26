@@ -13,6 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PersonDto {
 
+  @Parameter(description = "Identifikator for personen", example="e0TT/+3WKAEx1KaBSH+b+A==")
+  private String ident;
   @Parameter(description = "Personens fornavn", example = "Bob Builder")
   private String fornavn;
   @Parameter(description = "Personens fødselsdato", example = "01012000")

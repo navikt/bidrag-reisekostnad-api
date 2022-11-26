@@ -13,6 +13,7 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
+import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,13 +49,10 @@ public class Databasetjeneste {
     var ekisterendeHovedpart = forelderDao.finnMedPersonident(hovedpart);
     var eksisterendeMotpart = forelderDao.finnMedPersonident(motpart);
 
-    var nyForespørsel = Forespørsel.builder()
-        .opprettet(LocalDateTime.now())
+    var nyForespørsel = Forespørsel.builder().opprettet(LocalDateTime.now())
         .hovedpart(ekisterendeHovedpart.orElseGet(() -> Forelder.builder().personident(hovedpart).build()))
-        .motpart(eksisterendeMotpart.orElseGet(() -> Forelder.builder().personident(motpart).build()))
-        .barn(mapper.tilEntitet(identerBarn))
-        .kreverSamtykke(kreverSamtykke)
-        .build();
+        .motpart(eksisterendeMotpart.orElseGet(() -> Forelder.builder().personident(motpart).build())).barn(mapper.tilEntitet(identerBarn))
+        .kreverSamtykke(kreverSamtykke).build();
 
     var lagretForespørsel = forespørselDao.save(nyForespørsel);
 

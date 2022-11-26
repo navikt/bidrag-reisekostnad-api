@@ -16,24 +16,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class FeilhåndteringRestkontroller {
 
   @ResponseBody
+  @ExceptionHandler(InternFeil.class)
+  protected ResponseEntity<?> håndtereInternFeil(InternFeil internFeil) {
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .header(HttpHeaders.WARNING, internFeil.getFeilkode().toString()).build();
+  }
+
+  @ResponseBody
   @ExceptionHandler(Valideringsfeil.class)
   protected ResponseEntity<?> håndtereValideringsfeil(Valideringsfeil valideringsfeil) {
-    log.warn("Validering av brukerinput feilet med kode: {}", valideringsfeil.getFeilkode());
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
-        .header(HttpHeaders.WARNING, valideringsfeil.getFeilkode().toString())
-        .build();
+        .header(HttpHeaders.WARNING, valideringsfeil.getFeilkode().toString()).build();
   }
 
   @ResponseBody
   @ExceptionHandler(DataAccessException.class)
   protected ResponseEntity<?> håndtereDatatilgangsfeil(DataAccessException dataAccessException) {
-    log.error("En feil oppstod i kommunikasjon med databasen: {}.", dataAccessException.getMessage());
     return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .header(HttpHeaders.WARNING, dataAccessException.getMessage())
-        .build();
-
+        .header(HttpHeaders.WARNING, dataAccessException.getMessage()).build();
   }
 
   @ResponseBody
@@ -41,7 +44,6 @@ public class FeilhåndteringRestkontroller {
   protected ResponseEntity<?> handleFeilNavnOppgittException(Persondatafeil e) {
     return ResponseEntity
         .status(e.getHttpStatus())
-        .header(HttpHeaders.WARNING, e.getFeilkode().toString())
-        .build();
+        .header(HttpHeaders.WARNING, e.getFeilkode().toString()).build();
   }
 }

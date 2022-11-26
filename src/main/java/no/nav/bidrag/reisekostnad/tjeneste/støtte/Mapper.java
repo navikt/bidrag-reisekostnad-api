@@ -1,4 +1,4 @@
-package no.nav.bidrag.reisekostnad.tjeneste;
+package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 
 import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument.FORMAT_FØDSELSDATO;
 
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.ForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.MotpartDto;
@@ -28,6 +29,7 @@ import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class Mapper {
 
@@ -71,12 +73,12 @@ public class Mapper {
 
     var egenskapmapper = modelMapper.getTypeMap(Familiemedlem.class, PersonDto.class);
 
+    Converter<String, String> konverterePersonident = ident -> ident.getSource() == null ? null : kryptere(ident.getSource());
     Converter<String, LocalDate> konvertereDatostreng = d -> d.getSource() == null ? null
         : LocalDate.parse(d.getSource(), DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
 
-    egenskapmapper.addMappings(
-        mapper -> mapper.using(konvertereDatostreng).map(Familiemedlem::getFoedselsdato, PersonDto::setFødselsdato)
-    );
+    egenskapmapper.addMappings(mapper -> mapper.using(konverterePersonident).map(Familiemedlem::getIdent, PersonDto::setIdent));
+    egenskapmapper.addMappings(mapper -> mapper.using(konvertereDatostreng).map(Familiemedlem::getFoedselsdato, PersonDto::setFødselsdato));
 
     return modelMapper.map(familiemedlem, PersonDto.class);
   }
@@ -135,8 +137,6 @@ public class Mapper {
   }
 
   private Set<ForespørselDto> tilForespørselDto(Set<Forespørsel> forespørsler) {
-    var resultat = forespørsler.stream().filter(Objects::nonNull).map(this::tilForespørselDto).collect(Collectors.toSet());
-
     return forespørsler.stream().filter(Objects::nonNull).map(this::tilForespørselDto).collect(Collectors.toSet());
   }
 
@@ -173,9 +173,13 @@ public class Mapper {
   private PersonDto tilPersonDto(String personident) {
     var personinfo = bidragPersonkonsument.hentPersoninfo(personident);
     if (personinfo.isPresent()) {
-      return new PersonDto(personinfo.get().getFornavn(), personinfo.get().getFoedselsdato());
+      return new PersonDto(kryptere(personident), personinfo.get().getFornavn(), personinfo.get().getFoedselsdato());
     } else {
-      return new PersonDto(PERSON_IKKE_FUNNET, null);
+      return new PersonDto(null, PERSON_IKKE_FUNNET, null);
     }
+  }
+
+  private String kryptere(String ukryptertPersonident) {
+    return Krypteringsverktøy.kryptere(ukryptertPersonident);
   }
 }
