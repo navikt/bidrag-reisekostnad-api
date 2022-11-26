@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 public class ReisekostnadApiTjenesteTest {
 
   @Autowired
-  private ReisekostadApiTjeneste reisekostadApiTjeneste;
+  private ReisekostnadApiTjeneste reisekostnadApiTjeneste;
 
 
 

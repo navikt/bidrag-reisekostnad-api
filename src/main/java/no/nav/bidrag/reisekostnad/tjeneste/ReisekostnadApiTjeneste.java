@@ -21,14 +21,14 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ReisekostadApiTjeneste {
+public class ReisekostnadApiTjeneste {
 
   private final BidragPersonkonsument bidragPersonkonsument;
   private Databasetjeneste databasetjeneste;
   private final Mapper mapper;
 
   @Autowired
-  public ReisekostadApiTjeneste(BidragPersonkonsument bidragPersonkonsument, Databasetjeneste databasetjeneste, Mapper mapper) {
+  public ReisekostnadApiTjeneste(BidragPersonkonsument bidragPersonkonsument, Databasetjeneste databasetjeneste, Mapper mapper) {
     this.bidragPersonkonsument = bidragPersonkonsument;
     this.databasetjeneste = databasetjeneste;
     this.mapper = mapper;
@@ -116,11 +116,6 @@ public class ReisekostadApiTjeneste {
       }
     }
     return true;
-  }
-
-
-  private boolean inneholderBarnOver15År(Set<String> personidenterBarn) {
-    return personidenterBarn.stream().filter(Objects::nonNull).filter(this::erPersonOver15År).findFirst().isPresent();
   }
 
   private boolean erPersonOver15År(String personident) {
