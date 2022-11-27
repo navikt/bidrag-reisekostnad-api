@@ -16,4 +16,5 @@ public class Familiemedlem {
   String mellomnavn;
   String etternavn;
   String foedselsdato;
+  String diskresjonskode;
 }
