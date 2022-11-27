@@ -64,14 +64,6 @@ class Lokalkonfig {
       return execution.execute(request, body);
     };
   }
-
-  @Bean
-  public ClientHttpRequestInterceptor authTokenInterceptor() {
-    return (request, body, execution) -> {
-      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
-      return execution.execute(request, body);
-    };
-  }
 }
 
 

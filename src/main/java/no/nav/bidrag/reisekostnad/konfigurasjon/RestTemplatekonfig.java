@@ -18,12 +18,6 @@ public class RestTemplatekonfig {
 
   @Bean
   @Profile(Profil.I_SKY)
-  public ClientHttpRequestInterceptor authTokenInterceptor(SecurityTokenService securityTokenService) {
-    return securityTokenService.authTokenInterceptor("bidrag-person");
-  }
-
-  @Bean
-  @Profile(Profil.I_SKY)
   public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person");
   }

@@ -31,14 +31,12 @@ public class BidragPersonkonsument {
   public static final String ENDEPUNKT_MOTPART_BARN_RELASJON = "/motpartbarnrelasjon";
   public static final String ENDEPUNKT_PERSONINFO = "/informasjon";
   public static final String BIDRAG_PERSON_KONTEKSTROT = "/bidrag-person";
-  private final RestTemplate restTemplate;
   private final RestTemplate clientCredentialsRestTemplate;
 
   public static final String FORMAT_FØDSELSDATO = "yyyy-MM-dd";
 
   @Autowired
-  public BidragPersonkonsument(@Qualifier("bidrag-person") RestTemplate restTemplate, @Qualifier("bidrag-person-azure-client-credentials") RestTemplate clientCredentialsRestTemplate) {
-    this.restTemplate = restTemplate;
+  public BidragPersonkonsument(@Qualifier("bidrag-person-azure-client-credentials") RestTemplate clientCredentialsRestTemplate) {
     this.clientCredentialsRestTemplate = clientCredentialsRestTemplate;
   }
   @UserCacheable(CACHE_FAMILIE)

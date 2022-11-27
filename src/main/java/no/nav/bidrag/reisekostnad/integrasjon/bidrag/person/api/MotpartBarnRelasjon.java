@@ -11,9 +11,9 @@ import lombok.Value;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MotpartBarnRelasjon {
 
-  public enum Forelderrolle {MOR, FAR}
+  public enum Relasjon {MOR, FAR, BARN}
 
-  Forelderrolle forelderrolleMotpart;
+  Relasjon relasjonMotpart;
   Familiemedlem motpart;
   @Builder.Default
   List<Familiemedlem> fellesBarn = new ArrayList<>();

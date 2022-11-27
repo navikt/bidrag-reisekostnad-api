@@ -1,15 +1,11 @@
 package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 
 import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument.FORMAT_FØDSELSDATO;
-import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon.Forelderrolle.FAR;
+import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon.Relasjon.FAR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,11 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import lombok.Value;
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
@@ -38,7 +29,6 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelas
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -217,7 +207,7 @@ public class MapperTest {
 
   private MotpartBarnRelasjon oppretteMotpartBarnRelasjon(Testperson motpart) {
     return MotpartBarnRelasjon.builder()
-        .forelderrolleMotpart(FAR)
+        .relasjonMotpart(FAR)
         .motpart(Familiemedlem.builder()
             .ident(motpart.getFødselsnummer())
             .fornavn(motpart.getFornavn())
