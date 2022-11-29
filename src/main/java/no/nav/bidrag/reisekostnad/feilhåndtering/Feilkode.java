@@ -7,7 +7,7 @@ public enum Feilkode {
   INTERNFEIL("Intern feil har oppstått."),
   VALIDERING_DEAKTIVERE_HOVEDPART("Fant ingen aktive forespørsler knyttet til oppgitt hovedpart."),
   KRYPTERING("Kryptering av personident feilet."),
-  VALIDERING_HOVEDPERSON_DISKRESJON("Hovedperson har diskresjon. Kan ikke benytte løsningen."),
+  VALIDERING_PÅLOGGET_PERSON_DISKRESJON("Pålogget person har diskresjon. Kan ikke benytte løsningen."),
   VALIDERING_SAMTYKKE_MOTPART("Fant ingen aktive forespørsler knyttet til oppgitt motpart. Samtykke ikke oppdatert."),
   PDL_PERSON_IKKE_FUNNET("Fant ikke person i PDL"),
   PDL_FEIL("En feil oppstod ved henting av data fra PDL"),

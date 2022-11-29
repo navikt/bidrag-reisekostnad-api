@@ -42,9 +42,9 @@ public class ReisekostnadApiTjeneste {
     SIKKER_LOGG.info("Henter brukerinformasjon for person med ident {}", fnrPaaloggetBruker);
     var familierespons = bidragPersonkonsument.hentFamilie(fnrPaaloggetBruker);
     try {
-      validereHovedperson(familierespons);
+      validerePåloggetPerson(familierespons);
     } catch (Valideringsfeil valideringsfeil) {
-      log.warn("Hovedperson har diskresjon. Kan ikke bruke løsningen");
+      log.warn("Pålogget person har diskresjon. Kan ikke bruke løsningen");
     }
     return HttpResponse.from(HttpStatus.OK, mapper.tilDto(familierespons.get()));
   }
@@ -52,7 +52,7 @@ public class ReisekostnadApiTjeneste {
   public HttpResponse<Void> oppretteForespørselOmFordelingAvReisekostnader(String hovedperson, Set<String> krypterteIdenterBarn) {
     SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson {}", hovedperson);
     var familierespons = bidragPersonkonsument.hentFamilie(hovedperson);
-    validereHovedperson(familierespons);
+    validerePåloggetPerson(familierespons);
     var personidenterBarn = krypterteIdenterBarn.stream().map(k -> dekryptere(k)).collect(Collectors.toSet());
 
     // Kaster Valideringsfeil dersom hovedperson ikke er registrert med familierelasjoner eller mangler relasjon til minst ett av de oppgitte barna.
@@ -76,15 +76,15 @@ public class ReisekostnadApiTjeneste {
     return HttpResponse.from(HttpStatus.OK, null);
   }
 
-  private void validereHovedperson(Optional<HentFamilieRespons> familieRespons) {
+  private void validerePåloggetPerson(Optional<HentFamilieRespons> familieRespons) {
     if (!familieRespons.isPresent() || familieRespons.get().getPerson() == null) {
       throw new Persondatafeil(Feilkode.PDL_PERSON_IKKE_FUNNET, HttpStatus.NOT_FOUND);
     }
 
-    håndtereDiskresjonHovedperson(familieRespons.get().getPerson().getDiskresjonskode());
+    håndtereDiskresjonForPåloggetPerson(familieRespons.get().getPerson().getDiskresjonskode());
   }
 
-  private void håndtereDiskresjonHovedperson(String diskresjonskode) {
+  private void håndtereDiskresjonForPåloggetPerson(String diskresjonskode) {
 
     if (StringUtils.isEmpty(diskresjonskode)) {
       return;
@@ -92,7 +92,7 @@ public class ReisekostnadApiTjeneste {
 
     for (Diskresjonskode kode : Diskresjonskode.values()) {
       if (kode.toString().equals(diskresjonskode)) {
-        throw new Valideringsfeil(Feilkode.VALIDERING_HOVEDPERSON_DISKRESJON);
+        throw new Valideringsfeil(Feilkode.VALIDERING_PÅLOGGET_PERSON_DISKRESJON);
       }
     }
   }
