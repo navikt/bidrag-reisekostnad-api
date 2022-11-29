@@ -19,14 +19,22 @@ public enum Diskresjonskode {
   public static boolean harMinstEttFamiliemedlemHarDiskresjon(List<Familiemedlem> familiemedlemmer) {
 
     for (Familiemedlem familiemedlem : familiemedlemmer) {
-      if (!StringUtils.isEmpty(familiemedlem.getDiskresjonskode())) {
-        for (Diskresjonskode kode : Diskresjonskode.values()) {
-          if (kode.name().equalsIgnoreCase(familiemedlem.getDiskresjonskode())) {
-            return true;
-          }
+      return harDiskresjon(familiemedlem);
+    }
+
+    return false;
+  }
+
+  public static boolean harDiskresjon(Familiemedlem familiemedlem) {
+    if (StringUtils.isEmpty(familiemedlem.getDiskresjonskode())) {
+      return false;
+    } else {
+      for (Diskresjonskode kode : Diskresjonskode.values()) {
+        if (kode.name().equalsIgnoreCase(familiemedlem.getDiskresjonskode())) {
+          return true;
         }
       }
+      return false;
     }
-    return false;
   }
 }

@@ -60,17 +60,19 @@ public class Mapper {
     var forespørslerHvorPersonErHovedpart = forespørselDao.henteAktiveForespørslerHvorPersonErHovedpart(familieRespons.getPerson().getIdent());
     var forespørslerHvorPersonErMotpart = forespørselDao.henteAktiveForespørslerHvorPersonErMotpart(familieRespons.getPerson().getIdent());
 
+    var hovedpersonHarDiskresjon = Diskresjonskode.harDiskresjon(familieRespons.getPerson());
     var familierUtenDiskresjon = henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(familieRespons);
 
     return BrukerinformasjonDto.builder()
         .fornavn(familieRespons.getPerson().getFornavn())
+        .harDiskresjon(hovedpersonHarDiskresjon)
         .kjønn(familieRespons.getPerson().getKjønn())
         .harSkjulteFamilieenheterMedDiskresjon(familierUtenDiskresjon.size() < familieRespons.getPersonensMotpartBarnRelasjon().size())
-        .kanSøkeOmFordelingAvReisekostnader(personHarDeltForeldreansvar(familierUtenDiskresjon))
-        .barnMinstFemtenÅr(henteBarnOverFemtenÅr(familierUtenDiskresjon))
+        .kanSøkeOmFordelingAvReisekostnader(!hovedpersonHarDiskresjon && personHarDeltForeldreansvar(familierUtenDiskresjon))
+        .barnMinstFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : henteBarnOverFemtenÅr(familierUtenDiskresjon))
         .forespørslerSomHovedpart(tilForespørselDto(forespørslerHvorPersonErHovedpart))
         .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart))
-        .motparterMedFellesBarnUnderFemtenÅr(filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjon))
+        .motparterMedFellesBarnUnderFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjon))
         .build();
   }
 
@@ -92,7 +94,7 @@ public class Mapper {
   private Set<MotpartBarnRelasjon> henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(HentFamilieRespons familierespons) {
     var motpartBarnRelasjonUtenMotparterMedDiskresjon = filtrereBortEnheterDerMotpartHarDiskresjon(familierespons.getPersonensMotpartBarnRelasjon());
 
-   return  motpartBarnRelasjonUtenMotparterMedDiskresjon.stream()
+    return motpartBarnRelasjonUtenMotparterMedDiskresjon.stream()
         .filter(Objects::nonNull)
         .filter(m -> !Diskresjonskode.harMinstEttFamiliemedlemHarDiskresjon(m.getFellesBarn()))
         .collect(

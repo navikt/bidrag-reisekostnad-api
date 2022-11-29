@@ -57,6 +57,7 @@ public class ReisekostnadApiKontrollerTest {
   private static Testperson TESTPERSON_BARN_16 = new Testperson("77777700000", "Grus", 16);
   private static Testperson TESTPERSON_BARN_10 = new Testperson("33333355555", "Småstein", 10);
   private static Testperson TESTPERSON_IKKE_FUNNET = new Testperson("00000001231", "Utenfor", 29);
+  private static Testperson  TESTPERSON_HAR_DISKRESJON = new Testperson("23451644512", "Diskos", 29);
   private static Testperson TESTPERSON_HAR_MOTPART_MED_DISKRESJON = new Testperson("56472134561", "Tordivel", 44);
   private static Testperson TESTPERSON_HAR_BARN_MED_DISKRESJON = new Testperson("32456849111", "Kaktus", 48);
 
@@ -134,6 +135,34 @@ public class ReisekostnadApiKontrollerTest {
           () -> assertThat(barnUnder15År.getFornavn()).isEqualTo(TESTPERSON_BARN_10.getFornavn()),
           () -> assertThat(barnMinst15År.getFødselsdato()).isEqualTo(TESTPERSON_BARN_16.getFødselsdato()),
           () -> assertThat(barnMinst15År.getFornavn()).isEqualTo(TESTPERSON_BARN_16.getFornavn()));
+    }
+
+    @Test
+    void skalHenteBrukerinformasjonForHovedpartMedDiskresjon() {
+
+      // gitt
+      var hovedperson = TESTPERSON_HAR_DISKRESJON;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
+
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+      // hvis
+      var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+          BrukerinformasjonDto.class);
+
+      // så
+      assertAll(
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+          () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(hovedperson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(true),
+          () -> assertThat(brukerinformasjon.getBody().isKanSøkeOmFordelingAvReisekostnader()).isEqualTo(false),
+          () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
+          () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
     }
 
     @Test
@@ -224,7 +253,6 @@ public class ReisekostnadApiKontrollerTest {
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
       );
     }
-
   }
 
   @Nested

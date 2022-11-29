@@ -41,7 +41,11 @@ public class ReisekostnadApiTjeneste {
   public HttpResponse<BrukerinformasjonDto> henteBrukerinformasjon(String fnrPaaloggetBruker) {
     SIKKER_LOGG.info("Henter brukerinformasjon for person med ident {}", fnrPaaloggetBruker);
     var familierespons = bidragPersonkonsument.hentFamilie(fnrPaaloggetBruker);
-    validereHovedperson(familierespons);
+    try {
+      validereHovedperson(familierespons);
+    } catch (Valideringsfeil valideringsfeil) {
+      log.warn("Hovedperson har diskresjon. Kan ikke bruke løsningen");
+    }
     return HttpResponse.from(HttpStatus.OK, mapper.tilDto(familierespons.get()));
   }
 
