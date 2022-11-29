@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/bidrag-person/motpartbarnrelasjon",
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "ident": "05784456310"
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{ \"person\": { \"ident\":\"05784456310\", \"kjoenn\": \"KVINNE\", \"fornavn\": \"Albueskjell\", \"foedselsdato\": \"{{now offset='-53 years' format='yyyy-MM-dd'}}\" }, \"personensMotpartBarnRelasjon\": [{ \"motpart\": { \"ident\": \"11111122222\", \"fornavn\": \"Streng\",  \"doedsdato\": \"{{now offset='-2 years' format='yyyy-MM-dd'}}\", \"foedselsdato\": \"{{now offset='-38 years' format='yyyy-MM-dd'}}\" }, \"fellesBarn\": [{ \"ident\": \"33333355555\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years' format='yyyy-MM-dd'}}\" }, { \"ident\": \"77777700000\", \"fornavn\": \"Grus\", \"foedselsdato\": \"{{now offset='-16 years' format='yyyy-MM-dd'}}\" }]}]}",
+    "transformers": ["response-template"],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

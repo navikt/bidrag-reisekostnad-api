@@ -79,6 +79,8 @@ public class ReisekostnadApiTjeneste {
   private void validerePåloggetPerson(Optional<HentFamilieRespons> familieRespons) {
     if (!familieRespons.isPresent() || familieRespons.get().getPerson() == null) {
       throw new Persondatafeil(Feilkode.PDL_PERSON_IKKE_FUNNET, HttpStatus.NOT_FOUND);
+    } else if (familieRespons.get().getPerson().getDoedsdato() != null && LocalDate.now().isAfter(familieRespons.get().getPerson().getDoedsdato())) {
+      throw new Persondatafeil(Feilkode.PDL_PERSON_DØD, HttpStatus.FORBIDDEN);
     }
 
     håndtereDiskresjonForPåloggetPerson(familieRespons.get().getPerson().getDiskresjonskode());

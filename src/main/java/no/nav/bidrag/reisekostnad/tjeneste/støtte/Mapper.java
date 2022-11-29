@@ -43,9 +43,7 @@ public class Mapper {
   public Mapper(BidragPersonkonsument bidragPersonkonsument, ForespørselDao forespørselDao) {
     this.bidragPersonkonsument = bidragPersonkonsument;
     this.forespørselDao = forespørselDao;
-    this.modelMapper.getConfiguration()
-        .setFieldMatchingEnabled(true)
-        .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+    this.modelMapper.getConfiguration().setFieldMatchingEnabled(true).setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
     oppretteTypeMaps();
   }
 
@@ -62,17 +60,17 @@ public class Mapper {
 
     var hovedpersonHarDiskresjon = Diskresjonskode.harDiskresjon(familieRespons.getPerson());
     var familierUtenDiskresjon = henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(familieRespons);
+    var familierUtenDiskresjonEllerDødeMotparter = familierUtenDiskresjon.stream().filter(Objects::nonNull)
+        .filter(m -> erIkkeDød(m.getMotpart())).collect(Collectors.toSet());
 
-    return BrukerinformasjonDto.builder()
-        .fornavn(familieRespons.getPerson().getFornavn())
-        .harDiskresjon(hovedpersonHarDiskresjon)
-        .kjønn(familieRespons.getPerson().getKjønn())
-        .harSkjulteFamilieenheterMedDiskresjon(familierUtenDiskresjon.size() < familieRespons.getPersonensMotpartBarnRelasjon().size())
-        .kanSøkeOmFordelingAvReisekostnader(!hovedpersonHarDiskresjon && personHarDeltForeldreansvar(familierUtenDiskresjon))
-        .barnMinstFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : henteBarnOverFemtenÅr(familierUtenDiskresjon))
+    return BrukerinformasjonDto.builder().fornavn(familieRespons.getPerson().getFornavn()).harDiskresjon(hovedpersonHarDiskresjon)
+        .kjønn(familieRespons.getPerson().getKjoenn()).harSkjulteFamilieenheterMedDiskresjon(
+            familierUtenDiskresjonEllerDødeMotparter.size() < familieRespons.getPersonensMotpartBarnRelasjon().size())
+        .kanSøkeOmFordelingAvReisekostnader(!hovedpersonHarDiskresjon && personHarDeltForeldreansvar(familierUtenDiskresjonEllerDødeMotparter))
+        .barnMinstFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : henteBarnOverFemtenÅr(familierUtenDiskresjonEllerDødeMotparter))
         .forespørslerSomHovedpart(tilForespørselDto(forespørslerHvorPersonErHovedpart))
-        .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart))
-        .motparterMedFellesBarnUnderFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjon))
+        .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart)).motparterMedFellesBarnUnderFemtenÅr(
+            hovedpersonHarDiskresjon ? new HashSet<>() : filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjonEllerDødeMotparter))
         .build();
   }
 
@@ -94,11 +92,8 @@ public class Mapper {
   private Set<MotpartBarnRelasjon> henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(HentFamilieRespons familierespons) {
     var motpartBarnRelasjonUtenMotparterMedDiskresjon = filtrereBortEnheterDerMotpartHarDiskresjon(familierespons.getPersonensMotpartBarnRelasjon());
 
-    return motpartBarnRelasjonUtenMotparterMedDiskresjon.stream()
-        .filter(Objects::nonNull)
-        .filter(m -> !Diskresjonskode.harMinstEttFamiliemedlemHarDiskresjon(m.getFellesBarn()))
-        .collect(
-            Collectors.toSet());
+    return motpartBarnRelasjonUtenMotparterMedDiskresjon.stream().filter(Objects::nonNull)
+        .filter(m -> !Diskresjonskode.harMinstEttFamiliemedlemHarDiskresjon(m.getFellesBarn())).collect(Collectors.toSet());
   }
 
   private Set<MotpartBarnRelasjon> filtrereBortEnheterDerMotpartHarDiskresjon(List<MotpartBarnRelasjon> motpartBarnRelasjons) {
@@ -107,17 +102,19 @@ public class Mapper {
   }
 
   private boolean personHarDeltForeldreansvar(Set<MotpartBarnRelasjon> motpartBarnRelasjoner) {
-    return motpartBarnRelasjoner.size() > 0
-        && motpartBarnRelasjoner.iterator().hasNext()
+    return motpartBarnRelasjoner.size() > 0 && motpartBarnRelasjoner.iterator().hasNext()
         && motpartBarnRelasjoner.iterator().next().getFellesBarn().size() > 0;
   }
 
   private Set<PersonDto> henteBarnOverFemtenÅr(Set<MotpartBarnRelasjon> motpartBarnRelasjoner) {
-    return motpartBarnRelasjoner.stream().filter(Objects::nonNull)
-        .flatMap(mbr -> mbr.getFellesBarn().stream())
-        .filter(this::erMinstFemtenÅr)
-        .map(this::tilDto)
-        .collect(Collectors.toSet());
+    return motpartBarnRelasjoner.stream().filter(Objects::nonNull).flatMap(mbr -> mbr.getFellesBarn().stream()).filter(this::erMinstFemtenÅr)
+        .filter(this::erIkkeDød).map(this::tilDto).collect(Collectors.toSet());
+  }
+
+  private boolean erIkkeDød(Familiemedlem familiemedlem) {
+    var test = familiemedlem.getDoedsdato() == null || LocalDate.now().isAfter(familiemedlem.getDoedsdato());
+
+    return familiemedlem.getDoedsdato() == null || LocalDate.now().isAfter(familiemedlem.getDoedsdato());
   }
 
   private boolean erMinstFemtenÅr(Familiemedlem barn) {
@@ -143,10 +140,7 @@ public class Mapper {
     for (MotpartBarnRelasjon motpartBarnRelasjon : motpartBarnRelasjoner) {
       var barnUnderFemtenÅr = filtereUtBarnUnderFemtenÅr(motpartBarnRelasjon.getFellesBarn());
       if (barnUnderFemtenÅr.size() > 0) {
-        var motpartDto = MotpartDto.builder()
-            .motpart(tilDto(motpartBarnRelasjon.getMotpart()))
-            .fellesBarnUnder15År(barnUnderFemtenÅr)
-            .build();
+        var motpartDto = MotpartDto.builder().motpart(tilDto(motpartBarnRelasjon.getMotpart())).fellesBarnUnder15År(barnUnderFemtenÅr).build();
         motparterMedBarnUnderFemtenÅr.add(motpartDto);
       }
     }
@@ -154,7 +148,7 @@ public class Mapper {
   }
 
   private Set<PersonDto> filtereUtBarnUnderFemtenÅr(List<Familiemedlem> barn) {
-    return barn.stream().filter(Objects::nonNull).filter(this::erUnderFemtenÅr).map(this::tilDto).collect(Collectors.toSet());
+    return barn.stream().filter(Objects::nonNull).filter(this::erUnderFemtenÅr).filter(this::erIkkeDød).map(this::tilDto).collect(Collectors.toSet());
   }
 
   private Set<ForespørselDto> tilForespørselDto(Set<Forespørsel> forespørsler) {
@@ -183,8 +177,7 @@ public class Mapper {
 
   public Set<Barn> tilEntitet(Set<String> personidenterBarn) {
     return personidenterBarn.stream().filter(Objects::nonNull).filter(s -> !s.isEmpty())
-        .map(personident -> Barn.builder().personident(personident).build()).collect(
-            Collectors.toSet());
+        .map(personident -> Barn.builder().personident(personident).build()).collect(Collectors.toSet());
   }
 
   public Set<String> tilStringSet(List<Familiemedlem> familiemeldlemmer) {

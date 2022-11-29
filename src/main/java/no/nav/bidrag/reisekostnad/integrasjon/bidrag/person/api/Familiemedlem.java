@@ -19,12 +19,12 @@ public class Familiemedlem {
   String mellomnavn;
   String etternavn;
   @Getter(AccessLevel.NONE)
-  Kjønn kjønn;
+  Kjønn kjoenn;
   LocalDate doedsdato;
   LocalDate foedselsdato;
   String diskresjonskode;
 
-  public Kjønn getKjønn() {
-    return kjønn == null ? Kjønn.UKJENT : kjønn;
+  public Kjønn getKjoenn() {
+    return kjoenn == null ? Kjønn.UKJENT : kjoenn;
   }
 }

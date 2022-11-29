@@ -9,6 +9,7 @@ public enum Feilkode {
   KRYPTERING("Kryptering av personident feilet."),
   VALIDERING_PÅLOGGET_PERSON_DISKRESJON("Pålogget person har diskresjon. Kan ikke benytte løsningen."),
   VALIDERING_SAMTYKKE_MOTPART("Fant ingen aktive forespørsler knyttet til oppgitt motpart. Samtykke ikke oppdatert."),
+  PDL_PERSON_DØD("Pålogget person er død."),
   PDL_PERSON_IKKE_FUNNET("Fant ikke person i PDL"),
   PDL_FEIL("En feil oppstod ved henting av data fra PDL"),
   VALIDERING_NY_FOREPØRSEL("Feil ved validering av ny forespørsel"),
