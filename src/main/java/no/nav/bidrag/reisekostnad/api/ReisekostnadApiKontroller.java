@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/reisekostnad")
 @ProtectedWithClaims(issuer = ISSUER_TOKENX)
-public class ReisekostadApiKontroller {
+public class ReisekostnadApiKontroller {
 
   @Autowired
   private ReisekostnadApiTjeneste reisekostnadApiTjeneste;

@@ -91,7 +91,7 @@ public class MapperTest {
     var forespørslerSomHovedpart = brukerinformasjonDto.getForespørslerSomHovedpart();
 
     assertAll(
-        () -> assertThat(brukerinformasjonDto.getBrukersFornavn()).isEqualTo(HOVEDPART.getFornavn()),
+        () -> assertThat(brukerinformasjonDto.getFornavn()).isEqualTo(HOVEDPART.getFornavn()),
         () -> assertThat(brukerinformasjonDto.isKanSøkeOmFordelingAvReisekostnader()).isTrue(),
         () -> assertThat(barnMinstFemtenÅr.size()).isEqualTo(1),
         () -> assertThat(barnMinstFemtenÅr.stream().findFirst().get().getFornavn()).isEqualTo(BARN_OVER_FEMTEN.getFornavn()),
@@ -146,7 +146,7 @@ public class MapperTest {
     var forespørslerSomMotpart = brukerinformasjonDto.getForespørslerSomMotpart();
 
     assertAll(
-        () -> assertThat(brukerinformasjonDto.getBrukersFornavn()).isEqualTo(testperson.getFornavn()),
+        () -> assertThat(brukerinformasjonDto.getFornavn()).isEqualTo(testperson.getFornavn()),
         () -> assertThat(brukerinformasjonDto.isKanSøkeOmFordelingAvReisekostnader()).isTrue(),
         () -> assertThat(barnMinstFemtenÅr.size()).isEqualTo(1),
         () -> assertThat(barnMinstFemtenÅr.stream().findFirst().get().getFornavn()).isEqualTo(BARN_OVER_FEMTEN.getFornavn()),
@@ -199,7 +199,7 @@ public class MapperTest {
         .person(Familiemedlem.builder()
             .ident(hovedpart.getFødselsnummer())
             .fornavn(hovedpart.getFornavn())
-            .foedselsdato(hovedpart.getFødselsdatoSomStreng())
+            .foedselsdato(hovedpart.getFødselsdato())
             .build())
         .personensMotpartBarnRelasjon(List.of(oppretteMotpartBarnRelasjon(motpart)))
         .build();
@@ -211,19 +211,19 @@ public class MapperTest {
         .motpart(Familiemedlem.builder()
             .ident(motpart.getFødselsnummer())
             .fornavn(motpart.getFornavn())
-            .foedselsdato(motpart.getFødselsdatoSomStreng())
+            .foedselsdato(motpart.getFødselsdato())
             .build())
         .fellesBarn(
             List.of(
                 Familiemedlem.builder()
                     .ident(BARN_UNDER_FEMTEN.getFødselsnummer())
                     .fornavn(BARN_UNDER_FEMTEN.getFornavn())
-                    .foedselsdato(BARN_UNDER_FEMTEN.getFødselsdatoSomStreng())
+                    .foedselsdato(BARN_UNDER_FEMTEN.getFødselsdato())
                     .build(),
                 Familiemedlem.builder()
                     .ident(BARN_OVER_FEMTEN.getFødselsnummer())
                     .fornavn(BARN_OVER_FEMTEN.getFornavn())
-                    .foedselsdato(BARN_OVER_FEMTEN.getFødselsdatoSomStreng())
+                    .foedselsdato(BARN_OVER_FEMTEN.getFødselsdato())
                     .build()
             )
         )
@@ -249,10 +249,6 @@ class Testperson {
   String personnummer;
   String fornavn;
   int alder;
-
-  public String getFødselsdatoSomStreng() {
-    return getFødselsdato().format(DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
-  }
 
   public LocalDate getFødselsdato() {
     return LocalDate.now().minusYears(alder);

@@ -27,7 +27,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 
 @Slf4j
 @Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
-@AutoConfigureWireMock(stubs = "file:src/test/java/resources/mappings", port = 0)
+@AutoConfigureWireMock(port = 0)
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 @EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"},
@@ -46,7 +46,6 @@ public class BidragReisekostnadApiLokalTestapplikasjon {
 @Configuration
 @Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
 @EnableMockOAuth2Server
-@AutoConfigureWireMock(stubs = "file:src/test/java/resources/mappings", port = 0)
 class Lokalkonfig {
 
   @Autowired

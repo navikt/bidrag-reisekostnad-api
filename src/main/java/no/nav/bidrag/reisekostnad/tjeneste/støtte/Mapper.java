@@ -19,6 +19,7 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.database.datamodell.Person;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument;
+import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Diskresjonskode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Familiemedlem;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon;
@@ -59,13 +60,17 @@ public class Mapper {
     var forespørslerHvorPersonErHovedpart = forespørselDao.henteAktiveForespørslerHvorPersonErHovedpart(familieRespons.getPerson().getIdent());
     var forespørslerHvorPersonErMotpart = forespørselDao.henteAktiveForespørslerHvorPersonErMotpart(familieRespons.getPerson().getIdent());
 
+    var familierUtenDiskresjon = henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(familieRespons);
+
     return BrukerinformasjonDto.builder()
-        .brukersFornavn(familieRespons.getPerson().getFornavn())
-        .barnMinstFemtenÅr(henteBarnOverFemtenÅr(familieRespons))
-        .kanSøkeOmFordelingAvReisekostnader(personHarDeltForeldreansvar(familieRespons))
+        .fornavn(familieRespons.getPerson().getFornavn())
+        .kjønn(familieRespons.getPerson().getKjønn())
+        .harSkjulteFamilieenheterMedDiskresjon(familierUtenDiskresjon.size() < familieRespons.getPersonensMotpartBarnRelasjon().size())
+        .kanSøkeOmFordelingAvReisekostnader(personHarDeltForeldreansvar(familierUtenDiskresjon))
+        .barnMinstFemtenÅr(henteBarnOverFemtenÅr(familierUtenDiskresjon))
         .forespørslerSomHovedpart(tilForespørselDto(forespørslerHvorPersonErHovedpart))
         .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart))
-        .motparterMedFellesBarnUnderFemtenÅr(filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familieRespons))
+        .motparterMedFellesBarnUnderFemtenÅr(filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjon))
         .build();
   }
 
@@ -74,22 +79,38 @@ public class Mapper {
     var egenskapmapper = modelMapper.getTypeMap(Familiemedlem.class, PersonDto.class);
 
     Converter<String, String> konverterePersonident = ident -> ident.getSource() == null ? null : kryptere(ident.getSource());
-    Converter<String, LocalDate> konvertereDatostreng = d -> d.getSource() == null ? null
-        : LocalDate.parse(d.getSource(), DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
 
     egenskapmapper.addMappings(mapper -> mapper.using(konverterePersonident).map(Familiemedlem::getIdent, PersonDto::setIdent));
-    egenskapmapper.addMappings(mapper -> mapper.using(konvertereDatostreng).map(Familiemedlem::getFoedselsdato, PersonDto::setFødselsdato));
+    egenskapmapper.addMappings(mapper -> mapper.map(Familiemedlem::getFoedselsdato, PersonDto::setFødselsdato));
 
     return modelMapper.map(familiemedlem, PersonDto.class);
   }
 
-  private boolean personHarDeltForeldreansvar(HentFamilieRespons hentFamilieRespons) {
-    return hentFamilieRespons.getPersonensMotpartBarnRelasjon().size() > 0
-        && hentFamilieRespons.getPersonensMotpartBarnRelasjon().get(0).getFellesBarn().size() > 0;
+  /**
+   * Filtrerer bort alle familieenehter hvor enten motpart eller minst ett av barna har diskresjon
+   */
+  private Set<MotpartBarnRelasjon> henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(HentFamilieRespons familierespons) {
+    var motpartBarnRelasjonUtenMotparterMedDiskresjon = filtrereBortEnheterDerMotpartHarDiskresjon(familierespons.getPersonensMotpartBarnRelasjon());
+
+   return  motpartBarnRelasjonUtenMotparterMedDiskresjon.stream()
+        .filter(Objects::nonNull)
+        .filter(m -> !Diskresjonskode.harMinstEttFamiliemedlemHarDiskresjon(m.getFellesBarn()))
+        .collect(
+            Collectors.toSet());
   }
 
-  private Set<PersonDto> henteBarnOverFemtenÅr(HentFamilieRespons familieRespons) {
-    var motpartBarnRelasjoner = familieRespons.getPersonensMotpartBarnRelasjon();
+  private Set<MotpartBarnRelasjon> filtrereBortEnheterDerMotpartHarDiskresjon(List<MotpartBarnRelasjon> motpartBarnRelasjons) {
+    return motpartBarnRelasjons.stream().filter(Objects::nonNull).filter(m -> StringUtils.isEmpty(m.getMotpart().getDiskresjonskode()))
+        .collect(Collectors.toSet());
+  }
+
+  private boolean personHarDeltForeldreansvar(Set<MotpartBarnRelasjon> motpartBarnRelasjoner) {
+    return motpartBarnRelasjoner.size() > 0
+        && motpartBarnRelasjoner.iterator().hasNext()
+        && motpartBarnRelasjoner.iterator().next().getFellesBarn().size() > 0;
+  }
+
+  private Set<PersonDto> henteBarnOverFemtenÅr(Set<MotpartBarnRelasjon> motpartBarnRelasjoner) {
     return motpartBarnRelasjoner.stream().filter(Objects::nonNull)
         .flatMap(mbr -> mbr.getFellesBarn().stream())
         .filter(this::erMinstFemtenÅr)
@@ -99,27 +120,25 @@ public class Mapper {
 
   private boolean erMinstFemtenÅr(Familiemedlem barn) {
 
-    if (barn == null || StringUtils.isEmpty(barn.getFoedselsdato())) {
+    if (barn == null || barn.getFoedselsdato() == null) {
       return false;
     }
 
-    var personensFødselsdato = LocalDate.parse(barn.getFoedselsdato(), DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
-    return personensFødselsdato.isBefore(LocalDate.now().plusDays(1).minusYears(15));
+    return barn.getFoedselsdato().isBefore(LocalDate.now().plusDays(1).minusYears(15));
   }
 
   private boolean erUnderFemtenÅr(Familiemedlem barn) {
 
-    if (barn == null || StringUtils.isEmpty(barn.getFoedselsdato())) {
+    if (barn == null || barn.getFoedselsdato() == null) {
       return false;
     }
 
-    var personensFødselsdato = LocalDate.parse(barn.getFoedselsdato(), DateTimeFormatter.ofPattern(FORMAT_FØDSELSDATO));
-    return personensFødselsdato.isAfter(LocalDate.now().minusYears(15));
+    return barn.getFoedselsdato().isAfter(LocalDate.now().minusYears(15));
   }
 
-  private Set<MotpartDto> filtrereUtMotparterMedFellesBarnUnderFemtenÅr(HentFamilieRespons familieRespons) {
+  private Set<MotpartDto> filtrereUtMotparterMedFellesBarnUnderFemtenÅr(Set<MotpartBarnRelasjon> motpartBarnRelasjoner) {
     Set<MotpartDto> motparterMedBarnUnderFemtenÅr = new HashSet<>();
-    for (MotpartBarnRelasjon motpartBarnRelasjon : familieRespons.getPersonensMotpartBarnRelasjon()) {
+    for (MotpartBarnRelasjon motpartBarnRelasjon : motpartBarnRelasjoner) {
       var barnUnderFemtenÅr = filtereUtBarnUnderFemtenÅr(motpartBarnRelasjon.getFellesBarn());
       if (barnUnderFemtenÅr.size() > 0) {
         var motpartDto = MotpartDto.builder()

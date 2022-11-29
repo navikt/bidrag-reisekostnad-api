@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
+import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Kjønn;
 
 @Schema
 @Value
@@ -15,10 +16,22 @@ import lombok.Value;
 public class BrukerinformasjonDto {
 
   @Parameter(description = "Brukers fornavn som registrert i Folkeregisteret", example = "Kari Nordmann")
-  String brukersFornavn;
+  String fornavn;
 
+  @Parameter(description = "Brukers gjeldende kjønn som registrert i Folkeregisteret", example = "KVINNE")
+  Kjønn kjønn;
+
+  @Builder.Default
+  @Parameter(description = "Brukers gjeldende kjønn som registrert i Folkeregisteret", example = "false")
+  boolean harDiskresjon = false;
+
+  @Builder.Default
   @Parameter(description = "Personen kan opprette søknad om fordeling av reisekostnader", example = "true")
-  boolean kanSøkeOmFordelingAvReisekostnader;
+  boolean kanSøkeOmFordelingAvReisekostnader = true;
+
+  @Builder.Default
+  @Parameter(description = "Minst en av personens familieenheter har blitt skjult pga diskresjon", example = "false")
+  boolean harSkjulteFamilieenheterMedDiskresjon = false;
 
   @Builder.Default
   @Parameter(description = "Forespørsler personen har opprettet")
