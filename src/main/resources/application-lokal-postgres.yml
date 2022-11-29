@@ -9,7 +9,7 @@ spring:
 
 wiremock.server:
   port: 0
-  stubs: "classpath:/mappings"
+  stubs: "file:src/test/java/resources/mappings"
 
 AZURE_APP_TENANT_ID: tokenx
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
