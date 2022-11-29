@@ -63,9 +63,12 @@ public class Mapper {
     var familierUtenDiskresjonEllerDødeMotparter = familierUtenDiskresjon.stream().filter(Objects::nonNull)
         .filter(m -> erIkkeDød(m.getMotpart())).collect(Collectors.toSet());
 
-    return BrukerinformasjonDto.builder().fornavn(familieRespons.getPerson().getFornavn()).harDiskresjon(hovedpersonHarDiskresjon)
-        .kjønn(familieRespons.getPerson().getKjoenn()).harSkjulteFamilieenheterMedDiskresjon(
-            familierUtenDiskresjonEllerDødeMotparter.size() < familieRespons.getPersonensMotpartBarnRelasjon().size())
+    return BrukerinformasjonDto.builder()
+        .fornavn(familieRespons.getPerson().getFornavn())
+        .harDiskresjon(hovedpersonHarDiskresjon)
+        .kjønn(familieRespons.getPerson().getKjoenn())
+        .harSkjulteFamilieenheterMedDiskresjon(
+            familierUtenDiskresjon.size() < familieRespons.getPersonensMotpartBarnRelasjon().size())
         .kanSøkeOmFordelingAvReisekostnader(!hovedpersonHarDiskresjon && personHarDeltForeldreansvar(familierUtenDiskresjonEllerDødeMotparter))
         .barnMinstFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : henteBarnOverFemtenÅr(familierUtenDiskresjonEllerDødeMotparter))
         .forespørslerSomHovedpart(tilForespørselDto(forespørslerHvorPersonErHovedpart))
@@ -112,9 +115,7 @@ public class Mapper {
   }
 
   private boolean erIkkeDød(Familiemedlem familiemedlem) {
-    var test = familiemedlem.getDoedsdato() == null || LocalDate.now().isAfter(familiemedlem.getDoedsdato());
-
-    return familiemedlem.getDoedsdato() == null || LocalDate.now().isAfter(familiemedlem.getDoedsdato());
+    return familiemedlem.getDoedsdato() == null || LocalDate.now().isBefore(familiemedlem.getDoedsdato());
   }
 
   private boolean erMinstFemtenÅr(Familiemedlem barn) {

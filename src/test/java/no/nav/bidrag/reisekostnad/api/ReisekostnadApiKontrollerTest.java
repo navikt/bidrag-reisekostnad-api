@@ -12,8 +12,10 @@ import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon;
 import no.nav.bidrag.reisekostnad.Testkonfig;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
+import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Kjønn;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
+import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
@@ -57,10 +59,12 @@ public class ReisekostnadApiKontrollerTest {
   private static Testperson TESTPERSON_BARN_16 = new Testperson("77777700000", "Grus", 16);
   private static Testperson TESTPERSON_BARN_10 = new Testperson("33333355555", "Småstein", 10);
   private static Testperson TESTPERSON_IKKE_FUNNET = new Testperson("00000001231", "Utenfor", 29);
-  private static Testperson  TESTPERSON_HAR_DISKRESJON = new Testperson("23451644512", "Diskos", 29);
+  private static Testperson TESTPERSON_HAR_DISKRESJON = new Testperson("23451644512", "Diskos", 29);
   private static Testperson TESTPERSON_HAR_MOTPART_MED_DISKRESJON = new Testperson("56472134561", "Tordivel", 44);
   private static Testperson TESTPERSON_HAR_BARN_MED_DISKRESJON = new Testperson("32456849111", "Kaktus", 48);
-
+  private static Testperson TESTPERSON_ER_DØD = new Testperson("77765415234", "Steindød", 35);
+  private static Testperson TESTPERSON_HAR_DØDT_BARN = new Testperson("05784456310", "Albueskjell", 53);
+  private static Testperson TESTPERSON_DØD_MOTPART = new Testperson("445132456487", "Bunkers", 41);
   private static Testperson TESTPERSON_SERVERFEIL = new Testperson("12000001231", "Feil", 78);
 
   private static class CustomHeader {
@@ -104,10 +108,10 @@ public class ReisekostnadApiKontrollerTest {
     void skalHenteBrukerinformasjonForHovedpartMedFamilierelasjoner() {
 
       // gitt
-      var hovedperson = TESTPERSON_GRÅTASS;
-      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
+      var påloggetPerson = TESTPERSON_GRÅTASS;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
-      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
       // hvis
@@ -117,7 +121,7 @@ public class ReisekostnadApiKontrollerTest {
       // så
       assertAll(
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
-          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(hovedperson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
           () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
           () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
           () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
@@ -141,10 +145,10 @@ public class ReisekostnadApiKontrollerTest {
     void skalHenteBrukerinformasjonForHovedpartMedDiskresjon() {
 
       // gitt
-      var hovedperson = TESTPERSON_HAR_DISKRESJON;
-      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
+      var påloggetPerson = TESTPERSON_HAR_DISKRESJON;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
-      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
       // hvis
@@ -155,7 +159,7 @@ public class ReisekostnadApiKontrollerTest {
       assertAll(
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
           () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
-          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(hovedperson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
           () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(true),
           () -> assertThat(brukerinformasjon.getBody().isKanSøkeOmFordelingAvReisekostnader()).isEqualTo(false),
           () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
@@ -169,10 +173,10 @@ public class ReisekostnadApiKontrollerTest {
     void skalGiStatuskode404DersomPersondataMangler() {
 
       // gitt
-      var hovedperson = TESTPERSON_IKKE_FUNNET;
-      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
+      var påloggetPerson = TESTPERSON_IKKE_FUNNET;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
-      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
       // hvis
@@ -187,9 +191,9 @@ public class ReisekostnadApiKontrollerTest {
     void skalGiStatuskode500DersomKallMotBidragPersonFeilerMed500() {
 
       // gitt
-      var hovedperson = TESTPERSON_SERVERFEIL;
-      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
-      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      var påloggetPerson = TESTPERSON_SERVERFEIL;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
       // hvis
@@ -201,12 +205,12 @@ public class ReisekostnadApiKontrollerTest {
     }
 
     @Test
-    void skalFiltrereBortFamilieenhetHvorMotpartHarDiskresjon(){
+    void skalFiltrereBortFamilieenhetHvorMotpartHarDiskresjon() {
 
       // gitt
-      var hovedperson = TESTPERSON_HAR_MOTPART_MED_DISKRESJON;
-      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
-      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      var påloggetPerson = TESTPERSON_HAR_MOTPART_MED_DISKRESJON;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
       // hvis
@@ -217,7 +221,7 @@ public class ReisekostnadApiKontrollerTest {
       assertAll(
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
           () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.UKJENT),
-          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(hovedperson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
           () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
           () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(true),
           () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
@@ -228,12 +232,12 @@ public class ReisekostnadApiKontrollerTest {
     }
 
     @Test
-    void skalFiltrereBortFamilieenhetHvorBarnHarDiskresjon(){
+    void skalFiltrereBortFamilieenhetHvorBarnHarDiskresjon() {
 
       // gitt
-      var hovedperson = TESTPERSON_HAR_BARN_MED_DISKRESJON;
-      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(hovedperson.getIdent()));
-      var a = new OAuth2AccessTokenResponse(generereTesttoken(hovedperson.getIdent()), 1000, 1000, null);
+      var påloggetPerson = TESTPERSON_HAR_BARN_MED_DISKRESJON;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
       when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
       // hvis
@@ -244,13 +248,112 @@ public class ReisekostnadApiKontrollerTest {
       assertAll(
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
           () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
-          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(hovedperson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
           () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
           () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(true),
           () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
           () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
           () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
           () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
+      );
+    }
+
+    @Test
+    void skalGi403ForDødPerson() {
+
+      // gitt
+      var påloggetPerson = TESTPERSON_ER_DØD;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+      when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+      // hvis
+      var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+          BrukerinformasjonDto.class);
+
+      // så vil
+      assertAll(
+          () -> assertThat(brukerinformasjon.getHeaders().get("Warning").get(0)).isEqualTo(Feilkode.PDL_PERSON_DØD.name()),
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN)
+      );
+    }
+
+    @Test
+    void skalFiltrereBortFamilieenheterDerMotpartErDød() {
+
+      // gitt
+      var påloggetPerson = TESTPERSON_DØD_MOTPART;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+      when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+      // hvis
+      var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+          BrukerinformasjonDto.class);
+
+      // så
+      assertAll(
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+          () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.KVINNE),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
+          () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
+          () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
+      );
+    }
+
+    @Test
+    void skalFiltrereBortDødeBarn() {
+
+      // gitt
+      var påloggetPerson = TESTPERSON_HAR_DØDT_BARN;
+      httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+      var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+      when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+      // hvis
+      var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+          BrukerinformasjonDto.class);
+
+      // så
+      assertAll(
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+          () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.KVINNE),
+          () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+          () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
+          () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
+          () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
+          () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+          () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
+      );
+
+      var familieenhet = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst();
+
+      assertThat(familieenhet).isPresent();
+
+      var motpart = familieenhet.get().getMotpart();
+      assertAll(
+          () -> assertThat(motpart.getFødselsdato()).isEqualTo(LocalDate.now().minusYears(38)),
+          () -> assertThat(motpart.getFornavn()).isEqualTo("Streng"),
+          () -> assertThat(Krypteringsverktøy.dekryptere(motpart.getIdent())).isEqualTo("11111122222")
+      );
+
+      var barnUnder15 = familieenhet.get().getFellesBarnUnder15År();
+
+      assertThat(barnUnder15.size()).isEqualTo(1);
+
+      var barnetSomLever = barnUnder15.stream().findFirst();
+
+      assertAll(
+          () -> assertThat(barnetSomLever).isPresent(),
+          () -> assertThat(Krypteringsverktøy.dekryptere(barnetSomLever.get().getIdent())).isEqualTo("33333355555"),
+          () -> assertThat(barnetSomLever.get().getFornavn()).isEqualTo("Småstein"),
+          () -> assertThat(barnetSomLever.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10))
       );
     }
   }
