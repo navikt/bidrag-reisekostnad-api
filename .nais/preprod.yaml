@@ -60,7 +60,7 @@ spec:
     - name: BIDRAG_PERSON_SCOPE
       value: dev-fss.bidrag.bidrag-person-feature
     - name: BIDRAG_PERSON_URL
-      value: https://bidrag-person-feature.dev-fss-pub.nais.io
+      value: https://bidrag-person.dev-fss-pub.nais.io
     - name: POSTGRES_CONNECTION_NAME
       value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
     - name: DB_HOST
