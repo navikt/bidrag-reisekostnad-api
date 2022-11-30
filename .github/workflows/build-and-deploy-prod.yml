@@ -34,7 +34,9 @@ jobs:
         env:
           GITHUB_USERNAME: x-access-token
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        run: mvn install -B -e
+        run: |
+          cd ../
+          mvn install -B -e
       - name: Bygg Docker image
         run: |
           docker build -t ${IMAGE} -t ${IMAGE_LATEST} .
