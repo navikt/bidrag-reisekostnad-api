@@ -4,8 +4,8 @@ on:
     branches:
       - main
 env:
-  IMAGE: ghcr.io/navikt/bidrag-reisekostnad-api:${{ github.sha }}
-  IMAGE_LATEST: ghcr.io/navikt/bidrag-reisekostnad-api:latest
+  IMAGE: ghcr.io/navikt/${{ github.repository }}:${{ github.sha }}
+  IMAGE_LATEST: ghcr.io/navikt/${{ github.repository }}::latest
 jobs:
   deploy-to-prod:
     name: Bygg app/image, push til github, deploy til prod-gcp
