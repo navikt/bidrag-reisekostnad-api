@@ -6,6 +6,7 @@ target/
 *.log
 
 ### IntelliJ IDEA ###
+.jpb
 .idea
 *.iws
 *.iml
@@ -27,3 +28,4 @@ build/
 *.pdf
 test_VS_decrypt_*
 *.pdf
+dependencies.txt

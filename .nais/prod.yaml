@@ -1,0 +1,69 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: bidrag-reisekostnad-api
+  namespace: bidrag
+  labels:
+    team: bidrag
+spec:
+  image: {{ image }}
+  leaderElection: true
+  azure:
+    application:
+      enabled: true
+  secureLogs:
+    enabled: true
+  tokenx:
+    enabled: true
+  kafka:
+    pool: nav-prod
+  gcp:
+    permissions:
+      - resource:
+          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+          kind: Project
+        role: roles/cloudsql.client
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: reisekostnad-prod
+            envVarPrefix: DB
+  liveness:
+    path: /internal/actuator/health
+    initialDelay: 60
+    failureThreshold: 10
+  readiness:
+    path: /internal/actuator/health
+    initialDelay: 60
+    failureThreshold: 10
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      memory: 4Gi
+      cpu: "1"
+    requests:
+      memory: 2Gi
+      cpu: 200m
+  ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
+    - https://bidrag-reisekostnad-api.intern.nav.no
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod, i-sky
+    - name: BIDRAG_PERSON_SCOPE
+      value: prod-fss.bidrag.bidrag-person
+    - name: BIDRAG_PERSON_URL
+      value: https://bidrag-person.intern.nav.no
+    - name: POSTGRES_INSTANSEURL
+      value: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
+  accessPolicy:
+    inbound:
+      rules:
+        - application: bidrag-reisekostnad-ui
+          namespace: bidrag
+          cluster: prod-gcp

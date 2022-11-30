@@ -1,1 +1,66 @@
+spring:
+  config.activate.on-profile: i-sky
+  cloud.gcp.sql:
+    database-name: ${DB_NAME}
+    instance-connection-name: ${POSTGRES_INSTANSEURL}
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?user=${DB_USERNAME}&password=${DB_PASSWORD}
+    hikari:
+      idle-timeout: 10001
+      max-lifetime: 30001
+      connectionTimeout: 1000
+      maximum-pool-size: 10
+      minimum-idle: 1
+  flyway:
+    enabled: false
+    locations: classpath:/db/migration
+  jpa:
+    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+
+no.nav.security.jwt:
+  client.registration:
+    bidrag-person:
+      token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+      grant-type: client_credentials
+      scope: api://${BIDRAG_PERSON_SCOPE}/.default
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
+    bidrag-person_tokenx:
+      well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      token-exchange:
+        audience: ${BIDRAG_PERSON_SCOPE}
+      authentication:
+        client-id: ${TOKEN_X_CLIENT_ID}
+        client-jwk: ${TOKEN_X_PRIVATE_JWK}
+        client-auth-method: private_key_jwt
+  issuer:
+    tokenx:
+      discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
+      accepted_audience: ${TOKEN_X_CLIENT_ID}
+
+management:
+  endpoints.web:
+    exposure.include: info, health, metrics, prometheus
+    base-path: /internal/actuator
+  endpoint.health.show-details: always
+
+---
+
+springdoc:
+  packages-to-scan: { no.nav.bidrag.reisekostnad.api}
+  show-login-endpoint: true
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+
+integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 
