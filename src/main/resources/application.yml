@@ -3,6 +3,11 @@ spring:
   cloud.gcp.sql:
     database-name: ${DB_NAME}
     instance-connection-name: ${POSTGRES_INSTANSEURL}
+  jpa:
+    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -17,11 +22,6 @@ spring:
   flyway:
     enabled: false
     locations: classpath:/db/migration
-  jpa:
-    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
-    properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-    database: postgresql
 
 management:
   endpoints.web:
