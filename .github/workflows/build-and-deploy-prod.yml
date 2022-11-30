@@ -5,7 +5,7 @@ on:
       - main
 env:
   IMAGE: ghcr.io/navikt/${{ github.repository }}:${{ github.sha }}
-  IMAGE_LATEST: ghcr.io/navikt/${{ github.repository }}::latest
+  IMAGE_LATEST: ghcr.io/navikt/${{ github.repository }}:latest
 jobs:
   deploy-to-prod:
     name: Bygg app/image, push til github, deploy til prod-gcp
