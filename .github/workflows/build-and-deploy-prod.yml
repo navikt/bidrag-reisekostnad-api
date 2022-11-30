@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          path: deploy
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -34,9 +32,7 @@ jobs:
         env:
           GITHUB_USERNAME: x-access-token
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        run: |
-          cd ../
-          mvn install -B -e
+        run: mvn install -B -e
       - name: Bygg Docker image
         run: |
           docker build -t ${IMAGE} -t ${IMAGE_LATEST} .
