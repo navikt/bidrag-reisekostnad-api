@@ -3,11 +3,6 @@ spring:
   cloud.gcp.sql:
     database-name: ${DB_NAME}
     instance-connection-name: ${POSTGRES_INSTANSEURL}
-  jpa:
-    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
-    properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-    database: postgresql
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -22,27 +17,12 @@ spring:
   flyway:
     enabled: false
     locations: classpath:/db/migration
+  jpa:
+    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
 
-management:
-  endpoints.web:
-    exposure.include: info, health, metrics, prometheus
-    base-path: /internal/actuator
-  endpoint.health.show-details: always
-
----
-
-springdoc:
-  packages-to-scan: { no.nav.bidrag.reisekostnad.api}
-  show-login-endpoint: true
-  swagger-ui:
-    path: /swagger-ui.html
-    url: /v3/api-docs
-
-integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
-
----
-spring:
-  config.activate.on-profile: i-sky
 no.nav.security.jwt:
   client.registration:
     bidrag-person:
@@ -66,3 +46,21 @@ no.nav.security.jwt:
     tokenx:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}
+
+management:
+  endpoints.web:
+    exposure.include: info, health, metrics, prometheus
+    base-path: /internal/actuator
+  endpoint.health.show-details: always
+
+---
+
+springdoc:
+  packages-to-scan: { no.nav.bidrag.reisekostnad.api}
+  show-login-endpoint: true
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+
+integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
+
