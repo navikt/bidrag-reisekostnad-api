@@ -37,7 +37,7 @@
 		<google.protobuf-java.version>3.21.7</google.protobuf-java.version>
 		<google.guava.version>31.1-jre</google.guava.version>
 		<google.common-protos.version>2.9.6</google.common-protos.version>
-		<google.spring-cloud-gcp-starter-sql-postgresql.version>3.4.0</google.spring-cloud-gcp-starter-sql-postgresql.version>
+		<google.spring-cloud.version>3.4.0</google.spring-cloud.version>
 		<graalvm.version>22.0.0.2</graalvm.version>
 		<hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
 		<httpclient.version>4.5.13</httpclient.version>
@@ -61,6 +61,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.google.cloud</groupId>
+				<artifactId>spring-cloud-gcp-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
@@ -221,12 +228,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.cloud</groupId>
-			<artifactId>spring-cloud-gcp-starter-sql-postgresql</artifactId>
-			<version>${google.spring-cloud-gcp-starter-sql-postgresql.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
