@@ -17,7 +17,7 @@ import lombok.Setter;
 public class ForespørselDto {
 
   @Parameter(description = "Identifikator for forespørselen")
-  private int idForespørsel;
+  private int id;
   @Parameter(description = "Angir om forespørselen krever samtykke fra motpart")
   private boolean kreverSamtykke;
   @Parameter(description = "Liste med barn forespørselen gjelder for")
@@ -31,5 +31,5 @@ public class ForespørselDto {
   @Parameter(description = "Tidspunkt samtykke ble gitt")
   private LocalDateTime samtykket;
   @Parameter(description = "Tidspunkt for journalføring")
-  private LocalDateTime journalfoert;
+  private LocalDateTime journalført;
 }

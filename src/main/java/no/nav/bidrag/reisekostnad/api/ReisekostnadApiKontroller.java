@@ -86,7 +86,7 @@ public class ReisekostnadApiKontroller {
       @ApiResponse(responseCode = "500", description = "Serverfeil"),
       @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
   public ResponseEntity<Void> giSamtykkeTilFordelingAvReisekostnader(
-      @Parameter(name = "id_forespørsel", description = "ID til forespørsel som skal oppdateres") @RequestParam(name = "id_forespørsel", defaultValue = "-1") int idForespørsel) {
+      @Parameter(name = "id", description = "ID til forespørsel som skal oppdateres") @RequestParam(name = "id", defaultValue = "-1") int idForespørsel) {
     log.info("Gi samtykke til fordeling av reisekostnader (forespørsel med id {})", idForespørsel);
     var personidentPåloggetBruker = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Person med ident {} samtykker til at NAV skal fordele reisekostnader.", personidentPåloggetBruker);
@@ -105,7 +105,7 @@ public class ReisekostnadApiKontroller {
       @ApiResponse(responseCode = "500", description = "Serverfeil"),
       @ApiResponse(responseCode = "503", description = "Tjeneste utilgjengelig")})
   public ResponseEntity<Void> trekkeForespørsel(
-      @Parameter(name = "id_forespørsel", description = "ID til forespørsel som skal trekkes") @RequestParam(name = "id_forespørsel", defaultValue = "-1") int idForespørsel) {
+      @Parameter(name = "id", description = "ID til forespørsel som skal trekkes") @RequestParam(name = "id", defaultValue = "-1") int idForespørsel) {
     log.info("Trekke forespørsel (id: {}) om fordeling av reisekostnader", idForespørsel);
     var personidentPåloggetBruker = Tokeninfo.Companion.hentPaaloggetPerson();
     SIKKER_LOGG.info("Person med ident {} ønsker å trekke forespørsel om fordeling av reisekostnader.", personidentPåloggetBruker);
