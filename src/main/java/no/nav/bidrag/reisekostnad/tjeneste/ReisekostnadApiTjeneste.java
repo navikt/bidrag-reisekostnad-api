@@ -59,7 +59,7 @@ public class ReisekostnadApiTjeneste {
     validereRelasjonTilBarn(personidenterBarn, familierespons);
 
     familierespons.get().getPersonensMotpartBarnRelasjon().stream().filter(Objects::nonNull)
-        .forEach(m -> lagreForespørsel(hovedperson, m.getMotpart().getIdent(), mapper.tilStringSet(m.getFellesBarn())));
+        .forEach(m -> lagreForespørsel(hovedperson, m.getMotpart().getIdent(), personidenterBarn));
 
     return HttpResponse.from(HttpStatus.CREATED);
   }

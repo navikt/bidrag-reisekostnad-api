@@ -12,7 +12,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{ \"ident\": \"12345678910\", \"fornavn\": \"Streng\", \"foedselsdato\": \"{{now offset='-40 years'}}\" }",
+    "body": "{ \"ident\": \"12345678910\", \"fornavn\": \"Gråtass\", \"foedselsdato\": \"{{now offset='-40 years'}}\" }",
     "transformers": [
       "response-template"
     ],

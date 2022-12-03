@@ -69,6 +69,8 @@ spring:
     databaseName: reisekostnad
     portNumber: 5432
     serverName: localhost
+    username: postgres
+    password: test
     hikari:
       idle-timeout: 10001
       max-lifetime: 30001
