@@ -9,7 +9,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.bidrag.commons.CorrelationId;
+import no.nav.bidrag.commons.ExceptionLogger;
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration;
+import no.nav.bidrag.commons.web.CorrelationIdFilter;
+import no.nav.bidrag.commons.web.UserMdcFilter;
+import no.nav.bidrag.commons.web.config.RestOperationsAzure;
+import no.nav.bidrag.commons.web.config.RestTemplateBuilderBean;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
 @Slf4j
@@ -44,6 +51,16 @@ public class Applikasjonskonfig {
         .components(new Components()
             .addSecuritySchemes("bearer-key", new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"))
         ).info(new io.swagger.v3.oas.models.info.Info().title("bidrag-reisekostnad-api").version("v1"));
+  }
+
+  @Bean
+  public ExceptionLogger exceptionLogger() {
+    return new ExceptionLogger(Applikasjonskonfig.class.getSimpleName());
+  }
+
+  @Bean
+  public CorrelationIdFilter correlationIdFilter() {
+    return new CorrelationIdFilter();
   }
 
   @Configuration
