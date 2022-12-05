@@ -16,6 +16,7 @@ import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Diskresjonskode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
+import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class ReisekostnadApiTjeneste {
     validereRelasjonTilBarn(personidenterBarn, familierespons);
 
     familierespons.get().getPersonensMotpartBarnRelasjon().stream().filter(Objects::nonNull)
-        .forEach(m -> lagreForespørsel(hovedperson, m.getMotpart().getIdent(), personidenterBarn));
+        .forEach(m -> lagreForespørsel(hovedperson, m.getMotpart().getIdent(), henteUtBarnaSomTilhørerMotpart(m, personidenterBarn)));
 
     return HttpResponse.from(HttpStatus.CREATED);
   }
@@ -74,6 +75,11 @@ public class ReisekostnadApiTjeneste {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
     databasetjeneste.deaktivereForespørsel(idForespørsel, personidentHovedpart);
     return HttpResponse.from(HttpStatus.OK, null);
+  }
+
+  private Set<String> henteUtBarnaSomTilhørerMotpart(MotpartBarnRelasjon mBRelasjon, Set<String> valgteBarn) {
+    return mBRelasjon.getFellesBarn().stream().filter(Objects::nonNull).filter(barn -> valgteBarn.contains(barn.getIdent())).map(b -> b.getIdent())
+        .collect(Collectors.toSet());
   }
 
   private void validerePåloggetPerson(Optional<HentFamilieRespons> familieRespons) {
