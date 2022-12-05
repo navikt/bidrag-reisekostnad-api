@@ -26,7 +26,6 @@ public class Barn implements Person, Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @NaturalId
   private String personident;
 
   @ManyToOne(cascade = CascadeType.PERSIST)
