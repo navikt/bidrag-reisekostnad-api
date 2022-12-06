@@ -43,6 +43,7 @@ public class Forespørsel implements Serializable {
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Barn> barn = new HashSet<>();
 
+  private String idJournalpost;
   private boolean kreverSamtykke;
 
   private LocalDateTime opprettet;

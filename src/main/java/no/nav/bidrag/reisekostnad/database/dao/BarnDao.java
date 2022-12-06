@@ -9,5 +9,4 @@ public interface BarnDao extends CrudRepository<Barn, Integer> {
 
   @Query("select b from Barn b where b.personident = :personidentBarn and b.forespørsel.deaktivert is null")
   Optional<Barn> henteBarnTilknyttetAktivForespørsel(String personidentBarn);
-
 }

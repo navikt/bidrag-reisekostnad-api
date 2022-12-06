@@ -61,6 +61,8 @@ spec:
       value: https://bidrag-person.intern.nav.no
     - name: POSTGRES_INSTANSEURL
       value: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
+    - name: KJØREPLAN_ARKIVERING
+      value: "0 0/15 * * * ?"
   accessPolicy:
     inbound:
       rules:

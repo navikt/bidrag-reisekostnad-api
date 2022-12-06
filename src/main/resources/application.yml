@@ -62,5 +62,11 @@ springdoc:
     path: /swagger-ui.html
     url: /v3/api-docs
 
-integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
+integrasjon.bidrag:
+  dokument.url: ${BIDRAG_DOKUMENT_URL}
+  person.url: ${BIDRAG_PERSON_URL}
+
+kjøreplan:
+  databehandling:
+    arkivering: {KJØREPLAN_ARKIVERING}
 

@@ -181,17 +181,13 @@ public class Mapper {
         .map(personident -> Barn.builder().personident(personident).build()).collect(Collectors.toSet());
   }
 
-  public Set<String> tilStringSet(List<Familiemedlem> familiemeldlemmer) {
-    return familiemeldlemmer.stream().filter(Objects::nonNull).map(f -> f.getIdent()).collect(Collectors.toSet());
+  public Set<PersonDto> tilPersonDto(Set<Barn> barn) {
+    return barn.stream().filter(Objects::nonNull).map(b -> tilPersonDto(b.getPersonident())).collect(Collectors.toSet());
   }
 
-  private PersonDto tilPersonDto(String personident) {
+  public PersonDto tilPersonDto(String personident) {
     var personinfo = bidragPersonkonsument.hentPersoninfo(personident);
-    if (personinfo.isPresent()) {
-      return new PersonDto(kryptere(personident), personinfo.get().getFornavn(), personinfo.get().getFoedselsdato());
-    } else {
-      return new PersonDto(null, PERSON_IKKE_FUNNET, null);
-    }
+    return new PersonDto(kryptere(personident), personinfo.getFornavn(), personinfo.getFoedselsdato());
   }
 
   private String kryptere(String ukryptertPersonident) {

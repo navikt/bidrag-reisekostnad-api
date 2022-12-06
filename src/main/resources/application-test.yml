@@ -47,3 +47,4 @@ spring:
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
 BIDRAG_PERSON_URL: ${WIREMOCK_URL}
+BIDRAG_DOKUMENT_URL: ${WIREMOCK_URL}

@@ -26,7 +26,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalHenteBrukerinformasjonForHovedpartMedFamilierelasjoner() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonGråtass;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -52,19 +52,19 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn16.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(kontrollertestpersonBarn16.getFornavn()));
+        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
   }
 
   @Test
   void skalHenteBrukerinformasjonForHovedpartMedDiskresjon() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarDiskresjon;
+    var påloggetPerson = testpersonHarDiskresjon;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -92,7 +92,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalGiStatuskode404DersomPersondataMangler() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonIkkeFunnet;
+    var påloggetPerson = testpersonIkkeFunnet;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -110,7 +110,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalGiStatuskode500DersomKallMotBidragPersonFeilerMed500() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonServerfeil;
+    var påloggetPerson = testpersonServerfeil;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -127,7 +127,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortFamilieenhetHvorMotpartHarDiskresjon() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarMotpartMedDiskresjon;
+    var påloggetPerson = testpersonHarMotpartMedDiskresjon;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -154,7 +154,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortFamilieenhetHvorBarnHarDiskresjon() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarBarnMedDiskresjon;
+    var påloggetPerson = testpersonHarBarnMedDiskresjon;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -181,7 +181,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalGi403ForDødPerson() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonErDød;
+    var påloggetPerson = testpersonErDød;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -201,7 +201,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortFamilieenheterDerMotpartErDød() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonDødMotpart;
+    var påloggetPerson = testpersonDødMotpart;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -228,7 +228,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortDødeBarn() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarDødtBarn;
+    var påloggetPerson = testpersonHarDødtBarn;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);

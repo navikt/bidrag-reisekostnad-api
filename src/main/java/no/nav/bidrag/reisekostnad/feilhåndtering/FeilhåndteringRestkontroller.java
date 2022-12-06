@@ -40,8 +40,8 @@ public class FeilhåndteringRestkontroller {
   }
 
   @ResponseBody
-  @ExceptionHandler(Persondatafeil.class)
-  protected ResponseEntity<?> handleFeilNavnOppgittException(Persondatafeil e) {
+  @ExceptionHandler({Persondatafeil.class, Arkiveringsfeil.class})
+  protected ResponseEntity<?> håndtereIntegrasjonsfeil(ReisekostnadApiFeil e) {
     return ResponseEntity
         .status(e.getHttpStatus())
         .header(HttpHeaders.WARNING, e.getFeilkode().toString()).build();

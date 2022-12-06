@@ -22,10 +22,16 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+    <!-- PDF -->
+    <apache-pdfbox.version>2.0.27</apache-pdfbox.version>
+    <openhtml.version>1.0.10</openhtml.version>
+    <jsoup.version>1.15.3</jsoup.version>
+
     <!-- annet -->
     <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
     <bidrag-commons-test.version>0.2.2</bidrag-commons-test.version>
     <bidrag-commons.version>0.7.21</bidrag-commons.version>
+    <bidrag-dokument-dto.version>1.5.15</bidrag-dokument-dto.version>
     <brukernotifikasjon-schemas.version>v2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.19.0</checker-qual.version>
     <classgraph.version>4.8.149</classgraph.version>
@@ -51,10 +57,11 @@
     <osgi.core-version>6.0.0</osgi.core-version>
     <ow2.version>9.3</ow2.version>
     <scala.version>2.13.6</scala.version>
+    <shedlock.version>4.42.0</shedlock.version>
     <snappy-java.version>1.1.8.4</snappy-java.version>
     <spring-cloud-contract-wiremock.version>3.1.5</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
-    <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
+    <springdoc-openapi-ui.version>1.6.13</springdoc-openapi-ui.version>
     <token-support.version>2.1.7</token-support.version>
     <wiremock-jre8-standalone.version>2.35.0</wiremock-jre8-standalone.version>
   </properties>
@@ -209,6 +216,11 @@
       <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-commons</artifactId>
     </dependency>
+    <dependency>
+      <groupId>no.nav.bidrag.dokument</groupId>
+      <artifactId>bidrag-dokument-dto</artifactId>
+      <version>${bidrag-dokument-dto.version}</version>
+    </dependency>
     <!-- spring -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -328,6 +340,16 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>net.javacrumbs.shedlock</groupId>
+      <artifactId>shedlock-spring</artifactId>
+      <version>${shedlock.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.javacrumbs.shedlock</groupId>
+      <artifactId>shedlock-provider-jdbc-template</artifactId>
+      <version>${shedlock.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
       <version>${springdoc-openapi-ui.version}</version>
@@ -353,6 +375,54 @@
       <version>${hibernate-validator.version}</version>
       <type>pom</type>
     </dependency>
+
+    <!-- PDF -->
+    <dependency>
+      <!-- ALWAYS required, usually included transitively. -->
+      <groupId>com.openhtmltopdf</groupId>
+      <artifactId>openhtmltopdf-core</artifactId>
+      <version>${openhtml.version}</version>
+    </dependency>
+
+    <dependency>
+      <!-- Required for PDF output. -->
+      <groupId>com.openhtmltopdf</groupId>
+      <artifactId>openhtmltopdf-pdfbox</artifactId>
+      <version>${openhtml.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.pdfbox</groupId>
+          <artifactId>pdfbox</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>${apache-pdfbox.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
+    </dependency>
+
+    <dependency>
+      <!-- Required for image output only. -->
+      <groupId>com.openhtmltopdf</groupId>
+      <artifactId>openhtmltopdf-java2d</artifactId>
+      <version>${openhtml.version}</version>
+    </dependency>
+
+    <dependency>
+      <!-- Optional, leave out if you do not need logging via slf4j. -->
+      <groupId>com.openhtmltopdf</groupId>
+      <artifactId>openhtmltopdf-slf4j</artifactId>
+      <version>${openhtml.version}</version>
+    </dependency>
+
 
     <!-- test -->
     <dependency>

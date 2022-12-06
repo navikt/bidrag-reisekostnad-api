@@ -33,13 +33,13 @@ public class TrekkeForespørselTest extends KontrollerTest{
   void skalKunneTrekkeForespørsel() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonGråtass;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
-    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(kontrollertestpersonBarn10.getIdent())));
+    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
 
     var responsOpprett = httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel),
         Void.class);
@@ -84,12 +84,12 @@ public class TrekkeForespørselTest extends KontrollerTest{
     var barnMinst15År = brukerinformasjonMedTrukketForespørsel.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn16.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(kontrollertestpersonBarn16.getFornavn()));
+        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
 
     /* ----------- Verifisere lagrede forespørsler  ----------- */
     AssertionsForClassTypes.assertThat(brukerinformasjonMedTrukketForespørsel.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0);
@@ -106,7 +106,7 @@ public class TrekkeForespørselTest extends KontrollerTest{
     // gitt
     skalKunneTrekkeForespørsel();
 
-    var påloggetPerson = kontrollertestpersonGråtass;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -114,7 +114,7 @@ public class TrekkeForespørselTest extends KontrollerTest{
 
     var f = forespørselDao.findById(1);
 
-    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(kontrollertestpersonBarn10.getIdent())));
+    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
 
     // hvis
     var responsOpprett = httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel),

@@ -62,18 +62,18 @@ public class KontrollerTest {
     urlTrekkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_TREKKE_FORESPØRSEL + "?id=%s";
   }
 
-  protected static Kontrollertestperson kontrollertestpersonGråtass = new Kontrollertestperson("12345678910", "Gråtass", 40);
-  protected static Kontrollertestperson kontrollertestpersonStreng = new Kontrollertestperson("11111122222", "Streng", 38);
-  protected static Kontrollertestperson kontrollertestpersonBarn16 = new Kontrollertestperson("77777700000", "Grus", 16);
-  protected static Kontrollertestperson kontrollertestpersonBarn10 = new Kontrollertestperson("33333355555", "Småstein", 10);
-  protected static Kontrollertestperson kontrollertestpersonIkkeFunnet = new Kontrollertestperson("00000001231", "Utenfor", 29);
-  protected static Kontrollertestperson kontrollertestpersonHarDiskresjon = new Kontrollertestperson("23451644512", "Diskos", 29);
-  protected static Kontrollertestperson kontrollertestpersonHarMotpartMedDiskresjon = new Kontrollertestperson("56472134561", "Tordivel", 44);
-  protected static Kontrollertestperson kontrollertestpersonHarBarnMedDiskresjon = new Kontrollertestperson("32456849111", "Kaktus", 48);
-  protected static Kontrollertestperson kontrollertestpersonErDød = new Kontrollertestperson("77765415234", "Steindød", 35);
-  protected static Kontrollertestperson kontrollertestpersonHarDødtBarn = new Kontrollertestperson("05784456310", "Albueskjell", 53);
-  protected static Kontrollertestperson kontrollertestpersonDødMotpart = new Kontrollertestperson("445132456487", "Bunkers", 41);
-  protected static Kontrollertestperson kontrollertestpersonServerfeil = new Kontrollertestperson("12000001231", "Feil", 78);
+  protected static Testperson testpersonGråtass = new Testperson("12345678910", "Gråtass", 40);
+  protected static Testperson testpersonStreng = new Testperson("11111122222", "Streng", 38);
+  protected static Testperson testpersonBarn16 = new Testperson("77777700000", "Grus", 16);
+  protected static Testperson testpersonBarn10 = new Testperson("33333355555", "Småstein", 10);
+  protected static Testperson testpersonIkkeFunnet = new Testperson("00000001231", "Utenfor", 29);
+  protected static Testperson testpersonHarDiskresjon = new Testperson("23451644512", "Diskos", 29);
+  protected static Testperson testpersonHarMotpartMedDiskresjon = new Testperson("56472134561", "Tordivel", 44);
+  protected static Testperson testpersonHarBarnMedDiskresjon = new Testperson("32456849111", "Kaktus", 48);
+  protected static Testperson testpersonErDød = new Testperson("77765415234", "Steindød", 35);
+  protected static Testperson testpersonHarDødtBarn = new Testperson("05784456310", "Albueskjell", 53);
+  protected static Testperson testpersonDødMotpart = new Testperson("445132456487", "Bunkers", 41);
+  protected static Testperson testpersonServerfeil = new Testperson("12000001231", "Feil", 78);
 
   protected static class CustomHeader {
 
@@ -105,18 +105,16 @@ public class KontrollerTest {
     var token = mockOAuth2Server.issueToken("tokenx", personident, "aud-localhost", claims);
     return "Bearer " + token.serialize();
   }
-
-
 }
 
 @Value
-class Kontrollertestperson {
+class Testperson {
 
   String ident;
   String fornavn;
   LocalDate fødselsdato;
 
-  public Kontrollertestperson(String ident, String fornavn, int alder) {
+  public Testperson(String ident, String fornavn, int alder) {
     this.ident = ident;
     this.fornavn = fornavn;
     this.fødselsdato = LocalDate.now().minusYears(alder);

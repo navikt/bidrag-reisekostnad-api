@@ -2,19 +2,18 @@ package no.nav.bidrag.reisekostnad.feilhåndtering;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
-public class InternFeil extends RuntimeException implements ReisekostnadApiFeil {
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+public class InternFeil extends ReisekostnadApiFeil {
 
-  private final Feilkode feilkode;
+  public InternFeil(Feilkode feilkode) {
+    super(feilkode, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 
   public InternFeil(Feilkode feilkode, Exception e) {
-    super(feilkode.getBeskrivelse(), e);
-    this.feilkode = feilkode;
+    super(feilkode, HttpStatus.INTERNAL_SERVER_ERROR);
+    e.printStackTrace();
   }
-
-  public @Override String getFeilmelding() {
-    return this.feilkode.getBeskrivelse();
-  }
-
 }
