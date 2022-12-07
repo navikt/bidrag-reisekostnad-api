@@ -1,11 +1,14 @@
 package no.nav.bidrag.reisekostnad.api;
 
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Set;
+import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Kjønn;
@@ -22,11 +25,17 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 public class HenteBrukerinformasjonTest extends KontrollerTest {
 
+  private void sletteData() {
+    barnDao.deleteAll();
+    forespørselDao.deleteAll();
+    forelderDao.deleteAll();
+  }
+
   @Test
   void skalHenteBrukerinformasjonForHovedpartMedFamilierelasjoner() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonGråtass;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -52,19 +61,19 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn16.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(kontrollertestpersonBarn16.getFornavn()));
+        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
   }
 
   @Test
   void skalHenteBrukerinformasjonForHovedpartMedDiskresjon() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarDiskresjon;
+    var påloggetPerson = testpersonHarDiskresjon;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -89,10 +98,89 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   }
 
   @Test
+  void skalViseForespørslerSomHarBlittDeaktivertInnenGyldighetsperioden() {
+
+    // gitt
+    var påloggetPerson = testpersonGråtass;
+    httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+
+    var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+    when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+    var nyForespørsel = new NyForespørselDto(
+        Set.of(Krypteringsverktøy.kryptere(testpersonBarn16.getIdent()), Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
+
+    httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel), Void.class);
+
+    var brukerinformasjonMedAktivForespørsel = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    var idLagretForespørsel = brukerinformasjonMedAktivForespørsel.getBody().getForespørslerSomHovedpart().stream().findFirst().get().getId();
+
+    var url = String.format(urlTrekkeForespørsel, idLagretForespørsel);
+    httpHeaderTestRestTemplateApi.exchange(url, HttpMethod.PUT, initHttpEntity(null), Void.class);
+
+    // hvis
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    // så
+    // Forespørselen har nå blitt deaktivert
+    assertAll(
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null).findFirst()).isPresent()
+    );
+
+    var deaktivertForespørsel = forespørselDao.findById(idLagretForespørsel);
+
+    assertAll(
+        () -> assertThat(deaktivertForespørsel).isPresent(),
+        () -> assertThat(deaktivertForespørsel.get().getDeaktivert().toLocalDate()).isEqualTo(LocalDate.now())
+    );
+
+    deaktivertForespørsel.get()
+        .setDeaktivert(LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay());
+
+    // Endrer tidspunkt for deaktivering til maks antall dager bakover i tid innen for gyldighetsintervallet
+    forespørselDao.save(deaktivertForespørsel.get());
+
+    var brukerinformasjonForespørselDeaktivertI30Dager = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET,
+        initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    assertAll(
+        () -> assertThat(brukerinformasjonForespørselDeaktivertI30Dager.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(
+            brukerinformasjonForespørselDeaktivertI30Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
+                .findFirst()).isPresent()
+    );
+
+    deaktivertForespørsel.get().setDeaktivert(LocalDate.now().minusDays(1).atStartOfDay());
+
+    // Endrer tidpunkt for deaktivering til utenfor gyldighetsintervallet
+    forespørselDao.save(deaktivertForespørsel.get());
+
+    var brukerinformasjonForespørselDeaktivertI31Dager = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET,
+        initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    // Den deaktiverte førespørselen viser ikke lengre i brukeroversikten
+    assertAll(
+        () -> assertThat(brukerinformasjonForespørselDeaktivertI31Dager.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(
+            brukerinformasjonForespørselDeaktivertI31Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
+                .findFirst()).isPresent()
+    );
+
+    sletteData();
+  }
+
+  @Test
   void skalGiStatuskode404DersomPersondataMangler() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonIkkeFunnet;
+    var påloggetPerson = testpersonIkkeFunnet;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -110,7 +198,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalGiStatuskode500DersomKallMotBidragPersonFeilerMed500() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonServerfeil;
+    var påloggetPerson = testpersonServerfeil;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -127,7 +215,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortFamilieenhetHvorMotpartHarDiskresjon() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarMotpartMedDiskresjon;
+    var påloggetPerson = testpersonHarMotpartMedDiskresjon;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -154,7 +242,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortFamilieenhetHvorBarnHarDiskresjon() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarBarnMedDiskresjon;
+    var påloggetPerson = testpersonHarBarnMedDiskresjon;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -181,7 +269,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalGi403ForDødPerson() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonErDød;
+    var påloggetPerson = testpersonErDød;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -201,7 +289,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortFamilieenheterDerMotpartErDød() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonDødMotpart;
+    var påloggetPerson = testpersonDødMotpart;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
@@ -228,7 +316,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalFiltrereBortDødeBarn() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonHarDødtBarn;
+    var påloggetPerson = testpersonHarDødtBarn;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);

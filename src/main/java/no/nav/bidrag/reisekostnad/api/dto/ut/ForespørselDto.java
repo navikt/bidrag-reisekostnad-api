@@ -32,4 +32,6 @@ public class ForespørselDto {
   private LocalDateTime samtykket;
   @Parameter(description = "Tidspunkt for journalføring")
   private LocalDateTime journalført;
+  @Parameter(description = "Tidspunkt for deaktivering")
+  private LocalDateTime deaktivert;
 }

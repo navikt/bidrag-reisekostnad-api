@@ -33,13 +33,13 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
   void skalOppretteForespørselOmFordelingAvReisekostnaderForEttAvToFellesBarn() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonGråtass;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
-    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(kontrollertestpersonBarn10.getIdent())));
+    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
 
     // hvis
     var responsOpprett = httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel),
@@ -64,12 +64,12 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
     var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn16.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(kontrollertestpersonBarn16.getFornavn()));
+        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
 
     /* ----------- Verifisere lagret forespørsel  ----------- */
 
@@ -83,12 +83,14 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getJournalført()).isNull(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getSamtykket()).isNull(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().isKreverSamtykke()).isTrue(),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getIdent()).isEqualTo(Krypteringsverktøy.kryptere(kontrollertestpersonGråtass.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFornavn()).isEqualTo(kontrollertestpersonGråtass.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFødselsdato()).isEqualTo(kontrollertestpersonGråtass.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getIdent()).isEqualTo(Krypteringsverktøy.kryptere(kontrollertestpersonStreng.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getIdent()).isEqualTo(Krypteringsverktøy.kryptere(
+            testpersonGråtass.getIdent())),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFornavn()).isEqualTo(testpersonGråtass.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFødselsdato()).isEqualTo(testpersonGråtass.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getIdent()).isEqualTo(Krypteringsverktøy.kryptere(
+            testpersonStreng.getIdent())),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getBarn().size()).isEqualTo(1)
     );
 
@@ -96,9 +98,9 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     assertAll(
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel).isPresent(),
-        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent())).isEqualTo(kontrollertestpersonBarn10.getIdent()),
-        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato())
+        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent())).isEqualTo(testpersonBarn10.getIdent()),
+        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato())
     );
   }
 
@@ -106,14 +108,14 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
   void skalOppretteForespørselOmFordelingAvReisekostnaderForToAvToFellesBarn() {
 
     // gitt
-    var påloggetPerson = kontrollertestpersonGråtass;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
     var nyForespørsel = new NyForespørselDto(
-        Set.of(Krypteringsverktøy.kryptere(kontrollertestpersonBarn16.getIdent()), Krypteringsverktøy.kryptere(kontrollertestpersonBarn10.getIdent())));
+        Set.of(Krypteringsverktøy.kryptere(testpersonBarn16.getIdent()), Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
 
     // hvis
     var responsOpprett = httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel),
@@ -138,12 +140,12 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
     var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(kontrollertestpersonBarn16.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(kontrollertestpersonBarn16.getFornavn()));
+        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
 
     /* ----------- Verifisere lagrede forespørsler  ----------- */
     AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(2);
@@ -158,13 +160,13 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getSamtykket()).isNull(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().isKreverSamtykke()).isTrue(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getIdent()).isEqualTo(
-            Krypteringsverktøy.kryptere(kontrollertestpersonGråtass.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFornavn()).isEqualTo(kontrollertestpersonGråtass.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFødselsdato()).isEqualTo(kontrollertestpersonGråtass.getFødselsdato()),
+            Krypteringsverktøy.kryptere(testpersonGråtass.getIdent())),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFornavn()).isEqualTo(testpersonGråtass.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFødselsdato()).isEqualTo(testpersonGråtass.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getIdent()).isEqualTo(
-            Krypteringsverktøy.kryptere(kontrollertestpersonStreng.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
+            Krypteringsverktøy.kryptere(testpersonStreng.getIdent())),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getBarn().size()).isEqualTo(1)
     );
 
@@ -172,9 +174,9 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     assertAll(
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel).isPresent(),
-        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFornavn()).isEqualTo(kontrollertestpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent())).isEqualTo(kontrollertestpersonBarn10.getIdent()),
-        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(kontrollertestpersonBarn10.getFødselsdato())
+        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent())).isEqualTo(testpersonBarn10.getIdent()),
+        () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato())
     );
 
     var lagretForespørselBarnOver15 = brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.isKreverSamtykke() == false)
@@ -186,13 +188,13 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getSamtykket()).isNull(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().isKreverSamtykke()).isFalse(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getIdent()).isEqualTo(
-            Krypteringsverktøy.kryptere(kontrollertestpersonGråtass.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFornavn()).isEqualTo(kontrollertestpersonGråtass.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFødselsdato()).isEqualTo(kontrollertestpersonGråtass.getFødselsdato()),
+            Krypteringsverktøy.kryptere(testpersonGråtass.getIdent())),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFornavn()).isEqualTo(testpersonGråtass.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFødselsdato()).isEqualTo(testpersonGråtass.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getIdent()).isEqualTo(
-            Krypteringsverktøy.kryptere(kontrollertestpersonStreng.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFornavn()).isEqualTo(kontrollertestpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFødselsdato()).isEqualTo(kontrollertestpersonStreng.getFødselsdato()),
+            Krypteringsverktøy.kryptere(testpersonStreng.getIdent())),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getBarn().size()).isEqualTo(1)
     );
 
@@ -200,9 +202,10 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     assertAll(
         () -> AssertionsForClassTypes.assertThat(barnOver15ILagretForespørsel).isPresent(),
-        () -> AssertionsForClassTypes.assertThat(barnOver15ILagretForespørsel.get().getFornavn()).isEqualTo(kontrollertestpersonBarn16.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnOver15ILagretForespørsel.get().getIdent())).isEqualTo(kontrollertestpersonBarn16.getIdent()),
-        () -> AssertionsForClassTypes.assertThat(barnOver15ILagretForespørsel.get().getFødselsdato()).isEqualTo(kontrollertestpersonBarn16.getFødselsdato())
+        () -> AssertionsForClassTypes.assertThat(barnOver15ILagretForespørsel.get().getFornavn()).isEqualTo(testpersonBarn16.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnOver15ILagretForespørsel.get().getIdent())).isEqualTo(
+            testpersonBarn16.getIdent()),
+        () -> AssertionsForClassTypes.assertThat(barnOver15ILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato())
     );
   }
 }
