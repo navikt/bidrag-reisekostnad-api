@@ -55,3 +55,9 @@ ul.detaljer {
     margin: 2%; /* Remove margins */
 }
 
+.nav-logo {
+    width: 65px;
+    height: 25px;
+    display: block;
+    margin: 50px 80% 50px auto;
+}

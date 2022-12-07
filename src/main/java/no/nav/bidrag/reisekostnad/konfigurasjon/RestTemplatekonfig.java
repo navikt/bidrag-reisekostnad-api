@@ -17,19 +17,19 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 public class RestTemplatekonfig {
 
   @Bean
-  @Profile(Profil.I_SKY)
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q})
   public ClientHttpRequestInterceptor tokenxInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.authTokenInterceptor();
   }
 
   @Bean
-  @Profile(Profil.I_SKY)
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q})
   public ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-dokument");
   }
 
   @Bean
-  @Profile(Profil.I_SKY)
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q})
   public ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person");
   }

@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument
 
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
@@ -45,6 +46,7 @@ class BidragDokumentkonsument(@Qualifier("bidrag-dokument-azure-client-credentia
     private fun opprettJournalpostforespørsel(gjelderIdent: String, referanseid: String, dokumentByte: ByteArray): OpprettJournalpostRequest {
         return OpprettJournalpostRequest(
             gjelderIdent = gjelderIdent,
+            journalposttype = JournalpostType.INNGÅENDE,
             referanseId = referanseid,
             behandlingstema = BEHANDLINGSTEMA_REISEKOSTNADER,
             avsenderMottaker = AvsenderMottakerDto(ident = gjelderIdent),

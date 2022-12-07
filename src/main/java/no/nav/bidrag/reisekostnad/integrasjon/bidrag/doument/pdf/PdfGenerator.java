@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.api.dto.ut.PersonDto;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
+import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import org.apache.commons.compress.utils.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.W3CDom;
@@ -113,11 +114,10 @@ public class PdfGenerator {
 
   private static void leggeTilDataBarn(Element barnElement, Set<PersonDto> barna, Skriftspråk skriftspråk) {
 
-    var beskrivelse = barnElement.getElementsByClass(henteElementnavn(Elementnavn.BESKRIVELSE, skriftspråk));
     var detaljer = barnElement.getElementsByClass(henteElementnavn(Elementnavn.DETALJER, skriftspråk)).first();
     var førsteBarn = barnElement.getElementById(henteElementnavn(Elementnavn.BARN_1, skriftspråk));
 
-    var tekstformatBarn = "Fornavn: %s, fødselsdato: %s";
+    var tekstformatBarn = "%s, født: %s";
     var it = barna.iterator();
     var barn1 = it.next();
     førsteBarn.text(String.format(tekstformatBarn, barn1.getFornavn(),
@@ -134,9 +134,6 @@ public class PdfGenerator {
       nesteBarnIRekka.text(tekst);
       nesteBarnIRekka.appendTo(detaljer);
     }
-
-
-    var t = false;
   }
 
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
@@ -149,7 +146,7 @@ public class PdfGenerator {
         tekstvelger(Tekst.FØDSELSDATO, skriftspraak) + ": " + forelder.getFødselsdato().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
     var foedselsnummer = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspraak));
-    foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + forelder.getIdent());
+    foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + dekryptere(forelder.getIdent()));
   }
 
   private static String byggeHtmlstrengFraMal(String pdfmal, Skriftspråk skriftspråk, Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart) {
@@ -232,4 +229,8 @@ public class PdfGenerator {
     HOVEDPART,
     FORNAVN
   }
+  private static String dekryptere(String kryptertPersonident) {
+    return Krypteringsverktøy.dekryptere(kryptertPersonident);
+  }
+
 }
