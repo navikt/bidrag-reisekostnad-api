@@ -81,6 +81,8 @@ public class Databasetjeneste {
       var nå = LocalDateTime.now();
       SIKKER_LOGG.info("Hovedpart (ident: {}) deaktiverer forespørsel med id {}", personidentHovedpart, idForespørsel);
       forespørsel.get().setDeaktivert(nå);
+    } else if(forespørsel.isEmpty()) {
+      throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_FEIL_STATUS);
     } else {
       throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_HOVEDPART);
     }

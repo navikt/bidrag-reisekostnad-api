@@ -6,6 +6,7 @@ public enum Feilkode {
 
   INTERNFEIL("Intern feil har oppstått."),
   VALIDERING_DEAKTIVERE_HOVEDPART("Fant ingen aktive forespørsler knyttet til oppgitt hovedpart."),
+  VALIDERING_DEAKTIVERE_FEIL_STATUS("Den oppgitte forespørselen er allerede deaktivert"),
   KRYPTERING("Kryptering av personident feilet."),
   VALIDERING_PÅLOGGET_PERSON_DISKRESJON("Pålogget person har diskresjon. Kan ikke benytte løsningen."),
   VALIDERING_SAMTYKKE_MOTPART("Fant ingen aktive forespørsler knyttet til oppgitt motpart. Samtykke ikke oppdatert."),
