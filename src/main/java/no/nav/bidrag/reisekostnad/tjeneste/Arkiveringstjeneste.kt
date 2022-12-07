@@ -1,53 +1,40 @@
-package no.nav.bidrag.reisekostnad.tjeneste;
+package no.nav.bidrag.reisekostnad.tjeneste
 
-import java.time.LocalDateTime;
-import javax.transaction.Transactional;
-import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
-import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument;
-import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.pdf.PdfGenerator;
-import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
+import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument
+import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.pdf.PdfGenerator
+import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper
+import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import javax.transaction.Transactional
 
 @Service
-public class Arkiveringstjeneste {
+class Arkiveringstjeneste(
+    private val bidragDokumentkonsument: BidragDokumentkonsument,
+    private val mapper: Mapper,
+    private val databasetjeneste: Databasetjeneste
+) {
+    @Transactional
+    fun arkivereForespørsel(idForespørsel: Int): String? {
+        val forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel)
+        val pdfDokument = opprettPdf(forespørsel)
+        val referanseId = "$REISEKOSTNAD_REFERANSEIDPREFIKS$idForespørsel"
 
-  private final static String REISEKOSTNAD_REFERANSEIDPREFIKS = "REISEKOSTNAD_";
-  private final BidragDokumentkonsument bidragDokumentkonsument;
-  private final Mapper mapper;
-  private final Databasetjeneste databasetjeneste;
-  private final PdfGenerator pdfGenerator;
+        val respons = bidragDokumentkonsument.opprettJournalpost(forespørsel.hovedpart.personident, referanseId, pdfDokument)
 
-  @Autowired
-  public Arkiveringstjeneste(
-      BidragDokumentkonsument bidragDokumentkonsument,
-      Mapper mapper,
-      Databasetjeneste databasetjeneste,
-      PdfGenerator pdfGenerator) {
-    this.bidragDokumentkonsument = bidragDokumentkonsument;
-    this.mapper = mapper;
-    this.databasetjeneste = databasetjeneste;
-    this.pdfGenerator = pdfGenerator;
-  }
+        forespørsel.journalført = LocalDateTime.now()
+        forespørsel.idJournalpost = respons.journalpostId
+        return respons.journalpostId
+    }
 
-  @Transactional
-  public String arkivereForespørsel(int idForespørsel) {
-    var forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel);
-    var respons = bidragDokumentkonsument.oppretteJournalpost(forespørsel.getHovedpart().getPersonident(),
-        REISEKOSTNAD_REFERANSEIDPREFIKS + idForespørsel);
+    private fun opprettPdf(forespørsel: Forespørsel): ByteArray {
+        val barn = mapper.tilPersonDto(forespørsel.barn)
+        val hovedpart = mapper.tilPersonDto(forespørsel.hovedpart.personident)
+        val motpart = mapper.tilPersonDto(forespørsel.motpart.personident)
+        return PdfGenerator.genererePdf(barn, hovedpart, motpart)
+    }
 
-    forespørsel.setJournalført(LocalDateTime.now());
-    forespørsel.setIdJournalpost(respons.getJournalpostId());
-
-    return respons.getJournalpostId();
-  }
-
-  private byte[] opprettePdf(Forespørsel forespørsel) {
-
-    var barn = mapper.tilPersonDto(forespørsel.getBarn());
-    var hovedpart = mapper.tilPersonDto(forespørsel.getHovedpart().getPersonident());
-    var motpart = mapper.tilPersonDto(forespørsel.getMotpart().getPersonident());
-
-    return pdfGenerator.genererePdf(barn, hovedpart, motpart);
-  }
+    companion object {
+        private const val REISEKOSTNAD_REFERANSEIDPREFIKS = "REISEKOSTNAD_"
+    }
 }

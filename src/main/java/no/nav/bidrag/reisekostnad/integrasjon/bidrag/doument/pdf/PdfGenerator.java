@@ -66,7 +66,7 @@ public class PdfGenerator {
 
     var skriftspråk = Skriftspråk.BOKMÅL;
 
-    log.info("Oppretter dokument for farskapserklæring på {}", skriftspråk);
+    log.info("Oppretter dokument for reisekostnad på språk {}", skriftspråk);
 
     var html = byggeHtmlstrengFraMal(STI_TIL_PDF_TEMPLATE, skriftspråk, barn, hovedperson, motpart);
     try (final ByteArrayOutputStream pdfStream = new ByteArrayOutputStream()) {
