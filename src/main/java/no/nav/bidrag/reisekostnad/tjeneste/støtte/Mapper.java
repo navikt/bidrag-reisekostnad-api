@@ -3,6 +3,7 @@ package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument.FORMAT_FØDSELSDATO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,7 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Diskresjonskode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Familiemedlem;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon;
+import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -55,8 +57,10 @@ public class Mapper {
   }
 
   public BrukerinformasjonDto tilDto(HentFamilieRespons familieRespons) {
-    var forespørslerHvorPersonErHovedpart = forespørselDao.henteAktiveForespørslerHvorPersonErHovedpart(familieRespons.getPerson().getIdent());
-    var forespørslerHvorPersonErMotpart = forespørselDao.henteAktiveForespørslerHvorPersonErMotpart(familieRespons.getPerson().getIdent());
+    var forespørslerHvorPersonErHovedpart = forespørselDao.henteSynligeForespørslerHvorPersonErHovedpart(familieRespons.getPerson().getIdent(),
+        henteGrenseForSisteEndring());
+    var forespørslerHvorPersonErMotpart = forespørselDao.henteSynligeForespørslerHvorPersonErMotpart(familieRespons.getPerson().getIdent(),
+        henteGrenseForSisteEndring());
 
     var hovedpersonHarDiskresjon = Diskresjonskode.harDiskresjon(familieRespons.getPerson());
     var familierUtenDiskresjon = henteMotpartBarnRelasjonerSomIkkeHarDiskresjon(familieRespons);
@@ -75,6 +79,10 @@ public class Mapper {
         .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart)).motparterMedFellesBarnUnderFemtenÅr(
             hovedpersonHarDiskresjon ? new HashSet<>() : filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjonEllerDødeMotparter))
         .build();
+  }
+
+  private LocalDateTime henteGrenseForSisteEndring() {
+    return LocalDate.now().minusDays(Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING + 1).atStartOfDay();
   }
 
   private PersonDto tilDto(Familiemedlem familiemedlem) {
