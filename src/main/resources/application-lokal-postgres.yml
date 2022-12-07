@@ -45,7 +45,7 @@ integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
 BIDRAG_PERSON_URL: ${WIREMOCK_URL}
-KJØREPLAN_ARKIVERING: "0 0 7 * * ?"
+KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
 
 ---
 spring:

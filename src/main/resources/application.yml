@@ -63,5 +63,5 @@ springdoc:
     url: /v3/api-docs
 
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
-kjøreplan.databehandling.arkivering: ${KJØREPLAN_ARKIVERING}
+kjøreplan.databehandling.arkivering: ${KJOEREPLAN_ARKIVERING}
 
