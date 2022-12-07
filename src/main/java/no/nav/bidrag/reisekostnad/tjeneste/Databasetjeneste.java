@@ -12,6 +12,7 @@ import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
+import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,5 +85,30 @@ public class Databasetjeneste {
     } else {
       throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_HOVEDPART);
     }
+  }
+  public  Forespørsel henteAktivForespørsel(int idForespørsel) {
+    var forespørsel =  forespørselDao.henteAktivForespørsel(idForespørsel);
+    if (forespørsel.isPresent() && forespørsel.get().getDeaktivert() == null) {
+      return forespørsel.get();
+    } else {
+      throw new InternFeil(Feilkode.RESSURS_IKKE_FUNNET);
+    }
+  }
+
+  @Transactional
+  public void oppdatereInnsendingsstatus(int idForespørsel) {
+
+  }
+
+  public Set<Integer> henteForespørslerSomErKlareForInnsending() {
+    log.info("Ser etter forespørsler som er klare for innsending");
+    var aktiveForespørslerMedSamtykke = forespørselDao.henteAktiveOgSamtykkedeForespørslerSomErKlareForInnsending();
+    var aktiveForespørslerUtenSamtykke = forespørselDao.henteAktiveForespørslerSomIkkeKreverSamtykkOgErKlareForInnsending();
+    log.info("Fant {} aktive forespørsler med samtykke, og {} uten samtykke, som er klare for innsending", aktiveForespørslerMedSamtykke.size(),
+        aktiveForespørslerUtenSamtykke.size());
+
+    aktiveForespørslerMedSamtykke.addAll(aktiveForespørslerUtenSamtykke);
+
+    return aktiveForespørslerMedSamtykke;
   }
 }

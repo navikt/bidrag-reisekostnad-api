@@ -19,4 +19,12 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
 
   @Query("select f from Forespørsel f where f.id = :idForespørsel and f.deaktivert is null")
   Optional<Forespørsel> henteAktivForespørsel(int idForespørsel);
+
+  @Query("select f from Forespørsel f "
+      + "where f.deaktivert is null and f.samtykket is not null and f.journalført is null")
+  Set<Integer> henteAktiveOgSamtykkedeForespørslerSomErKlareForInnsending();
+
+  @Query("select f from Forespørsel  f "
+      + "where f.deaktivert is null and f.samtykket is null and f.journalført is null and f.kreverSamtykke is false")
+  Set<Integer> henteAktiveForespørslerSomIkkeKreverSamtykkOgErKlareForInnsending();
 }
