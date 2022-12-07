@@ -1,3 +1,4 @@
+logging.config: classpath:logback-spring.xml
 spring:
   config.activate.on-profile: i-sky
   cloud.gcp.sql:
