@@ -13,6 +13,7 @@ public enum Feilkode {
   PDL_PERSON_DØD("Pålogget person er død."),
   PDL_PERSON_IKKE_FUNNET("Fant ikke person i PDL"),
   PDL_FEIL("En feil oppstod ved henting av data fra PDL"),
+  RESSURS_IKKE_FUNNET("Fant ikke ønsket ressurs"),
   VALIDERING_NY_FOREPØRSEL("Feil ved validering av ny forespørsel"),
   VALIDERING_NY_FOREPØRSEL_INGEN_FAMILIERELASJONER("Feil ved validering av ny forespørsel. Fant ingen familierelasjoner for person."),
   VALIDERING_NY_FOREPØRSEL_MANGLER_RELASJON_MOTPART("Person mangler relasjon til oppgitt motpart"),

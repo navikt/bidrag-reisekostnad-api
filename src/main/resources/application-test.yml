@@ -47,3 +47,4 @@ spring:
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
 BIDRAG_PERSON_URL: ${WIREMOCK_URL}
+KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
