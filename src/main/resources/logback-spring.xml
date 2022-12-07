@@ -27,7 +27,7 @@
     </layout>
   </appender>
 
-  <springProfile name="nais">
+  <springProfile name="i-sky">
     <appender name="secureLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
       <file>/secure-logs/secure.log</file>
       <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
