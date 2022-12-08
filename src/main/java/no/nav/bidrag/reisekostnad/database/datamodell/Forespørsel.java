@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad.database.datamodell;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class Forespørsel implements Serializable {
 
   private LocalDateTime opprettet;
   private LocalDateTime samtykket;
+  private LocalDate samtykkefrist;
   private LocalDateTime journalført;
   private LocalDateTime deaktivert;
 

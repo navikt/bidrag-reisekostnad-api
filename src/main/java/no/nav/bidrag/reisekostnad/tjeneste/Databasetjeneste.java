@@ -1,7 +1,9 @@
 package no.nav.bidrag.reisekostnad.tjeneste;
 
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import javax.transaction.Transactional;
@@ -50,10 +52,15 @@ public class Databasetjeneste {
     var ekisterendeHovedpart = forelderDao.finnMedPersonident(hovedpart);
     var eksisterendeMotpart = forelderDao.finnMedPersonident(motpart);
 
-    var nyForespørsel = Forespørsel.builder().opprettet(LocalDateTime.now())
+    var samtykkefrist = kreverSamtykke ? LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE) : null;
+
+    var nyForespørsel = Forespørsel.builder()
+        .opprettet(LocalDateTime.now())
         .hovedpart(ekisterendeHovedpart.orElseGet(() -> Forelder.builder().personident(hovedpart).build()))
         .motpart(eksisterendeMotpart.orElseGet(() -> Forelder.builder().personident(motpart).build())).barn(mapper.tilEntitet(identerBarn))
-        .kreverSamtykke(kreverSamtykke).build();
+        .kreverSamtykke(kreverSamtykke)
+        .samtykkefrist(samtykkefrist)
+        .build();
 
     var lagretForespørsel = forespørselDao.save(nyForespørsel);
 
