@@ -37,4 +37,3 @@ public class Databehandler {
     log.info("Arkivering av alle de {} forespørslene ble gjennomført uten feil", idForespørslerForInnsending.size());
   }
 }
-
