@@ -82,14 +82,15 @@ public class Databasetjeneste {
       var nå = LocalDateTime.now();
       SIKKER_LOGG.info("Hovedpart (ident: {}) deaktiverer forespørsel med id {}", personidentHovedpart, idForespørsel);
       forespørsel.get().setDeaktivert(nå);
-    } else if(forespørsel.isEmpty()) {
+    } else if (forespørsel.isEmpty()) {
       throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_FEIL_STATUS);
     } else {
       throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_HOVEDPART);
     }
   }
-  public  Forespørsel henteAktivForespørsel(int idForespørsel) {
-    var forespørsel =  forespørselDao.henteAktivForespørsel(idForespørsel);
+
+  public Forespørsel henteAktivForespørsel(int idForespørsel) {
+    var forespørsel = forespørselDao.henteAktivForespørsel(idForespørsel);
     if (forespørsel.isPresent() && forespørsel.get().getDeaktivert() == null) {
       return forespørsel.get();
     } else {

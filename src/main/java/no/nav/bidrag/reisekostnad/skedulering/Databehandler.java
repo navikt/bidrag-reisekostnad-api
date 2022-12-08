@@ -2,6 +2,7 @@ package no.nav.bidrag.reisekostnad.skedulering;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,10 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class Databehandler {
 
+  private final Arkiveringstjeneste arkiveringstjeneste;
   private final Databasetjeneste databasetjeneste;
 
   @Autowired
-  public Databehandler(Databasetjeneste databasetjeneste) {
+  public Databehandler(Arkiveringstjeneste arkiveringstjeneste, Databasetjeneste databasetjeneste) {
+    this.arkiveringstjeneste = arkiveringstjeneste;
     this.databasetjeneste = databasetjeneste;
   }
 
@@ -24,6 +27,14 @@ public class Databehandler {
 
     var idForespørslerForInnsending = databasetjeneste.henteForespørslerSomErKlareForInnsending();
 
-    log.info("Skedulert oppgave ble trigget, men implementasjon mangler");
+    log.info("Fant totalt {} forespørsler som vil bli forsøkt oversendt til dokumentarkivet", idForespørslerForInnsending.size());
+
+    for (Integer id : idForespørslerForInnsending) {
+      //arkiveringstjeneste.arkivereForespørsel(id);
+      log.info("Arkivering av forespørsel med id {} ble ikke startet.", id);
+    }
+
+    log.info("Arkivering av alle de {} forespørslene ble gjennomført uten feil", idForespørslerForInnsending.size());
   }
 }
+

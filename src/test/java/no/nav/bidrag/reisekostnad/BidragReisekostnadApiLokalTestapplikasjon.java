@@ -6,12 +6,14 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.bidrag.commons.security.service.SecurityTokenService;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -57,7 +59,17 @@ class Lokalkonfig {
   );
 
   @Bean
-  public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor() {
+  @Qualifier("bidrag-dokument")
+  public ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor() {
+    return (request, body, execution) -> {
+      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
+      return execution.execute(request, body);
+    };
+  }
+
+  @Bean
+  @Qualifier("bidrag-person")
+  public ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor() {
     return (request, body, execution) -> {
       request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
       return execution.execute(request, body);

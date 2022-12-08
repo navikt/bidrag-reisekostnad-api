@@ -152,12 +152,8 @@ public class ReisekostnadApiTjeneste {
 
   private boolean erPersonOver15År(String personident) {
     var respons = bidragPersonkonsument.hentPersoninfo(personident);
-    if (respons.isPresent()) {
-      var fødselsdato = respons.get().getFoedselsdato();
-      return fødselsdato != null && fødselsdato.isBefore(LocalDate.now().minusYears(15));
-    } else {
-      return false;
-    }
+    var fødselsdato = respons.getFoedselsdato();
+    return fødselsdato != null && fødselsdato.isBefore(LocalDate.now().minusYears(15));
   }
 
   private Set<String> filtrereUtBarnOver15År(Set<String> alleBarn) {
