@@ -69,5 +69,3 @@ integrasjon.bidrag:
   person.url: ${BIDRAG_PERSON_URL}
 
 kjøreplan.databehandling.arkivering: ${KJOEREPLAN_ARKIVERING}
-
-
