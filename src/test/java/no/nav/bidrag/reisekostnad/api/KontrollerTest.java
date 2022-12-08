@@ -105,8 +105,6 @@ public class KontrollerTest {
     var token = mockOAuth2Server.issueToken("tokenx", personident, "aud-localhost", claims);
     return "Bearer " + token.serialize();
   }
-
-
 }
 
 @Value

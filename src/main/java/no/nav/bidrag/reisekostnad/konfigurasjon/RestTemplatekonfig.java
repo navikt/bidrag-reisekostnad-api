@@ -18,7 +18,19 @@ public class RestTemplatekonfig {
 
   @Bean
   @Profile(Profil.I_SKY)
-  public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
+  public ClientHttpRequestInterceptor tokenxInterceptor(SecurityTokenService securityTokenService) {
+    return securityTokenService.authTokenInterceptor();
+  }
+
+  @Bean
+  @Profile(Profil.I_SKY)
+  public ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
+    return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-dokument");
+  }
+
+  @Bean
+  @Profile(Profil.I_SKY)
+  public ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person");
   }
 
@@ -33,13 +45,26 @@ public class RestTemplatekonfig {
 
   @Bean
   @Scope("prototype")
+  @Qualifier("bidrag-dokument-azure-client-credentials")
+  public HttpHeaderRestTemplate bidragDokumentAzureCCRestTemplate(
+      @Value("${integrasjon.bidrag.dokument.url}") String urlBidragPerson,
+      HttpHeaderRestTemplate httpHeaderRestTemplate,
+      ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor
+  ) {
+    httpHeaderRestTemplate.getInterceptors().add(bidragDokumentClientCredentialsTokenInterceptor);
+    httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
+    return httpHeaderRestTemplate;
+  }
+
+  @Bean
+  @Scope("prototype")
   @Qualifier("bidrag-person")
   public HttpHeaderRestTemplate bidragPersonRestTemplate(
       @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
       HttpHeaderRestTemplate httpHeaderRestTemplate,
-      ClientHttpRequestInterceptor authTokenInterceptor) {
+      ClientHttpRequestInterceptor tokenxInterceptor) {
 
-    httpHeaderRestTemplate.getInterceptors().add(authTokenInterceptor);
+    httpHeaderRestTemplate.getInterceptors().add(tokenxInterceptor);
     httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
     return httpHeaderRestTemplate;
   }
@@ -50,9 +75,9 @@ public class RestTemplatekonfig {
   public HttpHeaderRestTemplate bidragPersonAzureCCRestTemplate(
       @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
       HttpHeaderRestTemplate httpHeaderRestTemplate,
-      ClientHttpRequestInterceptor clientCredentialsTokenInterceptor
+      ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor
   ) {
-    httpHeaderRestTemplate.getInterceptors().add(clientCredentialsTokenInterceptor);
+    httpHeaderRestTemplate.getInterceptors().add(bidragPersonClientCredentialsTokenInterceptor);
     httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
     return httpHeaderRestTemplate;
   }

@@ -65,8 +65,8 @@ spec:
       value: https://bidrag-dokument.dev-fss-pub.nais.io
     - name: POSTGRES_INSTANSEURL
       value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
-    - name: KJOEREPLAN_ARKIVERING
-      value: "0 0/30 * * * ?"
+    - name: KJØREPLAN_ARKIVERING
+      value: "0 0/15 * * * ?"
     # envVarPrefix var ikke satt i ved opprettelse av database - DB-miljøvariablelnavn ble derfor opprettet i full lengde. Kan fikses ved å slette og gjenopprette bidrag-reisekostnad-api i preprod slik at postgres-hemmeligheten populeres på ny.
     - name: DB_HOST
       value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_HOST}

@@ -6,9 +6,10 @@ import org.springframework.http.HttpStatus;
 
 @Slf4j
 @Getter
-public class Persondatafeil extends ReisekostnadApiFeil {
+public class Arkiveringsfeil extends ReisekostnadApiFeil {
 
-  public Persondatafeil(Feilkode feilkode, HttpStatus httpStatus) {
+  public Arkiveringsfeil(Feilkode feilkode, HttpStatus httpStatus) {
     super(feilkode, httpStatus);
+    log.warn("Det oppstod en feil ved arkivering av forespørsel");
   }
 }

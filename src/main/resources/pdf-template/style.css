@@ -1,0 +1,57 @@
+@charset "UTF-8";
+
+h1 {
+    font-size: 1.333em;
+    font-family: 'ArialNormal';
+    font-weight:bold;
+}
+
+h2 {
+    font-size : 1.167em;
+    font-family: 'ArialNormal';
+    font-weight: bold;
+}
+
+body {
+    font-size : 0.9em;
+    font-family: 'ArialNormal';
+    background-color: white;
+    margin-left: 75px;
+    margin-right: 75px;
+    margin-top: 80px;
+}
+
+p {
+    font-size : 1em;
+    font-family: 'ArialNormal';
+}
+
+td.hovedpart, td.motpart, td.barn {
+    font-size : 1em;
+    font-family: 'ArialNormal';
+    font-weight: bold;
+}
+img.logo {
+    float: left;
+    width: 60px;
+    height: 20px;
+    margin-right: 1%;
+    display: block;
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+}
+
+ul.detaljer-forelder {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margins */
+}
+
+ul.detaljer {
+    list-style-type: circle; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 2%; /* Remove margins */
+}
+

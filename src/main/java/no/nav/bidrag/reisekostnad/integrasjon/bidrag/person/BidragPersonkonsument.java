@@ -15,7 +15,6 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentPersoninfoRe
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.UserCacheable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,6 +38,7 @@ public class BidragPersonkonsument {
   public BidragPersonkonsument(@Qualifier("bidrag-person-azure-client-credentials") RestTemplate clientCredentialsRestTemplate) {
     this.clientCredentialsRestTemplate = clientCredentialsRestTemplate;
   }
+
   @UserCacheable(CACHE_FAMILIE)
   public Optional<HentFamilieRespons> hentFamilie(String personident) {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
@@ -50,22 +50,30 @@ public class BidragPersonkonsument {
       return Optional.of(hentFamilieRespons).map(ResponseEntity::getBody);
     } catch (HttpStatusCodeException hsce) {
       if (HttpStatus.NOT_FOUND.equals(hsce.getStatusCode())) {
-        SIKKER_LOGG.warn("Kall mot bidrag-person for henting av familierelasjoner returnerte http status {} for personident {}",
+        SIKKER_LOGG.warn("Kall mot bidrag-person for henting av familierelasjoner returnerte httpstatus {} for personident {}",
             hsce.getStatusCode(), personident);
         throw new Persondatafeil(PDL_PERSON_IKKE_FUNNET, hsce.getStatusCode());
       } else {
-        SIKKER_LOGG.warn("Kall mot bidrag-person for henting av familierelasjoner returnerte http status {} for personident {}", hsce.getStatusCode(),
+        SIKKER_LOGG.warn("Kall mot bidrag-person for henting av familierelasjoner returnerte httpstatus {} for personident {}", hsce.getStatusCode(),
             personident);
         throw new Persondatafeil(PDL_FEIL, hsce.getStatusCode());
       }
     }
   }
+
   @UserCacheable(CACHE_PERSON)
-  public Optional<HentPersoninfoRespons> hentPersoninfo(String personident) {
+  public HentPersoninfoRespons hentPersoninfo(String personident) {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
-    var hentPersoninfo = clientCredentialsRestTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_PERSONINFO, HttpMethod.POST,
-        new HttpEntity<>(forespørsel),
-        HentPersoninfoRespons.class);
-    return Optional.of(hentPersoninfo).map(ResponseEntity::getBody);
+    try {
+      var hentPersoninfo = clientCredentialsRestTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_PERSONINFO, HttpMethod.POST,
+          new HttpEntity<>(forespørsel),
+          HentPersoninfoRespons.class);
+      return hentPersoninfo.getBody();
+    } catch (HttpStatusCodeException hsce) {
+      SIKKER_LOGG.warn("Kall mot bidrag-person for henting av personinfo returnerte httpstatus {} for personident {}", hsce.getStatusCode(),
+          personident);
+      var feilkode = HttpStatus.NOT_FOUND.equals(hsce.getStatusCode()) ? PDL_PERSON_IKKE_FUNNET : PDL_FEIL;
+      throw new Persondatafeil(feilkode, hsce.getStatusCode());
+    }
   }
 }
