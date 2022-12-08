@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad.api.dto.ut;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,8 @@ public class ForespørselDto {
   private LocalDateTime opprettet;
   @Parameter(description = "Tidspunkt samtykke ble gitt")
   private LocalDateTime samtykket;
+  @Parameter(description = "Forespørselen må samtykkes innen")
+  private LocalDate samtykkefrist;
   @Parameter(description = "Tidspunkt for journalføring")
   private LocalDateTime journalført;
   @Parameter(description = "Tidspunkt for deaktivering")

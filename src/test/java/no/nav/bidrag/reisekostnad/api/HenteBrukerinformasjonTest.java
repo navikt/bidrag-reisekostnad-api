@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad.api;
 
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -174,6 +175,45 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     );
 
     sletteData();
+  }
+
+  @Test
+  void skalAngiFristForSamtykkeForForespørslerSomKreverSamtykke() {
+
+    // gitt
+    var påloggetPerson = testpersonGråtass;
+    httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+
+    var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+    when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+    var nyForespørsel = new NyForespørselDto(
+        Set.of(Krypteringsverktøy.kryptere(testpersonBarn16.getIdent()), Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
+
+    httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel), Void.class);
+
+    // hvis
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    // så
+    assertAll(
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(2),
+        () -> assertThat(
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.isKreverSamtykke()).findFirst()).isPresent(),
+        () -> assertThat(
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> !f.isKreverSamtykke()).findFirst()).isPresent()
+    );
+
+    var forespørselBarnUnder15 = brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.isKreverSamtykke()).findFirst();
+    var forespørselBarnOver15 = brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> !f.isKreverSamtykke()).findFirst();
+
+    assertAll(
+        () -> assertThat(forespørselBarnUnder15.get().getSamtykkefrist()).isEqualTo(
+            LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE)),
+        () -> assertThat(forespørselBarnOver15.get().getSamtykkefrist()).isNull()
+    );
   }
 
   @Test
