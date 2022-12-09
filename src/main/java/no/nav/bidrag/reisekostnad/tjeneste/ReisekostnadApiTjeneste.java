@@ -71,9 +71,9 @@ public class ReisekostnadApiTjeneste {
     return HttpResponse.from(HttpStatus.OK, null);
   }
 
-  public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personidentHovedpart) {
+  public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personident) {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
-    databasetjeneste.deaktivereForespørsel(idForespørsel, personidentHovedpart);
+    databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
     return HttpResponse.from(HttpStatus.OK, null);
   }
 
