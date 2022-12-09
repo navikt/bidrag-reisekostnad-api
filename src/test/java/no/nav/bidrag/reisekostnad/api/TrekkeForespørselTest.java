@@ -164,6 +164,7 @@ public class TrekkeForespørselTest extends KontrollerTest {
 
     assertAll(
         () -> assertThat(trukketForespørsel.getDeaktivert()).isNotNull(),
+        () -> assertThat(trukketForespørsel.getDeaktivertAv()).isEqualTo(Deaktivator.MOTPART),
         () -> assertThat(lagretForespørsel.isPresent()),
         () -> assertThat(lagretForespørsel.get().getDeaktivertAv()).isEqualTo(Deaktivator.MOTPART));
   }

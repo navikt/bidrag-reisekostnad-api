@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 
 @Builder
 @Getter
@@ -37,4 +38,6 @@ public class ForespørselDto {
   private LocalDateTime journalført;
   @Parameter(description = "Tidspunkt for deaktivering")
   private LocalDateTime deaktivert;
+  @Parameter(description = "Angir hvilken rolle har deaktivert forespørselen")
+  private Deaktivator deaktivertAv;
 }
