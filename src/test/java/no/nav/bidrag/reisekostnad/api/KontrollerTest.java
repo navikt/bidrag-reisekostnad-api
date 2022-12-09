@@ -154,21 +154,6 @@ public class KontrollerTest {
     return forespørselDao.save(forespørsel);
   }
 
-}
-
-@Value
-class Testperson {
-
-  String ident;
-  String fornavn;
-  LocalDate fødselsdato;
-
-  public Testperson(String ident, String fornavn, int alder) {
-    this.ident = ident;
-    this.fornavn = fornavn;
-    this.fødselsdato = LocalDate.now().minusYears(alder);
-  }
-
   protected void initTokenForPåloggetPerson(String personident){
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(personident));
 
@@ -184,22 +169,38 @@ class Testperson {
     }
 
     return results.stream().map((p)-> {
-        try {
-          return objectMapper.readValue(p.getBodyAsString(), OpprettJournalpostRequest.class);
-        } catch (JsonProcessingException e) {
-          return null;
-        }
-      }).filter(Objects::nonNull).collect(Collectors.toList());
+      try {
+        return objectMapper.readValue(p.getBodyAsString(), OpprettJournalpostRequest.class);
+      } catch (JsonProcessingException e) {
+        return null;
+      }
+    }).filter(Objects::nonNull).collect(Collectors.toList());
 
   }
 
   protected StubMapping stubArkiverDokumentFeiler(){
-   return WireMock.stubFor(
+    return WireMock.stubFor(
         WireMock.post(WireMock.urlEqualTo("/bidrag-dokument/journalpost/JOARK")).willReturn(
-                aResponse()
-                    .withHeader(HttpHeaders.CONNECTION, "close")
-                    .withStatus(HttpStatus.BAD_REQUEST.value())
+            aResponse()
+                .withHeader(HttpHeaders.CONNECTION, "close")
+                .withStatus(HttpStatus.BAD_REQUEST.value())
         )
     );
   }
+
+}
+
+@Value
+class Testperson {
+
+  String ident;
+  String fornavn;
+  LocalDate fødselsdato;
+
+  public Testperson(String ident, String fornavn, int alder) {
+    this.ident = ident;
+    this.fornavn = fornavn;
+    this.fødselsdato = LocalDate.now().minusYears(alder);
+  }
+
 }

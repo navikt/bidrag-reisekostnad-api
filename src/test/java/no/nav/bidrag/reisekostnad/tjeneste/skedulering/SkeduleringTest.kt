@@ -73,10 +73,34 @@ class SkeduleringTest {
             .samtykkefrist(LocalDate.now().plusDays(4))
             .build()
     }
+
+    @Test
+    @Transactional
+    fun skalArkivereFlereForespørsler(){
+        val forespørsel = oppprettForespørsel()
+        val forespørsel2 = oppprettForespørsel()
+        val forespørsel3 = oppprettForespørsel()
+        forespørselDao.save(forespørsel)
+        forespørselDao.save(forespørsel2)
+        forespørselDao.save(forespørsel3)
+        databehandler.arkiverForespørslerSomErKlareForInnsending()
+
+        assertSoftly {
+            forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
+            forespørsel2.journalført shouldHaveSameDayAs LocalDateTime.now()
+            forespørsel3.journalført shouldHaveSameDayAs LocalDateTime.now()
+            forespørsel.idJournalpost shouldBe "1232132132"
+            verifiserDokumentArkivertForForespørsel(forespørsel.id, 1)
+            verifiserDokumentArkivertForForespørsel(forespørsel2.id, 1)
+            verifiserDokumentArkivertForForespørsel(forespørsel3.id, 1)
+        }
+    }
     @Test
     @Transactional
     fun skalArkivereForespørslerSomIkkeKreverSamtykke(){
         val forespørsel = oppprettForespørsel()
+        forespørsel.isKreverSamtykke = false
+        forespørsel.samtykket = null
         forespørselDao.save(forespørsel)
         databehandler.arkiverForespørslerSomErKlareForInnsending()
 
@@ -84,6 +108,51 @@ class SkeduleringTest {
             forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel.idJournalpost shouldBe "1232132132"
             verifiserDokumentArkivertForForespørsel(forespørsel.id, 1)
+        }
+    }
+
+    @Test
+    @Transactional
+    fun skalArkivereForespørslerSomErSamtykket(){
+        val forespørsel = oppprettForespørsel()
+        forespørsel.isKreverSamtykke = true
+        forespørsel.samtykket = LocalDateTime.now()
+        forespørselDao.save(forespørsel)
+        databehandler.arkiverForespørslerSomErKlareForInnsending()
+
+        assertSoftly {
+            forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
+            forespørsel.idJournalpost shouldBe "1232132132"
+            verifiserDokumentArkivertForForespørsel(forespørsel.id, 1)
+        }
+    }
+
+    @Test
+    @Transactional
+    fun skalIkkeArkivereForespørslerSomIkkeErSamtykket(){
+        val forespørsel = oppprettForespørsel()
+        forespørsel.isKreverSamtykke = true
+
+        val forespørsel2 = oppprettForespørsel()
+        forespørsel2.isKreverSamtykke = true
+
+        val forespørselDeaktivert = oppprettForespørsel()
+        forespørselDeaktivert.deaktivert = LocalDateTime.now()
+        forespørselDao.save(forespørsel)
+        forespørselDao.save(forespørselDeaktivert)
+        forespørselDao.save(forespørsel2)
+        databehandler.arkiverForespørslerSomErKlareForInnsending()
+
+        assertSoftly {
+            forespørsel.journalført shouldBe null
+            forespørsel.idJournalpost shouldBe null
+            forespørsel2.journalført shouldBe null
+            forespørsel2.idJournalpost shouldBe null
+            forespørselDeaktivert.journalført shouldBe null
+            forespørselDeaktivert.idJournalpost shouldBe null
+            verifiserDokumentArkivertForForespørsel(forespørsel.id, 0)
+            verifiserDokumentArkivertForForespørsel(forespørselDeaktivert.id, 0)
+            verifiserDokumentArkivertForForespørsel(forespørsel2.id, 0)
         }
     }
 

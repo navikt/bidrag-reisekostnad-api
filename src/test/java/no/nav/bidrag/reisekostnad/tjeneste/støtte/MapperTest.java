@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Value;
@@ -242,9 +243,9 @@ public class MapperTest {
         .fornavn(BARN_UNDER_FEMTEN.getFornavn())
         .foedselsdato(BARN_UNDER_FEMTEN.getFødselsdato()).build());
 
-    when(bidragPersonkonsument.hentPersoninfo(BARN_OVER_ATTEN.getFødselsnummer())).thenReturn(Optional.of(HentPersoninfoRespons.builder()
+    when(bidragPersonkonsument.hentPersoninfo(BARN_OVER_ATTEN.getFødselsnummer())).thenReturn(HentPersoninfoRespons.builder()
         .fornavn(BARN_OVER_ATTEN.getFornavn())
-        .foedselsdato(BARN_OVER_ATTEN.getFødselsdato()).build()));
+        .foedselsdato(BARN_OVER_ATTEN.getFødselsdato()).build());
   }
 
   private HentFamilieRespons oppretteHentFamilieRespons(Testperson hovedpart, Testperson motpart) {

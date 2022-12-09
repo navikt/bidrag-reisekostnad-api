@@ -35,7 +35,6 @@ class Arkiveringstjeneste(
             val pdfDokument = opprettPdf(forespørsel)
             val referanseId = "$REISEKOSTNAD_REFERANSEIDPREFIKS$idForespørsel"
 
-//            saveToFile(pdfDokument)
             val respons = bidragDokumentkonsument.opprettJournalpost(forespørsel.hovedpart.personident, referanseId, pdfDokument)
             forespørsel.journalført = LocalDateTime.now()
             forespørsel.idJournalpost = respons.journalpostId
@@ -43,19 +42,6 @@ class Arkiveringstjeneste(
         } catch (e: Exception){
             log.error("Det skjedde en feil ved arkivering av dokument for forespørsel $idForespørsel", e)
         }
-    }
-
-    fun saveToFile(pdfDokument: ByteArray){
-        val targetFile = File.createTempFile("pdfdoc", "pdf")
-        org.apache.commons.io.FileUtils.writeByteArrayToFile(targetFile, pdfDokument)
-        val absolutePath: String = targetFile.toString()
-        println("Temp file : $absolutePath")
-
-        val separator = FileSystems.getDefault().separator
-        val tempFilePath = absolutePath
-            .substring(0, absolutePath.lastIndexOf(separator))
-
-        println("Temp file path : $tempFilePath")
     }
 
     private fun opprettPdf(forespørsel: Forespørsel): ByteArray {
