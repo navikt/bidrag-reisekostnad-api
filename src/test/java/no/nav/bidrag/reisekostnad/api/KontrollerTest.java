@@ -1,6 +1,9 @@
 package no.nav.bidrag.reisekostnad.api;
 
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import lombok.Value;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
@@ -9,7 +12,11 @@ import no.nav.bidrag.reisekostnad.Testkonfig;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao;
+import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
+import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
@@ -27,6 +34,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import java.util.Set;
 
 @ActiveProfiles(Profil.TEST)
 @EnableMockOAuth2Server
@@ -45,6 +53,7 @@ public class KontrollerTest {
   protected @Autowired ForespørselDao forespørselDao;
   protected @Autowired ForelderDao forelderDao;
   protected @Autowired BarnDao barnDao;
+  protected @Autowired Mapper mapper;
 
   protected static final String KONTROLLERKONTEKST = "/api/v1/reisekostnad";
   protected final static String ENDEPUNKT_BRUKERINFORMASJON = KONTROLLERKONTEKST + "/brukerinformasjon";
@@ -106,6 +115,22 @@ public class KontrollerTest {
     return "Bearer " + token.serialize();
   }
 
+  protected Forespørsel lagreForespørselForEttBarn(String personidentHovedpart, String personidentMotpart, String personidentBarn, boolean barnErUnder15){
+
+    var hovedpart = Forelder.builder().personident(personidentHovedpart).build();
+    var motpart = Forelder.builder().personident(personidentMotpart).build();
+    var barn = Barn.builder().personident(personidentBarn).build();
+    var forespørsel = Forespørsel.builder()
+        .opprettet(LocalDateTime.now())
+        .hovedpart(hovedpart)
+        .motpart(motpart)
+        .barn(Set.of(barn))
+        .kreverSamtykke(barnErUnder15)
+        .samtykkefrist(LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE))
+        .build();
+
+    return forespørselDao.save(forespørsel);
+  }
 
 }
 

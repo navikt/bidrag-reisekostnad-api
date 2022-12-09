@@ -3,9 +3,8 @@ package no.nav.bidrag.reisekostnad.feilhåndtering;
 public enum Feilkode {
 
   DATABASEFEIL("Feil ved lesing fra eller skriving til database"),
-
   INTERNFEIL("Intern feil har oppstått."),
-  VALIDERING_DEAKTIVERE_HOVEDPART("Fant ingen aktive forespørsler knyttet til oppgitt hovedpart."),
+  VALIDERING_DEAKTIVERE_PERSON_IKKE_PART_I_FORESPØRSEL("Personen er ikke part i forespørselen som ble forsøkt deaktivert"),
   VALIDERING_DEAKTIVERE_FEIL_STATUS("Den oppgitte forespørselen er allerede deaktivert"),
   KRYPTERING("Kryptering av personident feilet."),
   VALIDERING_PÅLOGGET_PERSON_DISKRESJON("Pålogget person har diskresjon. Kan ikke benytte løsningen."),
