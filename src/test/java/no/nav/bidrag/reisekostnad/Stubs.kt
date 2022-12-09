@@ -15,3 +15,7 @@ fun getBidragDokumentRequestPatternBuilder(forespørselId: Int?): RequestPattern
 fun verifiserDokumentArkivertForForespørsel(forespørselId: Int?) {
     WireMock.verify(getBidragDokumentRequestPatternBuilder(forespørselId))
 }
+
+fun verifiserDokumentIkkeArkivertForForespørsel(forespørselId: Int?) {
+    WireMock.verify(0, getBidragDokumentRequestPatternBuilder(forespørselId))
+}

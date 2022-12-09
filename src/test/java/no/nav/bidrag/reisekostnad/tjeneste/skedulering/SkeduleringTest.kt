@@ -14,6 +14,8 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
 import no.nav.bidrag.reisekostnad.getBidragDokumentRequestPatternBuilder
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil
 import no.nav.bidrag.reisekostnad.skedulering.Databehandler
+import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørsel
+import no.nav.bidrag.reisekostnad.verifiserDokumentIkkeArkivertForForespørsel
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -90,9 +92,9 @@ class SkeduleringTest {
             forespørsel2.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel3.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel.idJournalpost shouldBe "1232132132"
-            verifiserDokumentArkivertForForespørsel(forespørsel.id, 1)
-            verifiserDokumentArkivertForForespørsel(forespørsel2.id, 1)
-            verifiserDokumentArkivertForForespørsel(forespørsel3.id, 1)
+            verifiserDokumentArkivertForForespørsel(forespørsel.id)
+            verifiserDokumentArkivertForForespørsel(forespørsel2.id)
+            verifiserDokumentArkivertForForespørsel(forespørsel3.id)
         }
     }
     @Test
@@ -107,7 +109,7 @@ class SkeduleringTest {
         assertSoftly {
             forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel.idJournalpost shouldBe "1232132132"
-            verifiserDokumentArkivertForForespørsel(forespørsel.id, 1)
+            verifiserDokumentArkivertForForespørsel(forespørsel.id)
         }
     }
 
@@ -123,7 +125,7 @@ class SkeduleringTest {
         assertSoftly {
             forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel.idJournalpost shouldBe "1232132132"
-            verifiserDokumentArkivertForForespørsel(forespørsel.id, 1)
+            verifiserDokumentArkivertForForespørsel(forespørsel.id)
         }
     }
 
@@ -150,13 +152,9 @@ class SkeduleringTest {
             forespørsel2.idJournalpost shouldBe null
             forespørselDeaktivert.journalført shouldBe null
             forespørselDeaktivert.idJournalpost shouldBe null
-            verifiserDokumentArkivertForForespørsel(forespørsel.id, 0)
-            verifiserDokumentArkivertForForespørsel(forespørselDeaktivert.id, 0)
-            verifiserDokumentArkivertForForespørsel(forespørsel2.id, 0)
+            verifiserDokumentIkkeArkivertForForespørsel(forespørsel.id)
+            verifiserDokumentIkkeArkivertForForespørsel(forespørselDeaktivert.id)
+            verifiserDokumentIkkeArkivertForForespørsel(forespørsel2.id)
         }
-    }
-
-    protected fun verifiserDokumentArkivertForForespørsel(forespørselId: Int, antallGanger: Int = 1) {
-        WireMock.verify(antallGanger, getBidragDokumentRequestPatternBuilder(forespørselId))
     }
 }

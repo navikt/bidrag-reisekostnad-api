@@ -57,14 +57,14 @@ class Lokalkonfig {
       .extensions(new ResponseTemplateTransformer(false))
   );
 
-  @Bean
-  @Primary
-  public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor() {
-    return (request, body, execution) -> {
-      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
-      return execution.execute(request, body);
-    };
-  }
+//  @Bean
+//  @Primary
+//  public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor() {
+//    return (request, body, execution) -> {
+//      request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());
+//      return execution.execute(request, body);
+//    };
+//  }
 }
 
 

@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Familiemedlem;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentPersoninfoRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon;
+import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,8 @@ public class ReisekostnadApiTjenesteTest {
 
   @Mock
   private BidragPersonkonsument bidragPersonkonsument;
+  @Mock
+  private Arkiveringstjeneste arkiveringstjeneste;
   @Mock
   private Databasetjeneste databasetjeneste;
 
