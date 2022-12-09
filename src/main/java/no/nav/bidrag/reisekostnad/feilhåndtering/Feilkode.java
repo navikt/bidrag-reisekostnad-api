@@ -4,6 +4,7 @@ public enum Feilkode {
 
   ARKIVERINGSFEIL_OPPGITTE_DATA("Feil i data oppgitt til arkiveringstjenesten"),
   ARKIVERINGSFEIL("Feil ved arkivering av forespørsel"),
+  KAN_IKKE_ARKIVERE_FORESPØRSEL("Feil ved arkivering av forespørsel"),
   DATABASEFEIL("Feil ved lesing fra eller skriving til database"),
   INTERNFEIL("Intern feil har oppstått."),
   VALIDERING_DEAKTIVERE_PERSON_IKKE_PART_I_FORESPØRSEL("Personen er ikke part i forespørselen som ble forsøkt deaktivert"),

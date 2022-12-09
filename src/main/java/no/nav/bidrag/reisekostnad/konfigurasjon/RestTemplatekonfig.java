@@ -23,13 +23,13 @@ public class RestTemplatekonfig {
   }
 
   @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q})
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q, Profil.HENDELSE})
   public ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-dokument");
   }
 
   @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q})
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_Q, Profil.HENDELSE})
   public ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person");
   }

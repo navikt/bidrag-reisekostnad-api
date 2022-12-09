@@ -31,7 +31,7 @@
     <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
     <bidrag-commons-test.version>0.2.2</bidrag-commons-test.version>
     <bidrag-commons.version>0.7.21</bidrag-commons.version>
-    <bidrag-dokument-dto.version>1.5.17</bidrag-dokument-dto.version>
+    <bidrag-dokument-dto.version>1.5.18</bidrag-dokument-dto.version>
     <brukernotifikasjon-schemas.version>v2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.19.0</checker-qual.version>
     <classgraph.version>4.8.149</classgraph.version>
@@ -64,6 +64,8 @@
     <springdoc-openapi-ui.version>1.6.13</springdoc-openapi-ui.version>
     <token-support.version>2.1.7</token-support.version>
     <kotlin-logging-jvm.version>3.0.2</kotlin-logging-jvm.version>
+    <mockk.version>3.1.2</mockk.version>
+    <kotest.version>5.5.4</kotest.version>
     <wiremock-jre8-standalone.version>2.35.0</wiremock-jre8-standalone.version>
   </properties>
 
@@ -487,6 +489,19 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ninja-squad</groupId>
+      <artifactId>springmockk</artifactId>
+      <version>${mockk.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.kotest</groupId>
+      <artifactId>kotest-assertions-core-jvm</artifactId>
+      <version>${kotest.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -6,4 +6,5 @@ public interface Profil {
     String LOKAL_H2 = "lokal-h2";
     String LOKAL_POSTGRES = "lokal-postgres";
     String TEST = "test";
+    String HENDELSE = "hendelse";
 }

@@ -23,11 +23,11 @@ import org.springframework.web.client.RestTemplate
 class BidragDokumentkonsument(@Qualifier("bidrag-dokument-azure-client-credentials") private val restTemplate: RestTemplate) {
 
     companion object {
-        private const val BEHANDLINGSTEMA_REISEKOSTNADER = "ab0129"
-        private const val DOKUMENTTITTEL = "Fordeling av reisekostnader"
+        const val BEHANDLINGSTEMA_REISEKOSTNADER = "ab0129"
+        const val DOKUMENTTITTEL = "Fordeling av reisekostnader"
         const val KONTEKST_ROT_BIDRAG_DOKUMENT = "/bidrag-dokument"
     }
-    @Retryable(value = [RestClientException::class], maxAttempts = 3, backoff = Backoff(delay = 1000, multiplier = 2.0))
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 1000, multiplier = 2.0))
     fun opprettJournalpost(gjelderIdent: String, referanseid: String, dokumentByte: ByteArray): OpprettJournalpostResponse {
         val forespørsel = opprettJournalpostforespørsel(gjelderIdent, referanseid, dokumentByte)
         return try {

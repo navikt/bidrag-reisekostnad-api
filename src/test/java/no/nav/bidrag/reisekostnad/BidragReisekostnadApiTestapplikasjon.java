@@ -6,6 +6,7 @@ import com.google.common.net.HttpHeaders;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Profile;
 @ComponentScan(excludeFilters = {
     @ComponentScan.Filter(type = ASSIGNABLE_TYPE, value = {BidragReiesekostnadApiApplikasjon.class})})
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
+@EnableJwtTokenValidation(ignore = {"springfox.documentation.swagger.web.ApiResourceController"})
 public class BidragReisekostnadApiTestapplikasjon {
 
   public static void main(String... args) {

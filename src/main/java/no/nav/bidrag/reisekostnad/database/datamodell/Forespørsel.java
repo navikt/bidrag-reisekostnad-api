@@ -48,6 +48,7 @@ public class Forespørsel implements Serializable {
 
   private boolean kreverSamtykke;
 
+  private String idJournalpost;
   private LocalDateTime opprettet;
   private LocalDateTime samtykket;
   private LocalDate samtykkefrist;

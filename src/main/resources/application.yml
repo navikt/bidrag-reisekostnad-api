@@ -26,6 +26,7 @@ spring:
     database: postgresql
 
 no.nav.security.jwt:
+  dont-propagate-bearertoken: true
   client.registration:
     bidrag-person:
       token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}

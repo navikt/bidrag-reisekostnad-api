@@ -17,15 +17,14 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
   @Query("select f from Forespørsel f where f.motpart.personident = :personident and (f.deaktivert is null or f.deaktivert > :deaktivertEtter)")
   Set<Forespørsel> henteSynligeForespørslerHvorPersonErMotpart(String personident, LocalDateTime deaktivertEtter);
 
-  @Query("select f from Forespørsel f "
-      + "where f.id = :idForespørsel and f.deaktivert is null")
+  @Query("select f from Forespørsel f where f.id = :idForespørsel and f.deaktivert is null")
   Optional<Forespørsel> henteAktivForespørsel(int idForespørsel);
 
-  @Query("select f from Forespørsel f "
+  @Query("select f.id from Forespørsel f "
       + "where f.deaktivert is null and f.samtykket is not null and f.journalført is null")
   Set<Integer> henteAktiveOgSamtykkedeForespørslerSomErKlareForInnsending();
 
-  @Query("select f from Forespørsel  f "
+  @Query("select f.id from Forespørsel  f "
       + "where f.deaktivert is null and f.samtykket is null and f.journalført is null and f.kreverSamtykke is false")
   Set<Integer> henteAktiveForespørslerSomIkkeKreverSamtykkOgErKlareForInnsending();
 }

@@ -2,8 +2,12 @@ package no.nav.bidrag.reisekostnad.tjeneste
 
 import mu.KotlinLogging
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
+import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode
+import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.pdf.PdfGenerator
+import no.nav.bidrag.reisekostnad.model.erArkivert
+import no.nav.bidrag.reisekostnad.model.kanArkiveres
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper
 import org.springframework.stereotype.Service
 import java.io.File
@@ -16,27 +20,22 @@ private val log = KotlinLogging.logger {}
 
 @Service
 class Arkiveringstjeneste(
-    private val bidragDokumentkonsument: BidragDokumentkonsument,
-    private val mapper: Mapper,
-    private val databasetjeneste: Databasetjeneste
+    val bidragDokumentkonsument: BidragDokumentkonsument,
+    val mapper: Mapper,
+    val databasetjeneste: Databasetjeneste
 ) {
     @Transactional
     fun arkivereForespørsel(idForespørsel: Int) {
-        val forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel)
-        val pdfDokument = opprettPdf(forespørsel)
-        val referanseId = "$REISEKOSTNAD_REFERANSEIDPREFIKS$idForespørsel"
-//        val targetFile = File.createTempFile("pdfdoc", "pdf")
-//        val file = org.apache.commons.io.FileUtils.getFile("test.pdf")
-//        org.apache.commons.io.FileUtils.writeByteArrayToFile(targetFile, pdfDokument)
-//        val absolutePath: String = targetFile.toString()
-//        println("Temp file : $absolutePath")
-//
-//        val separator = FileSystems.getDefault().separator
-//        val tempFilePath = absolutePath
-//            .substring(0, absolutePath.lastIndexOf(separator))
-//
-//        println("Temp file path : $tempFilePath")
         try {
+            val forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel)
+
+            if (forespørsel.erArkivert) return
+            if (!forespørsel.kanArkiveres) throw Valideringsfeil(Feilkode.KAN_IKKE_ARKIVERE_FORESPØRSEL)
+
+            val pdfDokument = opprettPdf(forespørsel)
+            val referanseId = "$REISEKOSTNAD_REFERANSEIDPREFIKS$idForespørsel"
+
+//            saveToFile(pdfDokument)
             val respons = bidragDokumentkonsument.opprettJournalpost(forespørsel.hovedpart.personident, referanseId, pdfDokument)
             forespørsel.journalført = LocalDateTime.now()
             forespørsel.idJournalpost = respons.journalpostId
@@ -44,11 +43,23 @@ class Arkiveringstjeneste(
         } catch (e: Exception){
             log.error("Det skjedde en feil ved arkivering av dokument for forespørsel $idForespørsel", e)
         }
+    }
 
+    fun saveToFile(pdfDokument: ByteArray){
+        val targetFile = File.createTempFile("pdfdoc", "pdf")
+        org.apache.commons.io.FileUtils.writeByteArrayToFile(targetFile, pdfDokument)
+        val absolutePath: String = targetFile.toString()
+        println("Temp file : $absolutePath")
+
+        val separator = FileSystems.getDefault().separator
+        val tempFilePath = absolutePath
+            .substring(0, absolutePath.lastIndexOf(separator))
+
+        println("Temp file path : $tempFilePath")
     }
 
     private fun opprettPdf(forespørsel: Forespørsel): ByteArray {
-        val barn = mapper.tilPersonDto(forespørsel.barn)
+        val barn = forespørsel.barn.map { mapper.tilPersonDto(it?.personident) }.toSet()
         val hovedpart = mapper.tilPersonDto(forespørsel.hovedpart.personident)
         val motpart = mapper.tilPersonDto(forespørsel.motpart.personident)
         return PdfGenerator.genererePdf(barn, hovedpart, motpart)
