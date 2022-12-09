@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Mapper {
 
-  public static final String PERSON_IKKE_FUNNET = "UKJENT";
   private ModelMapper modelMapper = new ModelMapper();
   private ForespørselDao forespørselDao;
   private BidragPersonkonsument bidragPersonkonsument;
@@ -108,7 +107,7 @@ public class Mapper {
   }
 
   private Set<MotpartBarnRelasjon> filtrereBortEnheterDerMotpartHarDiskresjon(List<MotpartBarnRelasjon> motpartBarnRelasjons) {
-    return motpartBarnRelasjons.stream().filter(Objects::nonNull).filter(m -> StringUtils.isEmpty(m.getMotpart().getDiskresjonskode()))
+    return motpartBarnRelasjons.stream().filter(Objects::nonNull).filter(m -> m.getMotpart() != null && StringUtils.isEmpty(m.getMotpart().getDiskresjonskode()))
         .collect(Collectors.toSet());
   }
 
@@ -118,7 +117,7 @@ public class Mapper {
   }
 
   private Set<PersonDto> henteBarnOverFemtenÅr(Set<MotpartBarnRelasjon> motpartBarnRelasjoner) {
-    return motpartBarnRelasjoner.stream().filter(Objects::nonNull).flatMap(mbr -> mbr.getFellesBarn().stream()).filter(this::erMinstFemtenÅr)
+    return motpartBarnRelasjoner.stream().filter(Objects::nonNull).flatMap(mbr -> mbr.getFellesBarn().stream()).filter(this::erMellomFemtenOgAttenÅr)
         .filter(this::erIkkeDød).map(this::tilDto).collect(Collectors.toSet());
   }
 
@@ -126,13 +125,14 @@ public class Mapper {
     return familiemedlem.getDoedsdato() == null || LocalDate.now().isBefore(familiemedlem.getDoedsdato());
   }
 
-  private boolean erMinstFemtenÅr(Familiemedlem barn) {
+  private boolean erMellomFemtenOgAttenÅr(Familiemedlem barn) {
 
     if (barn == null || barn.getFoedselsdato() == null) {
       return false;
     }
 
-    return barn.getFoedselsdato().isBefore(LocalDate.now().plusDays(1).minusYears(15));
+    return barn.getFoedselsdato().isBefore(LocalDate.now().plusDays(1).minusYears(15))
+        && barn.getFoedselsdato().isAfter(LocalDate.now().minusYears(18));
   }
 
   private boolean erUnderFemtenÅr(Familiemedlem barn) {
@@ -161,6 +161,12 @@ public class Mapper {
   }
 
   private Set<ForespørselDto> tilForespørselDto(Set<Forespørsel> forespørsler) {
+
+    for (Forespørsel f:forespørsler) {
+      var t = tilForespørselDto(f);
+      assert(true);
+    }
+
     return forespørsler.stream().filter(Objects::nonNull).map(this::tilForespørselDto).collect(Collectors.toSet());
   }
 

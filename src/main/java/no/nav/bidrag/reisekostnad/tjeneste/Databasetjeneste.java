@@ -11,12 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao;
+import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,17 +84,19 @@ public class Databasetjeneste {
   }
 
   @Transactional
-  public void deaktivereForespørsel(int idForespørsel, String personidentHovedpart) {
+  public void deaktivereForespørsel(int idForespørsel, String personident) {
     log.info("Deaktiverer forespørsel med id {}", idForespørsel);
     var forespørsel = forespørselDao.henteAktivForespørsel(idForespørsel);
-    if (forespørsel.isPresent() && personidentHovedpart.equals(forespørsel.get().getHovedpart().getPersonident())) {
+    if (forespørsel.isPresent() && erPartIForespørsel(personident, forespørsel.get())) {
       var nå = LocalDateTime.now();
-      SIKKER_LOGG.info("Hovedpart (ident: {}) deaktiverer forespørsel med id {}", personidentHovedpart, idForespørsel);
+      var deaktivertAv = erHovedpart(personident, forespørsel.get()) ? Deaktivator.HOVEDPART : Deaktivator.MOTPART;
+      SIKKER_LOGG.info("Forelder med ident: {} deaktiverer forespørsel med id {}", personident, idForespørsel);
       forespørsel.get().setDeaktivert(nå);
+      forespørsel.get().setDeaktivertAv(deaktivertAv);
     } else if (forespørsel.isEmpty()) {
       throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_FEIL_STATUS);
     } else {
-      throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_HOVEDPART);
+      throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_PERSON_IKKE_PART_I_FORESPØRSEL);
     }
   }
 
@@ -120,5 +124,14 @@ public class Databasetjeneste {
     aktiveForespørslerMedSamtykke.addAll(aktiveForespørslerUtenSamtykke);
 
     return aktiveForespørslerMedSamtykke;
+  }
+
+  private boolean erHovedpart(String personident, Forespørsel forespørsel) {
+    return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident()));
+  }
+
+  private boolean erPartIForespørsel(String personident, Forespørsel forespørsel) {
+    return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident())
+        || personident.equals(forespørsel.getMotpart().getPersonident()));
   }
 }

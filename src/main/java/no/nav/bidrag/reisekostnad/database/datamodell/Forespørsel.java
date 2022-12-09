@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -44,7 +46,6 @@ public class Forespørsel implements Serializable {
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Barn> barn = new HashSet<>();
 
-  private String idJournalpost;
   private boolean kreverSamtykke;
 
   private LocalDateTime opprettet;
@@ -52,6 +53,8 @@ public class Forespørsel implements Serializable {
   private LocalDate samtykkefrist;
   private LocalDateTime journalført;
   private LocalDateTime deaktivert;
+  @Enumerated(EnumType.STRING)
+  private Deaktivator deaktivertAv;
 
   @Override
   public int hashCode() {
