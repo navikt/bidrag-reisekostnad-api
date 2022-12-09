@@ -193,6 +193,4 @@ public class TrekkeForespørselTest extends KontrollerTest {
     assertThat(responsOpprett.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
   }
-
-
 }
