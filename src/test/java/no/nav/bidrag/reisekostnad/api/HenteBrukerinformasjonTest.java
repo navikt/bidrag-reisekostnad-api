@@ -49,10 +49,10 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     // så
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
-        () -> AssertionsForClassTypes.assertThat(
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
+        () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
+        () -> assertThat(
             brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
                 .size()).isEqualTo(1));
 
@@ -62,12 +62,12 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
-        () -> AssertionsForClassTypes.assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
+        () -> assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
   }
 
   @Test
@@ -88,13 +88,13 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(true),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isKanSøkeOmFordelingAvReisekostnader()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(true),
+        () -> assertThat(brukerinformasjon.getBody().isKanSøkeOmFordelingAvReisekostnader()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
   }
 
@@ -268,12 +268,12 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.UKJENT),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(true),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(true),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
     );
   }
@@ -295,12 +295,12 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(true),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(true),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
     );
   }
@@ -320,7 +320,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
 
     // så vil
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getHeaders().get("Warning").get(0)).isEqualTo(Feilkode.PDL_PERSON_DØD.name()),
+        () -> assertThat(brukerinformasjon.getHeaders().get("Warning").get(0)).isEqualTo(Feilkode.PDL_PERSON_DØD.name()),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN)
     );
   }
@@ -342,12 +342,12 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.KVINNE),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
     );
   }
@@ -369,38 +369,38 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.KVINNE),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
     );
 
     var familieenhet = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst();
 
-    AssertionsForClassTypes.assertThat(familieenhet).isPresent();
+    assertThat(familieenhet).isPresent();
 
     var motpart = familieenhet.get().getMotpart();
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(motpart.getFødselsdato()).isEqualTo(LocalDate.now().minusYears(38)),
-        () -> AssertionsForClassTypes.assertThat(motpart.getFornavn()).isEqualTo("Streng"),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(motpart.getIdent())).isEqualTo("11111122222")
+        () -> assertThat(motpart.getFødselsdato()).isEqualTo(LocalDate.now().minusYears(38)),
+        () -> assertThat(motpart.getFornavn()).isEqualTo("Streng"),
+        () -> assertThat(Krypteringsverktøy.dekryptere(motpart.getIdent())).isEqualTo("11111122222")
     );
 
     var barnUnder15 = familieenhet.get().getFellesBarnUnder15År();
 
-    AssertionsForClassTypes.assertThat(barnUnder15.size()).isEqualTo(1);
+    assertThat(barnUnder15.size()).isEqualTo(1);
 
     var barnetSomLever = barnUnder15.stream().findFirst();
 
     assertAll(
-        () -> AssertionsForClassTypes.assertThat(barnetSomLever).isPresent(),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnetSomLever.get().getIdent())).isEqualTo("33333355555"),
-        () -> AssertionsForClassTypes.assertThat(barnetSomLever.get().getFornavn()).isEqualTo("Småstein"),
-        () -> AssertionsForClassTypes.assertThat(barnetSomLever.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10))
+        () -> assertThat(barnetSomLever).isPresent(),
+        () -> assertThat(Krypteringsverktøy.dekryptere(barnetSomLever.get().getIdent())).isEqualTo("33333355555"),
+        () -> assertThat(barnetSomLever.get().getFornavn()).isEqualTo("Småstein"),
+        () -> assertThat(barnetSomLever.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10))
     );
   }
 }
