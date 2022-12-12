@@ -211,6 +211,36 @@
         <artifactId>bidrag-commons</artifactId>
         <version>${bidrag-commons.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>3.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>2.0.6</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>3.0.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.shared</groupId>
+        <artifactId>maven-shared-utils</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sonatype.sisu</groupId>
+        <artifactId>sisu-inject-plexus</artifactId>
+        <version>2.2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>3.0.5</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -342,11 +372,6 @@
       <artifactId>modelmapper</artifactId>
       <version>${modelmapper.version}</version>
     </dependency>
-      <dependency>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-maven-lombok</artifactId>
-        <version>${kotlin.version}</version>
-      </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -497,6 +522,12 @@
       <artifactId>springmockk</artifactId>
       <version>${mockk.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.objenesis</groupId>
+          <artifactId>objenesis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.kotest</groupId>
@@ -515,18 +546,6 @@
         <version>${kotlin.version}</version>
         <executions>
           <execution>
-            <id>test-compile</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>test-compile</goal>
-            </goals>
-            <configuration>
-              <sourceDirs>
-                <source>src/test/kotlin</source>
-              </sourceDirs>
-            </configuration>
-          </execution>
-          <execution>
             <id>compile</id>
             <phase>process-sources</phase>
             <goals>
@@ -535,7 +554,18 @@
             <configuration>
               <sourceDirs>
                 <source>src/main/java</source>
-                <source>src/main/kotlin</source>
+              </sourceDirs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>process-test-sources</phase>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+            <configuration>
+              <sourceDirs>
+                <source>src/test/java</source>
               </sourceDirs>
             </configuration>
           </execution>
@@ -564,7 +594,7 @@
           </dependency>
           <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-maven-noarg</artifactId>
+            <artifactId>kotlin-maven-lombok</artifactId>
             <version>${kotlin.version}</version>
           </dependency>
         </dependencies>
