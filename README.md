@@ -46,8 +46,13 @@ Logg inn til GCP og konfigurer kubectl til å gå mot kluster `dev-gcp`
 ```bash
 gcloud auth login --update-adc
 
+# Sett cluster til dev-gcp
 kubectx dev-gcp
-#eller
+# Sett namespace til bidrag
+kubens bidrag 
+
+# -- Eller hvis du ikke har kubectx/kubens installert 
+# (da må -n=bidrag legges til etter exec i neste kommando)
 kubectl config use dev-gcp
 ```
 Deretter kjør følgende kommando for å importere secrets. Viktig at filen som opprettes ikke committes til git
@@ -57,3 +62,9 @@ kubectl exec --tty deployment/bidrag-reisekostnad-api printenv | grep -E 'AZURE_
 ```
 
 Deretter holder det med å kjøre [BidragReisekostnadApiLokalSky](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalSky.java)
+Dette vil starte opp applikasjonen lokalt med `H2` database. 
+
+Api kall kan testet ved å først hente token fra https://bidrag-reisekostnad.dev.nav.no/api/dev/session - `reisekostnad_api_token`. 
+Du må logge inn med en fødselsnummer hentet fra https://dolly.nais-dev-fss.adeo.no -> Test Norge
+
+Deretter kan tokenet brukes til å logge inn på swagger-ui http://localhost:8080/swagger-ui/index.html og teste ut ulike api kall
