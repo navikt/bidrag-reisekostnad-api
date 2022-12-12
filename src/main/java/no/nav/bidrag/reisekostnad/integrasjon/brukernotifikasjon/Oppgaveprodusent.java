@@ -43,9 +43,7 @@ public class Oppgaveprodusent {
 
     if (farsAktiveSigneringsoppgaver.isEmpty()) {
       log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
-
       oppretteOppgave(nokkel, melding);
-
       log.info("Samtykkeoppgave opprettet for forespørsel med id {}.", idForespørsel);
       databasetjeneste.lagreNyOppgavebestilling(idForespørsel, nokkel.getEventId());
     }
