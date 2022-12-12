@@ -2,36 +2,34 @@ package no.nav.bidrag.reisekostnad;
 
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
-import com.google.common.net.HttpHeaders;
-import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
-import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
-
-@EntityScan("no.nav.bidrag.reisekostnad.database")
+@Slf4j
+@Profile(Profil.LOKAL_SKY)
+@EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
+@EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"},
+    topics = {"aapen-brukernotifikasjon-nyBeskjed-v1", "aapen-brukernotifikasjon-done-v1", "aapen-brukernotifikasjon-nyOppgave-v1"})
 @ComponentScan(excludeFilters = {
     @ComponentScan.Filter(type = ASSIGNABLE_TYPE, value = {BidragReiesekostnadApiApplikasjon.class})})
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
-@EnableJwtTokenValidation(ignore = {"springfox.documentation.swagger.web.ApiResourceController"})
-public class BidragReisekostnadApiTestapplikasjon {
+public class BidragReisekostnadApiLokalSky {
 
   public static void main(String... args) {
-    String profile = args.length < 1 ? Profil.TEST : args[0];
-    SpringApplication app = new SpringApplication(BidragReisekostnadApiTestapplikasjon.class);
-    app.setAdditionalProfiles(profile);
+    SpringApplication app = new SpringApplication(BidragReisekostnadApiLokalTestapplikasjon.class);
+    app.setAdditionalProfiles(Profil.LOKAL_SKY, Profil.LOKAL_H2, "lokal-sky-secrets");
     app.run(args);
   }
 }
+
 

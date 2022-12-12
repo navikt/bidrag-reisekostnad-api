@@ -30,11 +30,14 @@ public class ReisekostnadApiTjeneste {
 
   private final BidragPersonkonsument bidragPersonkonsument;
   private Databasetjeneste databasetjeneste;
+
+  private Arkiveringstjeneste arkiveringstjeneste;
   private final Mapper mapper;
 
   @Autowired
-  public ReisekostnadApiTjeneste(BidragPersonkonsument bidragPersonkonsument, Databasetjeneste databasetjeneste, Mapper mapper) {
+  public ReisekostnadApiTjeneste(BidragPersonkonsument bidragPersonkonsument, Databasetjeneste databasetjeneste, Mapper mapper, Arkiveringstjeneste arkiveringstjeneste) {
     this.bidragPersonkonsument = bidragPersonkonsument;
+    this.arkiveringstjeneste = arkiveringstjeneste;
     this.databasetjeneste = databasetjeneste;
     this.mapper = mapper;
   }
@@ -68,6 +71,7 @@ public class ReisekostnadApiTjeneste {
   public HttpResponse<Void> oppdatereForespørselMedSamtykke(int idForespørsel, String personidentMotpart) {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller oppdatering av samtykke  feiler
     databasetjeneste.giSamtykke(idForespørsel, personidentMotpart);
+    arkiveringstjeneste.arkivereForespørsel(idForespørsel);
     return HttpResponse.from(HttpStatus.OK, null);
   }
 
@@ -111,12 +115,21 @@ public class ReisekostnadApiTjeneste {
     var barnUnder15År = barn.stream().filter(b -> !erPersonOver15År(b)).collect(Collectors.toSet());
 
     if (barnOver15År.size() > 0) {
-      databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barnOver15År, false);
+      lagreNyForespørsel(hovedperson, motpart, barnOver15År, false);
     }
 
     if (barnUnder15År.size() > 0) {
-      databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
+      lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
     }
+  }
+
+
+  private void lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke){
+    var forespørselId = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barn, kreverSamtykke);
+    if (!kreverSamtykke){
+      arkiveringstjeneste.arkivereForespørsel(forespørselId);
+    }
+
   }
 
   private void validereRelasjonTilBarn(Set<String> personidenterBarn, Optional<HentFamilieRespons> familieRespons) {
@@ -152,12 +165,8 @@ public class ReisekostnadApiTjeneste {
 
   private boolean erPersonOver15År(String personident) {
     var respons = bidragPersonkonsument.hentPersoninfo(personident);
-    if (respons.isPresent()) {
-      var fødselsdato = respons.get().getFoedselsdato();
-      return fødselsdato != null && fødselsdato.isBefore(LocalDate.now().minusYears(15));
-    } else {
-      return false;
-    }
+    var fødselsdato = respons.getFoedselsdato();
+    return fødselsdato != null && fødselsdato.isBefore(LocalDate.now().minusYears(15));
   }
 
   private Set<String> filtrereUtBarnOver15År(Set<String> alleBarn) {

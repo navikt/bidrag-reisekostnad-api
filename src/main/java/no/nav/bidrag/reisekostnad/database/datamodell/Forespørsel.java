@@ -45,7 +45,10 @@ public class Forespørsel implements Serializable {
   @JoinColumn(name = "forespørsel_id")
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Barn> barn = new HashSet<>();
+
   private boolean kreverSamtykke;
+
+  private String idJournalpost;
   private LocalDateTime opprettet;
   private LocalDateTime samtykket;
   private LocalDate samtykkefrist;

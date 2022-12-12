@@ -57,8 +57,12 @@ spec:
       value: prod, i-sky
     - name: BIDRAG_PERSON_SCOPE
       value: prod-fss.bidrag.bidrag-person
+    - name: BIDRAG_DOKUMENT_SCOPE
+      value: prod-fss.bidrag.bidrag-dokument
     - name: BIDRAG_PERSON_URL
-      value: https://bidrag-person.intern.nav.no
+      value: https://bidrag-person.prod-fss-pub.nais.io
+    - name: BIDRAG_DOKUMENT_URL
+      value: https://bidrag-dokument.prod-fss-pub.nais.io
     - name: POSTGRES_INSTANSEURL
       value: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
     - name: KJOEREPLAN_ARKIVERING

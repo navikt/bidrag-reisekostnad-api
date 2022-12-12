@@ -2,12 +2,27 @@ package no.nav.bidrag.reisekostnad.api;
 
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.matching.ContainsPattern;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.Value;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
+import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest;
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon;
+import no.nav.bidrag.reisekostnad.StubsKt;
 import no.nav.bidrag.reisekostnad.Testkonfig;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
@@ -18,6 +33,8 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.token.support.client.core.ClientProperties;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +49,7 @@ import org.springframework.boot.web.servlet.context.ServletWebServerApplicationC
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import java.util.Set;
@@ -58,16 +76,19 @@ public class KontrollerTest {
   protected static final String KONTROLLERKONTEKST = "/api/v1/reisekostnad";
   protected final static String ENDEPUNKT_BRUKERINFORMASJON = KONTROLLERKONTEKST + "/brukerinformasjon";
   protected final static String ENDEPUNKT_NY_FORESPØRSEL = KONTROLLERKONTEKST + "/forespoersel/ny";
+  protected final static String ENDEPUNKT_SAMTYKKE_FORESPØRSEL = KONTROLLERKONTEKST + "/forespoersel/samtykke";
   protected final static String ENDEPUNKT_TREKKE_FORESPØRSEL = KONTROLLERKONTEKST + "/forespoersel/trekke";
 
   protected String urlBrukerinformasjon;
   protected String urlNyForespørsel;
+  protected String urlSamtykkeForespørsel;
   protected String urlTrekkeForespørsel;
 
   @BeforeEach
   public void oppsett() {
     urlBrukerinformasjon = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_BRUKERINFORMASJON;
     urlNyForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_NY_FORESPØRSEL;
+    urlSamtykkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_SAMTYKKE_FORESPØRSEL;
     urlTrekkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_TREKKE_FORESPØRSEL + "?id=%s";
   }
 
@@ -84,6 +105,7 @@ public class KontrollerTest {
   protected static Testperson testpersonDødMotpart = new Testperson("445132456487", "Bunkers", 41);
   protected static Testperson testpersonServerfeil = new Testperson("12000001231", "Feil", 78);
 
+  protected static String opprettetJournalpostId = "1232132132";
   protected static class CustomHeader {
 
     String headerName;
@@ -132,6 +154,40 @@ public class KontrollerTest {
     return forespørselDao.save(forespørsel);
   }
 
+  protected void initTokenForPåloggetPerson(String personident){
+    httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(personident));
+
+    var a = new OAuth2AccessTokenResponse(generereTesttoken(personident), 1000, 1000, null);
+    when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+  }
+
+  protected List<OpprettJournalpostRequest> hentOpprettDokumentRequestBodyForForespørsel(Integer forespørselId){
+    var objectMapper = new ObjectMapper().findAndRegisterModules();
+    var results = WireMock.findAll(StubsKt.getBidragDokumentRequestPatternBuilder(forespørselId));
+    if (results.isEmpty()){
+      return null;
+    }
+
+    return results.stream().map((p)-> {
+      try {
+        return objectMapper.readValue(p.getBodyAsString(), OpprettJournalpostRequest.class);
+      } catch (JsonProcessingException e) {
+        return null;
+      }
+    }).filter(Objects::nonNull).collect(Collectors.toList());
+
+  }
+
+  protected StubMapping stubArkiverDokumentFeiler(){
+    return WireMock.stubFor(
+        WireMock.post(WireMock.urlEqualTo("/bidrag-dokument/journalpost/JOARK")).willReturn(
+            aResponse()
+                .withHeader(HttpHeaders.CONNECTION, "close")
+                .withStatus(HttpStatus.BAD_REQUEST.value())
+        )
+    );
+  }
+
 }
 
 @Value
@@ -146,4 +202,5 @@ class Testperson {
     this.fornavn = fornavn;
     this.fødselsdato = LocalDate.now().minusYears(alder);
   }
+
 }

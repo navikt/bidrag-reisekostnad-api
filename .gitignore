@@ -29,3 +29,5 @@ build/
 test_VS_decrypt_*
 *.pdf
 dependencies.txt
+
+application-lokal-sky-secrets.properties

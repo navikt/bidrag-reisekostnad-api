@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Profil.DATABASES_AND_NOT_LOKAL_SKY;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
@@ -21,6 +22,7 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -44,7 +46,7 @@ public class BidragReisekostnadApiLokalTestapplikasjon {
 }
 
 @Configuration
-@Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
+@Profile(DATABASES_AND_NOT_LOKAL_SKY)
 @EnableMockOAuth2Server
 class Lokalkonfig {
 
@@ -57,6 +59,7 @@ class Lokalkonfig {
   );
 
   @Bean
+  @Primary
   public ClientHttpRequestInterceptor clientCredentialsTokenInterceptor() {
     return (request, body, execution) -> {
       request.getHeaders().setBearerAuth(mockOAuth2Server.issueToken().serialize());

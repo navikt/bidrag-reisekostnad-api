@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/bidrag-dokument/journalpost/JOARK"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"journalpostId\": \"1232132132\"}",
+    "transformers": ["response-template"],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

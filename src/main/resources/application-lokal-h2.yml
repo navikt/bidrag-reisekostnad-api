@@ -7,6 +7,9 @@ spring:
   main.allow-bean-definition-overriding: true
   datasource.type: com.zaxxer.hikari.HikariDataSource
 
+---
+spring:
+  config.activate.on-profile: (lokal-h2 | lokal-postgres) & !lokal-sky
 wiremock.server:
   port: 0
   stubs: "file:src/test/java/resources/mappings"
@@ -35,7 +38,9 @@ KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
 
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
-BIDRAG_PERSON_URL: ${WIREMOCK_URL}
+integrasjon.bidrag:
+  dokument.url: ${WIREMOCK_URL}
+  person.url: ${WIREMOCK_URL}
 
 ---
 spring:
