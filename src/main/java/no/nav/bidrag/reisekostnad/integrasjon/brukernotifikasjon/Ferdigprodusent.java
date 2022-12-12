@@ -34,7 +34,6 @@ public class Ferdigprodusent {
       } catch (Exception e) {
         throw new InternFeil(Feilkode.BRUKERNOTIFIKASJON_OPPRETTE_OPPGAVE, e);
       }
-
       log.info("Ferdigmelding ble sendt for oppgave med eventId {}.");
       databasetjeneste.setteOppgaveTilFerdigstilt(nokkel.getEventId());
     } else {
