@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
@@ -128,10 +127,6 @@ public class PdfGenerator {
     detaljerFørsteBarn
         .getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspråk)).first()
         .text(String.format(tekstformatBarnFødselsdato, dekryptere(barn1.getIdent())));
-//
-//    detaljerFørsteBarn
-//        .getElementsByClass(henteElementnavn(Elementnavn.FØDSELSDATO, skriftspråk)).first()
-//        .text(String.format(tekstformatBarnFødselsdato, barn1.getFødselsdato().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
 
     var antallBarn = 1;
 
