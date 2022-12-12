@@ -1,0 +1,38 @@
+server.port: 9898
+
+no.nav.security.jwt:
+  client.registration:
+    bidrag-person:
+      token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+      grant-type: client_credentials
+      scope: api://${BIDRAG_PERSON_SCOPE}/.default
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
+    bidrag-dokument:
+      token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+      grant-type: client_credentials
+      scope: api://${BIDRAG_DOKUMENT_SCOPE}/.default
+      authentication:
+        client-id: ${AZURE_APP_CLIENT_ID}
+        client-secret: ${AZURE_APP_CLIENT_SECRET}
+        client-auth-method: client_secret_basic
+    bidrag-person_tokenx:
+      well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      token-exchange:
+        audience: ${BIDRAG_PERSON_SCOPE}
+      authentication:
+        client-id: ${TOKEN_X_CLIENT_ID}
+        client-jwk: ${TOKEN_X_PRIVATE_JWK}
+        client-auth-method: private_key_jwt
+  issuer:
+    tokenx:
+      discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
+      accepted_audience: ${TOKEN_X_CLIENT_ID}
+
+
+integrasjon.bidrag:
+  dokument.url: ${BIDRAG_DOKUMENT_URL}
+  person.url: ${BIDRAG_PERSON_URL}

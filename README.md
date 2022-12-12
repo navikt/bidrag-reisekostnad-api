@@ -38,3 +38,22 @@ Flyt for tedsting av forespoersel/ny-endepunktet fra lokal Swagger:
  - Sette cookie med tokenx som issuer for Swagger: http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
  - h2-konsoll: http://localhost:8080/h2-console/login.jsp (passord blankt)
 
+#### Kjøre lokalt mot sky
+For å kunne kjøre lokalt mot sky må du gjøre følgende
+
+Åpne terminal på root mappen til `bidrag-reisekostnad-api`
+Logg inn til GCP og konfigurer kubectl til å gå mot kluster `dev-gcp`
+```bash
+gcloud auth login --update-adc
+
+kubectx dev-gcp
+#eller
+kubectl config use dev-gcp
+```
+Deretter kjør følgende kommando for å importere secrets. Viktig at filen som opprettes ikke committes til git
+
+```bash
+kubectl exec --tty deployment/bidrag-reisekostnad-api printenv | grep -E 'AZURE_APP_CLIENT_ID|AZURE_APP_CLIENT_SECRET|TOKEN_X|BIDRAG_PERSON_URL|BIDRAG_DOKUMENT_URL|SCOPE|AZURE_OPENID_CONFIG_TOKEN_ENDPOINT|AZURE_APP_TENANT_ID|AZURE_APP_WELL_KNOWN_URL' > src/main/resources/application-lokal-sky-secrets.properties
+```
+
+Deretter holder det med å kjøre [BidragReisekostnadApiLokalSky](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalSky.java)
