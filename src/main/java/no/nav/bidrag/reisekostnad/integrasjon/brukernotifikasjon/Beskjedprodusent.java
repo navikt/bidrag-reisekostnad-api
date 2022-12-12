@@ -1,7 +1,6 @@
 package no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon;
 
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
-
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -60,4 +59,4 @@ public class Beskjedprodusent {
         .withTekst(meldingTilBruker)
         .build();
   }
-}
+̋}
