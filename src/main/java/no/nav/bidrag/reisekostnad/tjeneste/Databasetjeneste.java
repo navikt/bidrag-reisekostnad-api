@@ -170,7 +170,7 @@ public class Databasetjeneste {
     }
   }
 
-  public Set<Oppgavebestilling> henteMotpartsAktiveOppgaver(int idForespørsel, String personidentMotpart) {
+  public Set<Oppgavebestilling> henteAktiveOppgaverMotpart(int idForespørsel, String personidentMotpart) {
     return oppgavebestillingDao.henteAktiveOppgaver(idForespørsel, personidentMotpart);
   }
 }

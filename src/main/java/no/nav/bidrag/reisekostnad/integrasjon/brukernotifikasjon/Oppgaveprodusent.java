@@ -40,7 +40,7 @@ public class Oppgaveprodusent {
 
     var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), medEksternVarsling, farskapsportalUrl);
 
-    var farsAktiveSigneringsoppgaver = databasetjeneste.henteMotpartsAktiveOppgaver(idForespørsel, personidentMotpart);
+    var farsAktiveSigneringsoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
     if (farsAktiveSigneringsoppgaver.isEmpty()) {
       log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
