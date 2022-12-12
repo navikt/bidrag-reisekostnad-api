@@ -78,3 +78,16 @@ integrasjon.bidrag:
   person.url: ${BIDRAG_PERSON_URL}
 
 kjøreplan.databehandling.arkivering: ${KJOEREPLAN_ARKIVERING}
+
+egenskaper:
+  appnavn-reisekostnad: bidrag-reisekostnad
+  url-reisekostnad: ${URL_BIDRAG_REISEKOSTNAD_UI_OVERSIKT}
+  brukernotifikasjon:
+    emne-beskjed: "min-side.aapen-brukernotifikasjon-beskjed-v1"
+    emne-ferdig: "min-side.aapen-brukernotifikasjon-done-v1"
+    emne-oppgave: "min-side.aapen-brukernotifikasjon-oppgave-v1"
+    grupperingsid-reisekostnad: reisekostnad,
+    synlighet-beskjed-antall-maaneder: 1
+    levetid-oppgave-antall-dager: 30
+    sikkerhetsnivaa-beskjed: 3
+    sikkerhetsnivaa-oppgave: 3

@@ -11,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao;
+import no.nav.bidrag.reisekostnad.database.dao.OppgavebestillingDao;
 import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
+import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
@@ -29,13 +31,16 @@ public class Databasetjeneste {
   private BarnDao barnDao;
   private ForelderDao forelderDao;
   private ForespørselDao forespørselDao;
+  private OppgavebestillingDao oppgavebestillingDao;
   private Mapper mapper;
 
   @Autowired
-  public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, Mapper mapper) {
+  public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, OppgavebestillingDao oppgavebestillingDao,
+      Mapper mapper) {
     this.barnDao = barnDao;
     this.forelderDao = forelderDao;
     this.forespørselDao = forespørselDao;
+    this.oppgavebestillingDao = oppgavebestillingDao;
     this.mapper = mapper;
   }
 
@@ -111,7 +116,25 @@ public class Databasetjeneste {
 
   @Transactional
   public void oppdatereInnsendingsstatus(int idForespørsel) {
+  }
 
+  public Oppgavebestilling lagreNyOppgavebestilling(int idFarskapserklaering, String eventId) {
+    var forespørsel = henteForespørselForId(idFarskapserklaering);
+
+    var oppgavebestilling = Oppgavebestilling.builder()
+        .forespørsel(forespørsel)
+        .forelder(forespørsel.getMotpart())
+        .eventId(eventId)
+        .opprettet(LocalDateTime.now()).build();
+    return oppgavebestillingDao.save(oppgavebestilling);
+  }
+
+  public Forespørsel henteForespørselForId(int idFarskapserklaering) {
+    var farskapserklaering = forespørselDao.findById(idFarskapserklaering);
+    if (farskapserklaering.isPresent() && farskapserklaering.get().getDeaktivert() == null) {
+      return farskapserklaering.get();
+    }
+    throw new InternFeil(Feilkode.FANT_IKKE_FORESPØRSEL);
   }
 
   public Set<Integer> henteForespørslerSomErKlareForInnsending() {
@@ -133,5 +156,20 @@ public class Databasetjeneste {
   private boolean erPartIForespørsel(String personident, Forespørsel forespørsel) {
     return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident())
         || personident.equals(forespørsel.getMotpart().getPersonident()));
+  }
+
+  @Transactional
+  public void setteOppgaveTilFerdigstilt(String eventId) {
+    var aktiveOppgaver = oppgavebestillingDao.henteOppgavebestilling(eventId);
+
+    if (aktiveOppgaver.isPresent()) {
+      aktiveOppgaver.get().setFerdigstilt(LocalDateTime.now());
+    } else {
+      log.warn("Fant ingen oppgavebestilling med eventId {}, ferdigstiltstatus ble ikke satt!", eventId);
+    }
+  }
+
+  public Set<Oppgavebestilling> henteMotpartsAktiveOppgaver(int idForespørsel, Forelder motpart) {
+    return oppgavebestillingDao.henteAktiveOppgaver(idForespørsel, motpart.getPersonident());
   }
 }
