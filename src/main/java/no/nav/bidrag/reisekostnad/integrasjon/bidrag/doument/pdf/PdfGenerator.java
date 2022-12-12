@@ -118,7 +118,7 @@ public class PdfGenerator {
     var detaljerFørsteBarn = barnElement.getElementById("detaljer_barn_1");
 
     var tekstformatBarnNavn = tekstvelger(Tekst.FORNAVN, skriftspråk) + ": %s";
-    var tekstformatBarnFødselsnummer = tekstvelger(Tekst.PERSONIDENT, skriftspråk) + ": %s";
+    var tekstformatBarnFødselsdato = tekstvelger(Tekst.PERSONIDENT, skriftspråk) + ": %s";
     var it = barnaSorted.iterator();
     var barn1 = it.next();
     detaljerFørsteBarn
@@ -127,7 +127,11 @@ public class PdfGenerator {
 
     detaljerFørsteBarn
         .getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspråk)).first()
-        .text(String.format(tekstformatBarnFødselsnummer, dekryptere(barn1.getIdent())));
+        .text(String.format(tekstformatBarnFødselsdato, dekryptere(barn1.getIdent())));
+//
+//    detaljerFørsteBarn
+//        .getElementsByClass(henteElementnavn(Elementnavn.FØDSELSDATO, skriftspråk)).first()
+//        .text(String.format(tekstformatBarnFødselsdato, barn1.getFødselsdato().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
 
     var antallBarn = 1;
 
@@ -142,7 +146,7 @@ public class PdfGenerator {
       var fødselsnummerElement = new Element("div");
 
       navnElement.text(String.format(tekstformatBarnNavn, barn.getFornavn()));
-      fødselsnummerElement.text(String.format(tekstformatBarnFødselsnummer, dekryptere(barn.getIdent())));
+      fødselsnummerElement.text(String.format(tekstformatBarnFødselsdato, dekryptere(barn.getIdent())));
 
       navnElement.appendTo(nesteBarnIRekka);
       fødselsnummerElement.appendTo(nesteBarnIRekka);
