@@ -169,7 +169,7 @@ public class Databasetjeneste {
       log.warn("Fant ingen oppgavebestilling med eventId {}, ferdigstiltstatus ble ikke satt!", eventId);
     }
   }
-  
+
   public Set<Oppgavebestilling> henteAktiveOppgaverMotpart(int idForespørsel, String personidentMotpart) {
     return oppgavebestillingDao.henteAktiveOppgaver(idForespørsel, personidentMotpart);
   }
