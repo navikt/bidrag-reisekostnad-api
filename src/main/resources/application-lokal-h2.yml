@@ -91,4 +91,3 @@ spring:
     hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-
