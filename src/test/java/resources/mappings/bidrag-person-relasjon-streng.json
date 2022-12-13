@@ -12,7 +12,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{ \"person\": { \"ident\":\"11111122222\", \"kjønn\": \"KVINNE\", \"fornavn\": \"Streng\", \"foedselsdato\": \"{{now offset='-38 years' format='yyyy-MM-dd'}}\" }, \"personensMotpartBarnRelasjon\": [{ \"motpart\": { \"ident\": \"12345678910\", \"fornavn\": \"Gråtass\", \"foedselsdato\": \"{{now offset='-40 years' format='yyyy-MM-dd'}}\" }, \"fellesBarn\": [{ \"ident\": \"33333355555\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years' format='yyyy-MM-dd'}}\" }, { \"ident\": \"77777700000\", \"fornavn\": \"Grus\", \"foedselsdato\": \"{{now offset='-16 years' format='yyyy-MM-dd'}}\" }]}]}",
+    "body": "{ \"person\": { \"ident\":\"11111122222\", \"kortNavn\": \"Streng Menneske\", \"kjønn\": \"KVINNE\", \"fornavn\": \"Streng\", \"foedselsdato\": \"{{now offset='-38 years' format='yyyy-MM-dd'}}\" }, \"personensMotpartBarnRelasjon\": [{ \"motpart\": { \"ident\": \"12345678910\", \"fornavn\": \"Gråtass\", \"foedselsdato\": \"{{now offset='-40 years' format='yyyy-MM-dd'}}\" }, \"fellesBarn\": [{ \"ident\": \"33333355555\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years' format='yyyy-MM-dd'}}\" }, { \"ident\": \"77777700000\", \"fornavn\": \"Grus\", \"foedselsdato\": \"{{now offset='-16 years' format='yyyy-MM-dd'}}\" }]}]}",
     "transformers": ["response-template"],
     "headers": {
       "Content-Type": "application/json"

@@ -11,5 +11,6 @@ import lombok.Value;
 public class HentPersoninfoRespons {
 
   String fornavn;
+  String kortNavn;
   LocalDate foedselsdato;
 }

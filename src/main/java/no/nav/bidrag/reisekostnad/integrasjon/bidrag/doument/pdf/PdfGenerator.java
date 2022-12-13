@@ -122,7 +122,7 @@ public class PdfGenerator {
     var barn1 = it.next();
     detaljerFørsteBarn
         .getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspråk)).first()
-        .text(String.format(tekstformatBarnNavn, barn1.getFornavn()));
+        .text(String.format(tekstformatBarnNavn, barn1.getKortNavn()));
 
     detaljerFørsteBarn
         .getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspråk)).first()
@@ -152,7 +152,7 @@ public class PdfGenerator {
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
     var navn = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspraak));
 
-    navn.first().text(tekstvelger(Tekst.FORNAVN, skriftspraak) + ": " + forelder.getFornavn());
+    navn.first().text(tekstvelger(Tekst.FORNAVN, skriftspraak) + ": " + forelder.getKortNavn());
 
     var foedselsnummer = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspraak));
     foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + dekryptere(forelder.getIdent()));
