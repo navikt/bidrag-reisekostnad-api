@@ -1,13 +1,18 @@
 package no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon;
 
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_MANGLENDE_SAMTYKKE;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_VENTENDE_FORESPØRSEL;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Brukernotifikasjonskonfig.NAMESPACE_BIDRAG;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Egenskaper;
@@ -16,13 +21,6 @@ import no.nav.brukernotifikasjon.schemas.input.NokkelInput;
 
 @Slf4j
 public class Brukernotifikasjonkonsument {
-
-  private static final String MELDING_OM_SIGNERT_FARSKAPSERKLAERING = "Du har en signert farskapserklæring er tilgjengelig for nedlasting i en begrenset tidsperiode fra farskapsportalen:";
-  private static final String MELDING_OM_VENTENDE_FARSKAPSERKLAERING = "Du har mottatt en farskapserklæring som venter på din signatur.";
-  private static final String MELDING_TIL_HOVEDPART_OM_NEI_TIL_SAMTYKKE = "Fars signering ble avbrutt, aktuell farskapserklæring måtte derfor slettes. Mor kan opprette ny hvis ønskelig. Trykk her for å opprette ny farskapserklæring.";
-  private static final String MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE = "Fars signering ble avbrutt, aktuell farskapserklæring måtte derfor slettes. Mor kan opprette ny hvis ønskelig.";
-  private static final String MELDING_OM_MANGLENDE_SIGNERING = "Aksjon kreves: Farskapserklæring opprettet den %s for barn med %s er ikke ferdigstilt. Våre systemer mangler informasjon om at far har signert. Far må logge inn på Farskapsportal og forsøke å signere eller oppdatere status på ny. Ta kontakt med NAV ved problemer.";
-  private static final String MELDING_OM_IKKE_UTFOERT_SIGNERINGSOPPGAVE = "Far har ikke signert farskapserklæringen innen fristen. Farskapserklæringen er derfor slettet. Mor kan opprette ny hvis ønskelig. Trykk her for å opprette ny farskapserklæring.";
 
   private final Beskjedprodusent beskjedprodusent;
   private final Ferdigprodusent ferdigprodusent;
@@ -37,44 +35,46 @@ public class Brukernotifikasjonkonsument {
     this.egenskaper = egenskaper;
   }
 
-  public void varsleForeldreOmManglendeSamtykke(Forelder hovedpart, Forelder far, Set<Barn> barn, LocalDate opprettetDato) {
-    log.info("Informerer foreldre (hovedpart: {}, motpart: {}) om mangldende samtykke.", hovedpart.getId(), far.getId());
-    beskjedprodusent.oppretteBeskjedTilBruker(hovedpart,
-        String.format(MELDING_OM_MANGLENDE_SIGNERING, opprettetDato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-            ""), true,
-        oppretteNokkel(hovedpart.getPersonident()));
-    beskjedprodusent.oppretteBeskjedTilBruker(far,
-        String.format(MELDING_OM_MANGLENDE_SIGNERING, opprettetDato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), ""), true,
-        oppretteNokkel(far.getPersonident()));
+  public void varsleForeldreOmManglendeSamtykke(String personidentHovedpart, String personidentMotpart, LocalDate opprettetDato) {
+    log.info("Informerer foreldre om mangldende samtykke for forespørsel opprettet den {}.",
+        opprettetDato.format(DateTimeFormatter.ofPattern("ddMMyyy")));
+    SIKKER_LOGG.info("Informerer foreldre (hovedpart: {}, motpart: {}) om mangldende samtykke for forespørsel opprettet den {}", personidentHovedpart,
+        personidentMotpart, opprettetDato);
+
+    var dato = opprettetDato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    var melding = new DynamiskMelding(MELDING_OM_MANGLENDE_SAMTYKKE, List.of(dato));
+
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, melding, true, oppretteNokkel(personidentHovedpart));
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, melding, true, oppretteNokkel(personidentMotpart));
   }
 
-  public void varsleMorOmUtgaattOppgaveForSignering(Forelder mor) {
+  public void varsleMorOmUtgaattOppgaveForSignering(String personidentHovedperson) {
     log.info("Sender varsel til mor om utgått signeringsoppgave");
-    var noekkel = oppretteNokkel(mor.getPersonident());
-    beskjedprodusent.oppretteBeskjedTilBruker(mor, MELDING_OM_IKKE_UTFOERT_SIGNERINGSOPPGAVE, true, noekkel);
+    var noekkel = oppretteNokkel(personidentHovedperson);
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedperson, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true, noekkel);
     log.info("Ekstern melding med eventId: {}, ble sendt til mor", noekkel.getEventId());
   }
 
-  public void varsleOmNeiTilSamtykke(Forelder hovedpart, Forelder motpart) {
+  public void varsleOmNeiTilSamtykke(String personidentHovedpart, String personidentMotpart) {
     log.info("Varsler brukere om avbrutt signering");
-    beskjedprodusent.oppretteBeskjedTilBruker(hovedpart, MELDING_TIL_HOVEDPART_OM_NEI_TIL_SAMTYKKE, true, oppretteNokkel(hovedpart.getPersonident()));
-    beskjedprodusent.oppretteBeskjedTilBruker(motpart, MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE, true, oppretteNokkel(motpart.getPersonident()));
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE), true,
+        oppretteNokkel(personidentHovedpart));
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE), false,
+        oppretteNokkel(personidentMotpart));
   }
 
-  public void oppretteOppgaveTilMotpartOmSamtykke(int udForespørsel, Forelder motpart) {
+  public void oppretteOppgaveTilMotpartOmSamtykke(int idForespørsel, String personidentMotpart) {
     try {
-      oppgaveprodusent
-          .oppretteOppgaveOmSamtykke(udForespørsel, motpart,
-              MELDING_OM_VENTENDE_FARSKAPSERKLAERING, true);
+      oppgaveprodusent.oppretteOppgaveOmSamtykke(idForespørsel, personidentMotpart, new DynamiskMelding(MELDING_OM_VENTENDE_FORESPØRSEL), true);
     } catch (InternFeil internFeil) {
-      log.error("En feil inntraff ved opprettelse av oppgave til far for farskapserklæring med id {}", udForespørsel);
+      log.error("En feil inntraff ved opprettelse av samtykkeoppgave til motpart i forespørsels med id {}", idForespørsel);
     }
   }
 
   public void sletteSamtykkeoppgave(String eventId, Forelder motpart) {
     log.info("Sletter samtykkeoppgave med eventId {}", eventId);
     try {
-      ferdigprodusent.ferdigstilleFarsSigneringsoppgave(motpart, oppretteNokkel(eventId, motpart.getPersonident()));
+      ferdigprodusent.ferdigstilleFarsSigneringsoppgave(oppretteNokkel(eventId, motpart.getPersonident()));
     } catch (InternFeil internFeilException) {
       log.error("En feil oppstod ved sending av ferdigmelding for oppgave med eventId {}.", eventId);
     }
@@ -94,5 +94,4 @@ public class Brukernotifikasjonkonsument {
         .withAppnavn(egenskaper.getAppnavnReisekostnad())
         .build();
   }
-
 }

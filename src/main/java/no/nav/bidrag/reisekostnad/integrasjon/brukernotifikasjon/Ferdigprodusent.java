@@ -4,7 +4,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
+import no.nav.bidrag.reisekostnad.database.dao.OppgavebestillingDao;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Egenskaper;
@@ -12,7 +12,6 @@ import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder;
 import no.nav.brukernotifikasjon.schemas.input.DoneInput;
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput;
-import no.nav.bidrag.reisekostnad.database.dao.OppgavebestillingDao;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @Slf4j
@@ -24,7 +23,7 @@ public class Ferdigprodusent {
   OppgavebestillingDao oppgavebestillingDao;
   Egenskaper egenskaper;
 
-  public void ferdigstilleFarsSigneringsoppgave(Forelder motpart, NokkelInput nokkel) {
+  public void ferdigstilleFarsSigneringsoppgave(NokkelInput nokkel) {
 
     var oppgaveSomSkalFerdigstilles = oppgavebestillingDao.henteOppgavebestilling(nokkel.getEventId());
 
@@ -39,8 +38,7 @@ public class Ferdigprodusent {
       log.info("Ferdigmelding ble sendt for oppgave med eventId {}.");
       databasetjeneste.setteOppgaveTilFerdigstilt(nokkel.getEventId());
     } else {
-      log.warn("Fant ingen aktiv oppgavebestilling for eventId {} (gjelder far med id: {}). Bestiller derfor ikke ferdigstilling.",
-          nokkel.getEventId(), motpart.getId());
+      log.warn("Fant ingen aktiv oppgavebestilling for eventId {}. Bestiller derfor ikke ferdigstilling.", nokkel.getEventId());
     }
   }
 

@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Egenskaper;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
@@ -15,9 +16,7 @@ import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder;
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder;
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput;
 import no.nav.brukernotifikasjon.schemas.input.OppgaveInput;
-import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import org.springframework.kafka.core.KafkaTemplate;
-import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 
 @Slf4j
 @AllArgsConstructor
@@ -28,24 +27,27 @@ public class Oppgaveprodusent {
   private URL farskapsportalUrl;
   private Egenskaper egenskaper;
 
-  public void oppretteOppgaveOmSamtykke(int idForespørsel, Forelder motpart, String oppgavetekst,
+  public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst,
       boolean medEksternVarsling) {
 
     var nokkel = new NokkelInputBuilder()
         .withEventId(UUID.randomUUID().toString())
         .withGrupperingsId(egenskaper.getBrukernotifikasjon().getGrupperingsidReisekostnad())
-        .withFodselsnummer(motpart.getPersonident())
+        .withFodselsnummer(personidentMotpart)
         .withAppnavn(egenskaper.getAppnavnReisekostnad())
         .withNamespace(NAMESPACE_BIDRAG)
         .build();
-    var melding = oppretteOppgave(oppgavetekst, medEksternVarsling, farskapsportalUrl);
 
-    var farsAktiveSigneringsoppgaver = databasetjeneste.henteMotpartsAktiveOppgaver(idForespørsel, motpart);
+    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), medEksternVarsling, farskapsportalUrl);
+
+    var farsAktiveSigneringsoppgaver = databasetjeneste.henteMotpartsAktiveOppgaver(idForespørsel, personidentMotpart);
 
     if (farsAktiveSigneringsoppgaver.isEmpty()) {
-      log.info("Oppretter oppgave om signering til far i farskapserklæring med id {}", idForespørsel);
+      log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
+
       oppretteOppgave(nokkel, melding);
-      log.info("Signeringsppgave opprettet for far med id {}.", motpart.getId());
+
+      log.info("Samtykkeoppgave opprettet for forespørsel med id {}.", idForespørsel);
       databasetjeneste.lagreNyOppgavebestilling(idForespørsel, nokkel.getEventId());
     }
   }

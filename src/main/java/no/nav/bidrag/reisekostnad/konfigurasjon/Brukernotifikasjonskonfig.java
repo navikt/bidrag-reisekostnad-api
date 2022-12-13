@@ -3,16 +3,17 @@ package no.nav.bidrag.reisekostnad.konfigurasjon;
 
 import static net.javacrumbs.shedlock.support.Utils.getHostname;
 
-import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Beskjedprodusent;
-import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Ferdigprodusent;
-import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Oppgaveprodusent;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import no.nav.bidrag.reisekostnad.database.dao.OppgavebestillingDao;
+import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Beskjedprodusent;
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument;
+import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Ferdigprodusent;
+import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Oppgaveprodusent;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.brukernotifikasjon.schemas.input.BeskjedInput;
 import no.nav.brukernotifikasjon.schemas.input.DoneInput;
@@ -29,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import no.nav.bidrag.reisekostnad.database.dao.OppgavebestillingDao;
 
 @Configuration
 public class Brukernotifikasjonskonfig {
@@ -107,7 +107,7 @@ public class Brukernotifikasjonskonfig {
 
   @Bean
   Brukernotifikasjonkonsument brukernotifikasjonkonsument(Beskjedprodusent beskjedprodusent, Ferdigprodusent ferdigprodusent,
-      Oppgaveprodusent oppgaveprodusent, Egenskaper egenskaper) throws MalformedURLException {
+      Oppgaveprodusent oppgaveprodusent, Egenskaper egenskaper) {
     return new Brukernotifikasjonkonsument(beskjedprodusent, ferdigprodusent, oppgaveprodusent, egenskaper);
   }
 
