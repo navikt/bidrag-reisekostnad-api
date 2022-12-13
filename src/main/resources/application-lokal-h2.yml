@@ -55,6 +55,19 @@ spring.kafka.consumer.group-id: reisekostnad
 spring.kafka.consumer.auto-offset-reset: earliest
 URL_BIDRAG_REISEKOSTNAD_UI_OVERSIKT: https://bidrag-reisekostnad.dev.nav.no
 
+### brukernotifkasjoner
+KAFKA_BROKERS: 127.0.0.1:9092
+KAFKA_SCHEMA_REGISTRY: http://localhost:8081
+KAFKA_TRUSTSTORE_PATH: classpath:cert/server-selfsigned.jks
+KAFKA_CREDSTORE_PASSWORD: qwer1234
+KAFKA_SCHEMA_REGISTRY_USER: user
+KAFKA_SCHEMA_REGISTRY_PASSWORD: secret
+KAFKA_KEYSTORE_PATH: /var/test
+spring.kafka.bootstrap-servers: localhost:9092
+spring.kafka.consumer.group-id: reisekostnad
+spring.kafka.consumer.auto-offset-reset: earliest
+URL_BIDRAG_REISEKOSTNAD_UI_OVERSIKT: https://bidrag-reisekostnad.dev.nav.no
+
 ---
 spring:
   config.activate.on-profile: lokal-h2
