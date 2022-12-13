@@ -113,16 +113,16 @@ public class PdfGenerator {
 
   private static void leggeTilDataBarn(Element barnElement, Set<PersonDto> barna, Skriftspråk skriftspråk) {
 
-    var barnaSorted = barna.stream().sorted((a,b) -> a.getFødselsdato().isAfter(b.getFødselsdato()) ? -1 : 1);
+    var barnaSortert = barna.stream().sorted((a,b) -> a.getFødselsdato().isAfter(b.getFødselsdato()) ? -1 : 1);
     var detaljerFørsteBarn = barnElement.getElementById("detaljer_barn_1");
 
     var tekstformatBarnNavn = tekstvelger(Tekst.FORNAVN, skriftspråk) + ": %s";
     var tekstformatBarnFødselsdato = tekstvelger(Tekst.PERSONIDENT, skriftspråk) + ": %s";
-    var it = barnaSorted.iterator();
+    var it = barnaSortert.iterator();
     var barn1 = it.next();
     detaljerFørsteBarn
         .getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspråk)).first()
-        .text(String.format(tekstformatBarnNavn, barn1.getKortNavn()));
+        .text(String.format(tekstformatBarnNavn, barn1.getKortnavn()));
 
     detaljerFørsteBarn
         .getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspråk)).first()
@@ -132,8 +132,8 @@ public class PdfGenerator {
 
     while(it.hasNext()) {
       var barn = it.next();
-      var mellomRom =  new Element("p");
-      mellomRom.appendTo(barnElement);
+      var mellomrom =  new Element("p");
+      mellomrom.appendTo(barnElement);
       var nesteBarnIRekka = new Element("div");
       nesteBarnIRekka.id("detaljer_barn_" +  ++antallBarn);
 
@@ -152,7 +152,7 @@ public class PdfGenerator {
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
     var navn = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspraak));
 
-    navn.first().text(tekstvelger(Tekst.FORNAVN, skriftspraak) + ": " + forelder.getKortNavn());
+    navn.first().text(tekstvelger(Tekst.FORNAVN, skriftspraak) + ": " + forelder.getKortnavn());
 
     var foedselsnummer = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspraak));
     foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + dekryptere(forelder.getIdent()));
