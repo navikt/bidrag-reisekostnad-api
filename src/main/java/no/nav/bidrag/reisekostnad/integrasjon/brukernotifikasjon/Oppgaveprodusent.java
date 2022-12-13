@@ -39,7 +39,6 @@ public class Oppgaveprodusent {
         .build();
 
     var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), medEksternVarsling, farskapsportalUrl);
-
     var farsAktiveSigneringsoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
     if (farsAktiveSigneringsoppgaver.isEmpty()) {

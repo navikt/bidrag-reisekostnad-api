@@ -28,22 +28,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class ReisekostnadApiTjenesteTest {
 
-  @Mock
-  private BidragPersonkonsument bidragPersonkonsument;
-
-  @Mock
-  private Brukernotifikasjonkonsument brukernotifikasjonkonsument;
-
-  @Mock
-  private Arkiveringstjeneste arkiveringstjeneste;
-  @Mock
-  private Databasetjeneste databasetjeneste;
-
-  @Mock
-  private Mapper mapper;
-
-  @InjectMocks
-  private ReisekostnadApiTjeneste reisekostnadApiTjeneste;
+  private @Mock BidragPersonkonsument bidragPersonkonsument;
+  private @Mock Brukernotifikasjonkonsument brukernotifikasjonkonsument;
+  private @Mock Arkiveringstjeneste arkiveringstjeneste;
+  private @Mock Databasetjeneste databasetjeneste;
+  private @Mock Mapper mapper;
+  private @InjectMocks ReisekostnadApiTjeneste reisekostnadApiTjeneste;
 
   @Test
   void skalOppretteForespørselKunForMotpartsBarn() {
