@@ -89,7 +89,7 @@ public class Databasetjeneste {
   }
 
   @Transactional
-  public Deaktivator deaktivereForespørsel(int idForespørsel, String personident) {
+  public Forespørsel deaktivereForespørsel(int idForespørsel, String personident) {
     log.info("Deaktiverer forespørsel med id {}", idForespørsel);
     var forespørsel = forespørselDao.henteAktivForespørsel(idForespørsel);
     if (forespørsel.isPresent() && erPartIForespørsel(personident, forespørsel.get())) {
@@ -98,7 +98,7 @@ public class Databasetjeneste {
       SIKKER_LOGG.info("Forelder med ident: {} deaktiverer forespørsel med id {}", personident, idForespørsel);
       forespørsel.get().setDeaktivert(nå);
       forespørsel.get().setDeaktivertAv(deaktivertAv);
-      return deaktivertAv;
+      return forespørsel.get();
     } else if (forespørsel.isEmpty()) {
       throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_FEIL_STATUS);
     } else {

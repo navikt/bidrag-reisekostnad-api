@@ -2,6 +2,8 @@ package no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon;
 
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Brukernotifikasjonskonfig.NAMESPACE_BIDRAG;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -44,10 +46,13 @@ public class Oppgaveprodusent {
     if (farsAktiveSigneringsoppgaver.isEmpty()) {
       log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
 
-      oppretteOppgave(nokkel, melding);
-
-      log.info("Samtykkeoppgave opprettet for forespørsel med id {}.", idForespørsel);
-      databasetjeneste.lagreNyOppgavebestilling(idForespørsel, nokkel.getEventId());
+      if (egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
+        oppretteOppgave(nokkel, melding);
+        log.info("Samtykkeoppgave opprettet for forespørsel med id {}.", idForespørsel);
+        databasetjeneste.lagreNyOppgavebestilling(idForespørsel, nokkel.getEventId());
+      } else {
+        log.warn("Brukernotifikasjoner er skrudd av - oppgavebestilling ble derfor ikke sendt.");
+      }
     }
   }
 

@@ -33,7 +33,8 @@ data class Brukernotifikasjon(
     var synlighetBeskjedAntallMaaneder: Int = 1,
     var levetidOppgaveAntallDager: Int = 30,
     var sikkerhetsnivaaBeskjed: Int = 3,
-    var sikkerhetsnivaaOppgave: Int = 3
+    var sikkerhetsnivaaOppgave: Int = 3,
+    var skruddPaa: Boolean = true
 )
 
 

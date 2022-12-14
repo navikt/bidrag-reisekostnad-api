@@ -86,11 +86,11 @@ public class ReisekostnadApiTjeneste {
   public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personident) {
 
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
-    var deaktivertAv = databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
+    var deaktivertForespørsel = databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
 
-    if (Deaktivator.MOTPART.equals(deaktivertAv)) {
-      var forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel);
-      brukernotifikasjonkonsument.varsleOmNeiTilSamtykke(forespørsel.getHovedpart().getPersonident(), forespørsel.getMotpart().getPersonident());
+    if (deaktivertForespørsel != null && Deaktivator.MOTPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
+      brukernotifikasjonkonsument.varsleOmNeiTilSamtykke(deaktivertForespørsel.getHovedpart().getPersonident(),
+          deaktivertForespørsel.getMotpart().getPersonident());
     }
 
     return HttpResponse.from(HttpStatus.OK, null);
