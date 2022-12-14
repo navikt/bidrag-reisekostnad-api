@@ -60,5 +60,4 @@ public class Beskjedprodusent {
         .withTekst(meldingTilBruker)
         .build();
   }
-̋
 }
