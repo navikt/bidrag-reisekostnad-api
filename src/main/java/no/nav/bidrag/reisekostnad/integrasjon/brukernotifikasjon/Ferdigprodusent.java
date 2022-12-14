@@ -27,6 +27,11 @@ public class Ferdigprodusent {
 
     var oppgaveSomSkalFerdigstilles = oppgavebestillingDao.henteOppgavebestilling(nokkel.getEventId());
 
+    if (!egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
+      log.warn("Brukernotifikasjoner er skrudd av - ferdigbestilling av oppgave ble derfor ikke sendt.");
+      return;
+    }
+
     if (oppgaveSomSkalFerdigstilles.isPresent() && oppgaveSomSkalFerdigstilles.get().getFerdigstilt() == null) {
       var melding = oppretteDone();
       try {

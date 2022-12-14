@@ -45,15 +45,16 @@ integrasjon.bidrag:
 ### brukernotifkasjoner
 KAFKA_BROKERS: 127.0.0.1:9092
 KAFKA_SCHEMA_REGISTRY: http://localhost:8081
-KAFKA_TRUSTSTORE_PATH: classpath:cert/server-selfsigned.jks
+KAFKA_TRUSTSTORE_PATH: src/test/java/resources/cert/server-selfsigned.jks
 KAFKA_CREDSTORE_PASSWORD: qwer1234
 KAFKA_SCHEMA_REGISTRY_USER: user
 KAFKA_SCHEMA_REGISTRY_PASSWORD: secret
-KAFKA_KEYSTORE_PATH: /var/test
+KAFKA_KEYSTORE_PATH: src/test/java/resources/cert/server-selfsigned.jks
 spring.kafka.bootstrap-servers: localhost:9092
 spring.kafka.consumer.group-id: reisekostnad
 spring.kafka.consumer.auto-offset-reset: earliest
 BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.dev.nav.no
+egenskaper.brukernotifikasjon.skruddPaa: false
 
 ---
 spring:
@@ -91,4 +92,3 @@ spring:
     hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-

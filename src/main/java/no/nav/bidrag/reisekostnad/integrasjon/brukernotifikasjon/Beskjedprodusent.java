@@ -33,6 +33,11 @@ public class Beskjedprodusent {
     var farskapsportalUrl = lenkeTilOversikt ? farskapsportalUrlOversikt : farskapsportalUrlForside;
     var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), medEksternVarsling, farskapsportalUrl);
 
+    if (!egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
+      log.warn("Brukernotifikasjoner er skrudd av - {} ble derfor ikke sendt.", meldingTilBruker.getMelding());
+      return;
+    }
+
     try {
       kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBeskjed(), nokkel, beskjed);
     } catch (Exception e) {
