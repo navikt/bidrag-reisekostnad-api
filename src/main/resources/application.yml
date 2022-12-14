@@ -81,7 +81,7 @@ kjøreplan.databehandling.arkivering: ${KJOEREPLAN_ARKIVERING}
 
 egenskaper:
   appnavn-reisekostnad: bidrag-reisekostnad
-  url-reisekostnad: ${URL_BIDRAG_REISEKOSTNAD_UI_OVERSIKT}
+  url-reisekostnad: ${BIDRAG_REISEKOSTNAD_UI_URL}
   brukernotifikasjon:
     emne-beskjed: "min-side.aapen-brukernotifikasjon-beskjed-v1"
     emne-ferdig: "min-side.aapen-brukernotifikasjon-done-v1"

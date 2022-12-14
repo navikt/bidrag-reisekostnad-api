@@ -66,4 +66,4 @@ KAFKA_SCHEMA_REGISTRY_PASSWORD: secret
 KAFKA_KEYSTORE_PATH: /var/test
 KAFKA_BROKERS: 127.0.0.1:9092
 KAFKA_SCHEMA_REGISTRY: http://localhost:8081
-URL_BIDRAG_REISEKOSTNAD_UI_OVERSIKT: https://bidrag-reisekostnad.dev.nav.no
+BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.dev.nav.no
