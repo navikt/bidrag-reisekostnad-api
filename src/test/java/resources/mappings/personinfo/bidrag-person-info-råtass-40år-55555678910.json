@@ -12,7 +12,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{ \"ident\": \"55555678910\", \"kortNavn\": \"Råtass Grønntass\", \"fornavn\": \"Råtass\", \"foedselsdato\": \"{{now offset='-40 years'}}\" }",
+    "body": "{ \"ident\": \"55555678910\", \"kortnavn\": \"Råtass Grønntass\", \"fornavn\": \"Råtass\", \"foedselsdato\": \"{{now offset='-40 years'}}\" }",
     "transformers": [
       "response-template"
     ],

@@ -12,7 +12,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{ \"ident\": \"33333355555\", \"kortNavn\": \"Småstein Bamse\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years'}}\" }",
+    "body": "{ \"ident\": \"33333355555\", \"kortnavn\": \"Småstein Bamse\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years'}}\" }",
     "transformers": [
       "response-template"
     ],

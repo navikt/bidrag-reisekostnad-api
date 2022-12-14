@@ -12,7 +12,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{ \"ident\": \"23232323455555\",\"kortNavn\": \"Mellomstein Etterstein\", \"fornavn\": \"Mellomstein\", \"foedselsdato\": \"{{now offset='-15 years'}}\" }",
+    "body": "{ \"ident\": \"23232323455555\",\"kortnavn\": \"Mellomstein Etterstein\", \"fornavn\": \"Mellomstein\", \"foedselsdato\": \"{{now offset='-15 years'}}\" }",
     "transformers": [
       "response-template"
     ],

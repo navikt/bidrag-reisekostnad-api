@@ -12,7 +12,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{ \"ident\": \"77777700000\", \"kortNavn\": \"Grus Bamse\", \"fornavn\": \"Grus\", \"foedselsdato\": \"{{now offset='-16 years'}}\" }",
+    "body": "{ \"ident\": \"77777700000\", \"kortnavn\": \"Grus Bamse\", \"fornavn\": \"Grus\", \"foedselsdato\": \"{{now offset='-16 years'}}\" }",
     "transformers": [
       "response-template"
     ],
