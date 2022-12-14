@@ -27,7 +27,7 @@ enum Melding {
 
   MELDING_OM_VENTENDE_FORESPØRSEL("Trykk her for å se en forespørsel du har fått om fordeling av reisekostnader for barn."),
   MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE(
-      "Din motpart i forespørsel om fordeling av reisekostnader for felles barn, samtykket ikke til at denne ble sendt inn til NAV."),
+      "Den andre forelderen samtykket ikke til at NAV behandler fordeling av reisekostnade"),
   MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE("Du har avslått en forespørsel om fordeling av reisekostnader."),
   MELDING_OM_MANGLENDE_SAMTYKKE(
       "Aksjon kreves: Farskapserklæring opprettet den %s for barn med %s er ikke ferdigstilt. Våre systemer mangler informasjon om at far har signert. Far må logge inn på Farskapsportal og forsøke å signere eller oppdatere status på ny. Ta kontakt med NAV ved problemer."),
