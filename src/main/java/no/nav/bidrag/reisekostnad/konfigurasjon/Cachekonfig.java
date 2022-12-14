@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.CacheEvictBeforeWorkingHours;
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.UserCacheKey;
 import no.nav.bidrag.reisekostnad.konfigurasjon.cache.UserCacheKeyGenerator;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @EnableCaching
 @Profile(Profil.I_SKY)
+@ConfigurationProperties
 public class Cachekonfig {
 
   public static final String CACHE_PERSON = "person-cache";

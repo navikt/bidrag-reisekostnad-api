@@ -1,7 +1,9 @@
 package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Familiemedlem;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentPersoninfoRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon;
+import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument;
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
@@ -25,18 +28,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class ReisekostnadApiTjenesteTest {
 
-  @Mock
-  private BidragPersonkonsument bidragPersonkonsument;
-  @Mock
-  private Arkiveringstjeneste arkiveringstjeneste;
-  @Mock
-  private Databasetjeneste databasetjeneste;
-
-  @Mock
-  private Mapper mapper;
-
-  @InjectMocks
-  private ReisekostnadApiTjeneste reisekostnadApiTjeneste;
+  private @Mock BidragPersonkonsument bidragPersonkonsument;
+  private @Mock Brukernotifikasjonkonsument brukernotifikasjonkonsument;
+  private @Mock Arkiveringstjeneste arkiveringstjeneste;
+  private @Mock Databasetjeneste databasetjeneste;
+  private @Mock Mapper mapper;
+  private @InjectMocks ReisekostnadApiTjeneste reisekostnadApiTjeneste;
 
   @Test
   void skalOppretteForespørselKunForMotpartsBarn() {
@@ -97,6 +94,7 @@ public class ReisekostnadApiTjenesteTest {
     when(bidragPersonkonsument.hentPersoninfo(småstein.getIdent())).thenReturn(hentPersoninfoSmåstein);
     when(bidragPersonkonsument.hentPersoninfo(brorAvEnAnnenMor.getIdent())).thenReturn(hentPersoninfoBrorAvEnAnnenMor);
     when(databasetjeneste.lagreNyForespørsel(personidentHovedperson, personidentMotpart, Set.of(småstein.getIdent()), true)).thenReturn(1);
+    doNothing().when(brukernotifikasjonkonsument).oppretteOppgaveTilMotpartOmSamtykke(anyInt(), anyString());
 
     // hvis
     var respons = reisekostnadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedperson, valgteKrypterteBarn);

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.commons.web.HttpResponse;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
+import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Persondatafeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
@@ -17,6 +18,7 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsumen
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Diskresjonskode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.MotpartBarnRelasjon;
+import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
@@ -28,16 +30,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReisekostnadApiTjeneste {
 
-  private final BidragPersonkonsument bidragPersonkonsument;
-  private Databasetjeneste databasetjeneste;
-
   private Arkiveringstjeneste arkiveringstjeneste;
+  private final BidragPersonkonsument bidragPersonkonsument;
+  private final Brukernotifikasjonkonsument brukernotifikasjonkonsument;
+  private final Databasetjeneste databasetjeneste;
   private final Mapper mapper;
 
   @Autowired
-  public ReisekostnadApiTjeneste(BidragPersonkonsument bidragPersonkonsument, Databasetjeneste databasetjeneste, Mapper mapper, Arkiveringstjeneste arkiveringstjeneste) {
-    this.bidragPersonkonsument = bidragPersonkonsument;
+  public ReisekostnadApiTjeneste(
+      Arkiveringstjeneste arkiveringstjeneste,
+      BidragPersonkonsument bidragPersonkonsument,
+      Brukernotifikasjonkonsument brukernotifikasjonkonsument,
+      Databasetjeneste databasetjeneste,
+      Mapper mapper) {
     this.arkiveringstjeneste = arkiveringstjeneste;
+    this.bidragPersonkonsument = bidragPersonkonsument;
+    this.brukernotifikasjonkonsument = brukernotifikasjonkonsument;
     this.databasetjeneste = databasetjeneste;
     this.mapper = mapper;
   }
@@ -76,8 +84,15 @@ public class ReisekostnadApiTjeneste {
   }
 
   public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personident) {
+
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
-    databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
+    var deaktivertAv = databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
+
+    if (Deaktivator.MOTPART.equals(deaktivertAv)) {
+      var forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel);
+      brukernotifikasjonkonsument.varsleOmNeiTilSamtykke(forespørsel.getHovedpart().getPersonident(), forespørsel.getMotpart().getPersonident());
+    }
+
     return HttpResponse.from(HttpStatus.OK, null);
   }
 
@@ -119,17 +134,18 @@ public class ReisekostnadApiTjeneste {
     }
 
     if (barnUnder15År.size() > 0) {
-      lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
+      var idForespørsel = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
+      if (idForespørsel > 0) {
+        brukernotifikasjonkonsument.oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, motpart);
+      }
     }
   }
 
-
-  private void lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke){
+  private void lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke) {
     var forespørselId = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barn, kreverSamtykke);
-    if (!kreverSamtykke){
+    if (!kreverSamtykke) {
       arkiveringstjeneste.arkivereForespørsel(forespørselId);
     }
-
   }
 
   private void validereRelasjonTilBarn(Set<String> personidenterBarn, Optional<HentFamilieRespons> familieRespons) {
@@ -176,5 +192,4 @@ public class ReisekostnadApiTjeneste {
   private String dekryptere(String kryptertPersonident) {
     return Krypteringsverktøy.dekryptere(kryptertPersonident);
   }
-
 }
