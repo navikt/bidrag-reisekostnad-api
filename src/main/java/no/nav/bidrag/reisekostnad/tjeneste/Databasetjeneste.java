@@ -5,8 +5,10 @@ import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
@@ -19,6 +21,8 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
+import no.nav.bidrag.reisekostnad.model.ConstantsKt;
+import no.nav.bidrag.reisekostnad.model.ForespørselExtensionsKt;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +39,24 @@ public class Databasetjeneste {
   private Mapper mapper;
 
   @Autowired
-  public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, OppgavebestillingDao oppgavebestillingDao,
-      Mapper mapper) {
+  public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, OppgavebestillingDao oppgavebestillingDao, Mapper mapper) {
     this.barnDao = barnDao;
     this.forelderDao = forelderDao;
     this.forespørselDao = forespørselDao;
     this.oppgavebestillingDao = oppgavebestillingDao;
     this.mapper = mapper;
+  }
+
+  @Transactional(TxType.REQUIRES_NEW)
+  public int overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId){
+    var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
+    var barnSomHarFylt15år = ForespørselExtensionsKt.getIdenterBarnSomHarFylt15år(originalForespørsel);
+
+    ForespørselExtensionsKt.fjernBarnSomHarFylt15år(originalForespørsel);
+
+    var hovedpartIdent = originalForespørsel.getHovedpart().getPersonident();
+    var motpartIdent = originalForespørsel.getMotpart().getPersonident();
+    return lagreNyForespørsel(hovedpartIdent, motpartIdent, barnSomHarFylt15år, false);
   }
 
   @Transactional
@@ -148,6 +163,13 @@ public class Databasetjeneste {
     aktiveForespørslerMedSamtykke.addAll(aktiveForespørslerUtenSamtykke);
 
     return aktiveForespørslerMedSamtykke;
+  }
+
+  public List<Forespørsel> hentForespørselSomInneholderBarnSomHarFylt15år() {
+    var forespørsler = forespørselDao.henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(ConstantsKt.getDato15ÅrTilbakeFraIdag());
+    log.info("Fant {} aktive forespørsler om inneholder barn som har nylig fylt 15år", forespørsler.size());
+
+    return forespørsler.stream().toList();
   }
 
   private boolean erHovedpart(String personident, Forespørsel forespørsel) {
