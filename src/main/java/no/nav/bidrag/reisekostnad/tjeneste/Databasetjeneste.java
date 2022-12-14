@@ -61,13 +61,10 @@ public class Databasetjeneste {
 
     var samtykkefrist = kreverSamtykke ? LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE) : null;
 
-    var nyForespørsel = Forespørsel.builder()
-        .opprettet(LocalDateTime.now())
+    var nyForespørsel = Forespørsel.builder().opprettet(LocalDateTime.now())
         .hovedpart(ekisterendeHovedpart.orElseGet(() -> Forelder.builder().personident(hovedpart).build()))
         .motpart(eksisterendeMotpart.orElseGet(() -> Forelder.builder().personident(motpart).build())).barn(mapper.tilEntitet(identerBarn))
-        .kreverSamtykke(kreverSamtykke)
-        .samtykkefrist(samtykkefrist)
-        .build();
+        .kreverSamtykke(kreverSamtykke).samtykkefrist(samtykkefrist).build();
 
     var lagretForespørsel = forespørselDao.save(nyForespørsel);
 
@@ -122,10 +119,7 @@ public class Databasetjeneste {
   public Oppgavebestilling lagreNyOppgavebestilling(int idFarskapserklaering, String eventId) {
     var forespørsel = henteForespørselForId(idFarskapserklaering);
 
-    var oppgavebestilling = Oppgavebestilling.builder()
-        .forespørsel(forespørsel)
-        .forelder(forespørsel.getMotpart())
-        .eventId(eventId)
+    var oppgavebestilling = Oppgavebestilling.builder().forespørsel(forespørsel).forelder(forespørsel.getMotpart()).eventId(eventId)
         .opprettet(LocalDateTime.now()).build();
     return oppgavebestillingDao.save(oppgavebestilling);
   }
@@ -155,8 +149,8 @@ public class Databasetjeneste {
   }
 
   private boolean erPartIForespørsel(String personident, Forespørsel forespørsel) {
-    return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident())
-        || personident.equals(forespørsel.getMotpart().getPersonident()));
+    return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident()) || personident.equals(
+        forespørsel.getMotpart().getPersonident()));
   }
 
   @Transactional

@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
