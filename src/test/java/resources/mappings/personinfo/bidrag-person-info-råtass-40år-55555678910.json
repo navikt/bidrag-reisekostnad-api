@@ -5,14 +5,14 @@
     "bodyPatterns": [
       {
         "equalToJson": {
-          "ident": "33333355555"
+          "ident": "55555678910"
         }
       }
     ]
   },
   "response": {
     "status": 200,
-    "body": "{ \"ident\": \"33333355555\", \"kortnavn\": \"Småstein Bamse\", \"fornavn\": \"Småstein\", \"foedselsdato\": \"{{now offset='-10 years'}}\" }",
+    "body": "{ \"ident\": \"55555678910\", \"kortnavn\": \"Råtass Grønntass\", \"fornavn\": \"Råtass\", \"foedselsdato\": \"{{now offset='-40 years'}}\" }",
     "transformers": [
       "response-template"
     ],

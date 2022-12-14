@@ -18,11 +18,11 @@ public class PdfGeneratorTest {
 
     // gitt
     var barn = Set.of(
-        new PersonDto(Krypteringsverktøy.kryptere("00087324682"), "Sandstrand", LocalDate.now().minusMonths(126)),
-        new PersonDto(Krypteringsverktøy.kryptere("25987324683"), "Verksted", LocalDate.now().minusMonths(159)));
+        new PersonDto(Krypteringsverktøy.kryptere("00087324682"), "Sandstrand", "Sandstrand",  LocalDate.now().minusMonths(126)),
+        new PersonDto(Krypteringsverktøy.kryptere("25987324683"), "Verksted", "Verksted", LocalDate.now().minusMonths(159)));
 
-    var hovedpart = new PersonDto(Krypteringsverktøy.kryptere("659873746879"), "Parkas", LocalDate.now().minusMonths(465));
-    var motpart = new PersonDto(Krypteringsverktøy.kryptere("45987324687"), "Bonjour", LocalDate.now().minusMonths(512));
+    var hovedpart = new PersonDto(Krypteringsverktøy.kryptere("659873746879"), "Parkas", "Parkas", LocalDate.now().minusMonths(465));
+    var motpart = new PersonDto(Krypteringsverktøy.kryptere("45987324687"), "Bonjour", "Bonjour", LocalDate.now().minusMonths(512));
 
 
     // hvis

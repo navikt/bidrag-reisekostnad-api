@@ -1,5 +1,4 @@
-
-<html>
+<html xmlns="http://www.w3.org/1999/html">
   <head>
     <title>Forespørsel om fordeling av reisekostnader</title>
     <link rel="stylesheet" href="style.css"/>
@@ -11,29 +10,31 @@
   </div>
   <main>
     <h1>Fordeling av reisekostnader</h1>
-    <p id="innledning">Forespørsel om fordeling av reisekostnader for barn med delt omsorg.</p>
-    <div class="forelder" id="hovedpart">
-      <p class="beskrivelse"><b>Hovedpart</b></p>
-      <ul class="detaljer-forelder">
-        <li class="personident">Personident: 50123465510</li>
-        <li class="fødselsdato">Fødselsdato: 01.01.1989</li>
-        <li class="fornavn">Fornavn: Per</li>
-      </ul>
-    </div>
-    <div class="forelder" id="motpart">
-      <p class="beskrivelse"><b>Motpart</b></p>
-      <ul class="detaljer-forelder">
-        <li class="personident">Personident: 50123465510</li>
-        <li class="fødselsdato">Fødselsdato: 01.01.1989</li>
-        <li class="fornavn">Fornavn: Per</li>
-      </ul>
-    </div>
+    <p id="innledning">Forespørsel om fordeling av barns reisekostnader ved samvær.</p>
     <div class="barn" id="barn">
-      <p class="beskrivelse"><b id="tittel">Barn</b></p>
-      <ul class="detaljer">
-        <li id="barn_1">Ane, født 25.03.2013</li>
+      <div class="beskrivelse"><b id="tittel">Barn forespørselen gjelder for</b></div>
+      <div id="detaljer_barn_1">
+        <div class="navn">Navn: Per</div>
+        <div class="personident">Fødselsnummer: 50123465510</div>
+      </div>
+    </div>
+    <p></p>
+    <div class="forelder" id="hovedpart">
+      <div class="beskrivelse"><b>Forelderen som har sendt forespørselen</b></div>
+      <ul class="detaljer-forelder">
+        <li class="navn">Navn: Per</li>
+        <li class="personident">Fødselsnummer: 50123465510</li>
       </ul>
     </div>
+    <p></p>
+    <div class="forelder" id="motpart">
+      <div class="beskrivelse"><b>Den andre forelderen</b></div>
+      <ul class="detaljer-forelder">
+        <li class="navn">Navn: Per</li>
+        <li class="personident">Fødselsnummer: 50123465510</li>
+      </ul>
+    </div>
+
   </main>
   </body>
 </html>

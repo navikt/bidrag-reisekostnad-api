@@ -201,7 +201,7 @@ public class Mapper {
 
   public PersonDto tilPersonDto(String personident) {
     var personinfo = bidragPersonkonsument.hentPersoninfo(personident);
-    return new PersonDto(kryptere(personident), personinfo.getFornavn(), personinfo.getFoedselsdato());
+    return new PersonDto(kryptere(personident), personinfo.getFornavn(), personinfo.getKortnavn(), personinfo.getFoedselsdato());
   }
 
   private String kryptere(String ukryptertPersonident) {

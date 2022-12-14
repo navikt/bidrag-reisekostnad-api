@@ -17,6 +17,8 @@ public class PersonDto {
   private String ident;
   @Parameter(description = "Personens fornavn", example = "Bob Builder")
   private String fornavn;
+  @Parameter(description = "Personens kortnavn", example = "Bob Builder")
+  private String kortnavn;
   @Parameter(description = "Personens fødselsdato", example = "01012000")
   private LocalDate fødselsdato;
 }

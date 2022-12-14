@@ -52,10 +52,10 @@ class ArkiveringTjenesteTest {
     private val identBarn2 = "41244124"
     private val barn = setOf(Barn.builder().personident(identBarn1).build(), Barn.builder().personident(identBarn2).build())
 
-    private val barn1Dto = PersonDto(Krypteringsverktøy.kryptere(identBarn1), null, motpartFodselsdato)
-    private val barn2Dto = PersonDto(Krypteringsverktøy.kryptere(identBarn2), null, motpartFodselsdato)
-    private val hovedpartDto = PersonDto(Krypteringsverktøy.kryptere(identHovedpart), null, hovedpartFodselsdato)
-    private val motpartDto = PersonDto(Krypteringsverktøy.kryptere(identMotpart), null, motpartFodselsdato)
+    private val barn1Dto = PersonDto(Krypteringsverktøy.kryptere(identBarn1), null, null, motpartFodselsdato)
+    private val barn2Dto = PersonDto(Krypteringsverktøy.kryptere(identBarn2), null, null, motpartFodselsdato)
+    private val hovedpartDto = PersonDto(Krypteringsverktøy.kryptere(identHovedpart), null, null, hovedpartFodselsdato)
+    private val motpartDto = PersonDto(Krypteringsverktøy.kryptere(identMotpart), null, null, motpartFodselsdato)
     private val produsertDokument = "Produsert dokument".toByteArray()
 
     @BeforeEach

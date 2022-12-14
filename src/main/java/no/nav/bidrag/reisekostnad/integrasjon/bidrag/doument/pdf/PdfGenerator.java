@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
@@ -114,36 +113,46 @@ public class PdfGenerator {
 
   private static void leggeTilDataBarn(Element barnElement, Set<PersonDto> barna, Skriftspråk skriftspråk) {
 
-    var detaljer = barnElement.getElementsByClass(henteElementnavn(Elementnavn.DETALJER, skriftspråk)).first();
-    var førsteBarn = barnElement.getElementById(henteElementnavn(Elementnavn.BARN_1, skriftspråk));
+    var barnaSortert = barna.stream().sorted((a,b) -> a.getFødselsdato().isAfter(b.getFødselsdato()) ? -1 : 1);
+    var detaljerFørsteBarn = barnElement.getElementById("detaljer_barn_1");
 
-    var tekstformatBarn = "%s, født: %s";
-    var it = barna.iterator();
+    var tekstformatBarnNavn = tekstvelger(Tekst.FORNAVN, skriftspråk) + ": %s";
+    var tekstformatBarnFødselsdato = tekstvelger(Tekst.PERSONIDENT, skriftspråk) + ": %s";
+    var it = barnaSortert.iterator();
     var barn1 = it.next();
-    førsteBarn.text(String.format(tekstformatBarn, barn1.getFornavn(),
-        barn1.getFødselsdato().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+    detaljerFørsteBarn
+        .getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspråk)).first()
+        .text(String.format(tekstformatBarnNavn, barn1.getKortnavn()));
+
+    detaljerFørsteBarn
+        .getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspråk)).first()
+        .text(String.format(tekstformatBarnFødselsdato, dekryptere(barn1.getIdent())));
 
     var antallBarn = 1;
+
     while(it.hasNext()) {
       var barn = it.next();
-       var nesteBarnIRekka = new Element("li");
-      nesteBarnIRekka.id("barn_" +  ++antallBarn);
+      var mellomrom =  new Element("p");
+      mellomrom.appendTo(barnElement);
+      var nesteBarnIRekka = new Element("div");
+      nesteBarnIRekka.id("detaljer_barn_" +  ++antallBarn);
 
-      var tekst = String.format(tekstformatBarn, barn.getFornavn(),
-          barn.getFødselsdato().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-      nesteBarnIRekka.text(tekst);
-      nesteBarnIRekka.appendTo(detaljer);
+      var navnElement = new Element("div");
+      var fødselsnummerElement = new Element("div");
+
+      navnElement.text(String.format(tekstformatBarnNavn, barn.getFornavn()));
+      fødselsnummerElement.text(String.format(tekstformatBarnFødselsdato, dekryptere(barn.getIdent())));
+
+      navnElement.appendTo(nesteBarnIRekka);
+      fødselsnummerElement.appendTo(nesteBarnIRekka);
+      nesteBarnIRekka.appendTo(barnElement);
     }
   }
 
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
-    var navn = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.FORNAVN, skriftspraak));
+    var navn = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspraak));
 
-    navn.first().text(tekstvelger(Tekst.FORNAVN, skriftspraak) + ": " + forelder.getFornavn());
-
-    var foedselsdato = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.FØDSELSDATO, skriftspraak));
-    foedselsdato.first().text(
-        tekstvelger(Tekst.FØDSELSDATO, skriftspraak) + ": " + forelder.getFødselsdato().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+    navn.first().text(tekstvelger(Tekst.FORNAVN, skriftspraak) + ": " + forelder.getKortnavn());
 
     var foedselsnummer = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.PERSONIDENT, skriftspraak));
     foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + dekryptere(forelder.getIdent()));
@@ -153,8 +162,6 @@ public class PdfGenerator {
     try {
       var input = new ClassPathResource(pdfmal + skriftspråk.toString().toLowerCase() + ".html").getInputStream();
       var document = Jsoup.parse(input, "UTF-8", "");
-
-      var e = henteElementnavn(Elementnavn.BARN, skriftspråk);
 
       // Legge til informasjon om barn
       leggeTilDataBarn(document.getElementById(henteElementnavn(Elementnavn.BARN, skriftspråk)), barn, skriftspråk);
@@ -222,7 +229,8 @@ public class PdfGenerator {
     BARN,
     BARN_1,
     BESKRIVELSE,
-    DETALJER,
+    DETALJER_BARN,
+    NAVN,
     MOTPART,
     FØDSELSDATO,
     PERSONIDENT,
