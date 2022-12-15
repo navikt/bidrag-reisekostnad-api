@@ -48,15 +48,33 @@ public class Databasetjeneste {
   }
 
   @Transactional(TxType.REQUIRES_NEW)
+  public int oppdaterForespørselTilÅIkkeKreveSamtykke(int forespørselId){
+    var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
+    if (originalForespørsel.getBarn().size() == 1){
+      originalForespørsel.setKreverSamtykke(false);
+      log.info("Forespørsel med id {} ble endret til å ikke kreve samtykke", forespørselId);
+    }
+
+    return forespørselId;
+  }
+  @Transactional(TxType.REQUIRES_NEW)
   public int overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId){
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
+
+    if (originalForespørsel.getBarn().size() == 1){
+      log.warn("Forespørsel {} med barn som har fylt 15år ble forsøket overført til ny forespørsel. Forespørsel inneholder bare en barn. Gjør ingen endring", forespørselId);
+      return forespørselId;
+    }
+
     var barnSomHarFylt15år = ForespørselExtensionsKt.getIdenterBarnSomHarFylt15år(originalForespørsel);
 
     ForespørselExtensionsKt.fjernBarnSomHarFylt15år(originalForespørsel);
 
     var hovedpartIdent = originalForespørsel.getHovedpart().getPersonident();
     var motpartIdent = originalForespørsel.getMotpart().getPersonident();
-    return lagreNyForespørsel(hovedpartIdent, motpartIdent, barnSomHarFylt15år, false);
+    var nyForespørselId = lagreNyForespørsel(hovedpartIdent, motpartIdent, barnSomHarFylt15år, false);
+    log.info("Barn som har fylt 15 år i forespørsel med id {} ble overført til ny forespørsel {}", forespørselId, nyForespørselId);
+    return nyForespørselId;
   }
 
   @Transactional

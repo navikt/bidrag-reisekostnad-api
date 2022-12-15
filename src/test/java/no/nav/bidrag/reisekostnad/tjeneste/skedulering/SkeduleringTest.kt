@@ -77,6 +77,7 @@ class SkeduleringTest {
     protected var testpersonBarn12 = Barn.builder().personident("335533133355555").fødselsdato(LocalDate.now().minusYears(12)).build()
     protected var testpersonBarn15 = Barn.builder().personident("23232323455555").fødselsdato(LocalDate.now().minusYears(15)).build()
     protected var testpersonBarn15_2 = Barn.builder().personident("5515155").fødselsdato(LocalDate.now().minusYears(15)).build()
+    protected var testpersonBarn15_3 = Barn.builder().personident("235515232323455555").fødselsdato(LocalDate.now().minusYears(15)).build()
 
     fun oppprettForespørsel(kreverSamtykke: Boolean = false): Forespørsel{
         return Forespørsel.builder()

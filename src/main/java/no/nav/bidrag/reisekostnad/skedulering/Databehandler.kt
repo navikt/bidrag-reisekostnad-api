@@ -2,9 +2,6 @@ package no.nav.bidrag.reisekostnad.skedulering
 
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
-import no.nav.bidrag.reisekostnad.model.fjernBarnSomHarFylt15år
-import no.nav.bidrag.reisekostnad.model.identerBarnSomHarFylt15år
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste
 import org.springframework.scheduling.annotation.Scheduled
@@ -28,14 +25,14 @@ class Databehandler(private val arkiveringstjeneste: Arkiveringstjeneste, privat
 
     @Scheduled(cron = "\${kjøreplan.databehandling.arkivering}")
     @SchedulerLock(name = "forespørsel_til_arkiv", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
-    @Transactional
     fun behandleForespørslerSomInneholderBarnSomHarNyligFylt15År() {
         val forespørslerOver15År = databasetjeneste.hentForespørselSomInneholderBarnSomHarFylt15år()
         log.info("Fant totalt ${forespørslerOver15År.size} forespørsler som inneholder barn som har nylig fylt 15 år")
         forespørslerOver15År.forEach { originalForespørsel ->
             try {
-                val nyForespørselId = databasetjeneste.overførBarnSomHarFylt15årTilNyForespørsel(originalForespørsel.id)
-                // Arkivering er idempotent som betyr at arkivering for samme forespørselId vil føre til samme resultat
+                val nyForespørselId = if (originalForespørsel.barn.size == 1)
+                    databasetjeneste.oppdaterForespørselTilÅIkkeKreveSamtykke(originalForespørsel.id)
+                    else databasetjeneste.overførBarnSomHarFylt15årTilNyForespørsel(originalForespørsel.id)
                 arkiveringstjeneste.arkivereForespørsel(nyForespørselId)
             } catch (e: Exception){
                 log.error("Det skjedde en feil ved behandling av forespørsel ${originalForespørsel.id} som inneholder barn som har nylig fylt 15 år. Rullet tilbake alle endringer", e)
