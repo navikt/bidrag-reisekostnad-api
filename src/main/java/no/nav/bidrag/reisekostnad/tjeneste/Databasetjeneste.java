@@ -61,8 +61,8 @@ public class Databasetjeneste {
   public int overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId){
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
 
-    if (originalForespørsel.getBarn().size() == 1){
-      log.warn("Forespørsel {} med barn som har fylt 15år ble forsøket overført til ny forespørsel. Forespørsel inneholder bare en barn. Gjør ingen endring", forespørselId);
+    if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)){
+      log.warn("Forespørsel {} som inneholder barn fylt 15 år ble forsøket splittet til ny forespørsel. Splitting er ikke mulig fordi alle barn i forespørselen har fylt 15 år. Gjør ingen endring", forespørselId);
       return forespørselId;
     }
 

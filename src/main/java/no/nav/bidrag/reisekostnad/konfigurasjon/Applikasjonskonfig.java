@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -42,6 +43,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     security = @SecurityRequirement(name = "bearer-key"))
 @EnableSecurityConfiguration
 @EnableRetry
+@EnableAspectJAutoProxy
 public class Applikasjonskonfig {
 
   public static final String ISSUER_TOKENX = "tokenx";
