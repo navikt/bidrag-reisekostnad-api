@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@DisplayName("ArkiverSkeduleringTest")
+@DisplayName("BarnFylt15årSkeduleringTest")
 class BarnFylt15årSkeduleringTest: SkeduleringTest() {
 
     @Test
@@ -71,7 +71,7 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
 
         databehandler.behandleForespørslerSomInneholderBarnSomHarNyligFylt15År()
 
-        val alleForespørsler = forespørselDao.findAll().toList()
+        val alleForespørsler = transactionTemplate.execute { forespørselDao.findAll().toList() }!!
 
         originalForespørsel = alleForespørsler.find { it.id == originalForespørsel.id }!!
         originalForespørselMedFeil = alleForespørsler.find { it.id == originalForespørselMedFeil.id }!!

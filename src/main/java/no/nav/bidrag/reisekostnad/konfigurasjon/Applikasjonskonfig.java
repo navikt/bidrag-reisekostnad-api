@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Slf4j
@@ -40,6 +41,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     info = @Info(title = "bidrag-reisekostnad-api", version = "v1"),
     security = @SecurityRequirement(name = "bearer-key"))
 @EnableSecurityConfiguration
+@EnableRetry
 public class Applikasjonskonfig {
 
   public static final String ISSUER_TOKENX = "tokenx";
