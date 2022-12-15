@@ -1,5 +1,6 @@
 package no.nav.bidrag.reisekostnad.aop
 
+import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.reisekostnad.model.MDC_KORRELASJONSID
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.After
@@ -19,7 +20,7 @@ class KorrelasjonsIdAspect {
         val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
         val enkodedMetodenavn = URLEncoder.encode(joinPoint.signature.name, "utf-8")
         val korrelasjonsId = "${tilfeldigVerdi}_$enkodedMetodenavn"
-        MDC.put(MDC_KORRELASJONSID, korrelasjonsId)
+        MDC.put(MDC_KORRELASJONSID, CorrelationId.existing(korrelasjonsId).get())
     }
 
     @After(value = "execution(* no.nav.bidrag.reisekostnad.skedulering.Databehandler.*(..))")
