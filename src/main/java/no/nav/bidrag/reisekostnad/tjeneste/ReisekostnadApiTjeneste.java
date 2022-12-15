@@ -146,18 +146,19 @@ public class ReisekostnadApiTjeneste {
     }
 
     if (barnUnder15År.size() > 0) {
-      var idForespørsel = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
+      var idForespørsel = lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
       if (idForespørsel > 0) {
         brukernotifikasjonkonsument.oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, motpart);
       }
     }
   }
 
-  private void lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke) {
+  private int lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke) {
     var forespørselId = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barn, kreverSamtykke);
     if (!kreverSamtykke) {
       arkiveringstjeneste.arkivereForespørsel(forespørselId);
     }
+    return forespørselId;
   }
 
   private void validereRelasjonTilBarn(Set<String> personidenterBarn, Optional<HentFamilieRespons> familieRespons) {
