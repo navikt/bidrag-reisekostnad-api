@@ -7,13 +7,11 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Value;
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon;
+import no.nav.bidrag.reisekostnad.Testperson;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao;
@@ -42,7 +40,7 @@ import org.springframework.test.context.ActiveProfiles;
 @DisplayName("MapperTest")
 @ActiveProfiles(Profil.TEST)
 @EnableMockOAuth2Server
-@AutoConfigureWireMock(port=0)
+@AutoConfigureWireMock(port = 0)
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @SpringBootTest(classes = {Mapper.class, ForespørselDao.class, BidragReisekostnadApiTestapplikasjon.class})
 public class MapperTest {
@@ -57,11 +55,11 @@ public class MapperTest {
 
   private @MockBean TokenValidationContextHolder tokenValidationContextHolder;
 
-  private static final Testperson HOVEDPART = new Testperson("00000", "Pegasus", 35);
+  private static final Testperson HOVEDPART = new Testperson("10001", "Pegasus", 35);
   private static final Testperson MOTPART = new Testperson("11111", "Zuez", 43);
   private static final Testperson BARN_OVER_FEMTEN = new Testperson("12345", "Alfa", 16);
   private static final Testperson BARN_UNDER_FEMTEN = new Testperson("44444", "Beta", 12);
-  private  static final Testperson BARN_OVER_ATTEN = new Testperson("00000", "Myndig", 18);
+  private static final Testperson BARN_OVER_ATTEN = new Testperson("00000", "Myndig", 18);
 
   @BeforeEach
   void sletteTestdata() {
@@ -135,8 +133,8 @@ public class MapperTest {
     var denAndreParten = MOTPART;
     var familierespons = oppretteHentFamilieRespons(testperson, denAndreParten);
 
-    forespørselDao.save(oppretteForespørsel(denAndreParten.getFødselsnummer(),
-        testperson.getFødselsnummer(),
+    forespørselDao.save(oppretteForespørsel(denAndreParten.getIdent(),
+        testperson.getIdent(),
         familierespons.getPersonensMotpartBarnRelasjon().stream()
             .flatMap(mbr -> mbr.getFellesBarn().stream())
             .filter(barn -> barn.getFoedselsdato().isAfter(LocalDate.now().minusYears(18)))
@@ -215,10 +213,13 @@ public class MapperTest {
         () -> assertThat(barnMinstFemtenÅr.stream().findFirst().get().getFødselsdato()).isEqualTo(BARN_OVER_FEMTEN.getFødselsdato()),
         () -> assertThat(motpartOgBarnUnderFemtenÅr.size()).isEqualTo(1),
         () -> assertThat(motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getMotpart().getFornavn()).isEqualTo(denAndreParten.getFornavn()),
-        () -> assertThat(motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getMotpart().getFødselsdato()).isEqualTo(denAndreParten.getFødselsdato()),
-        () -> assertThat(motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getFellesBarnUnder15År().stream().findFirst().get().getFornavn()).isEqualTo(
+        () -> assertThat(motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getMotpart().getFødselsdato()).isEqualTo(
+            denAndreParten.getFødselsdato()),
+        () -> assertThat(
+            motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getFellesBarnUnder15År().stream().findFirst().get().getFornavn()).isEqualTo(
             BARN_UNDER_FEMTEN.getFornavn()),
-        () -> assertThat(motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getFellesBarnUnder15År().stream().findFirst().get().getFødselsdato()).isEqualTo(
+        () -> assertThat(
+            motpartOgBarnUnderFemtenÅr.stream().findFirst().get().getFellesBarnUnder15År().stream().findFirst().get().getFødselsdato()).isEqualTo(
             BARN_UNDER_FEMTEN.getFødselsdato()),
         () -> assertThat(brukerinformasjonDto.getForespørslerSomHovedpart().size()).isEqualTo(0)
     );
@@ -227,23 +228,23 @@ public class MapperTest {
   }
 
   private void bidragPersonkonsumentTestrespons() {
-    when(bidragPersonkonsument.hentPersoninfo(HOVEDPART.getFødselsnummer())).thenReturn(HentPersoninfoRespons.builder()
+    when(bidragPersonkonsument.hentPersoninfo(HOVEDPART.getIdent())).thenReturn(HentPersoninfoRespons.builder()
         .fornavn(HOVEDPART.getFornavn())
         .foedselsdato(HOVEDPART.getFødselsdato()).build());
 
-    when(bidragPersonkonsument.hentPersoninfo(MOTPART.getFødselsnummer())).thenReturn(HentPersoninfoRespons.builder()
+    when(bidragPersonkonsument.hentPersoninfo(MOTPART.getIdent())).thenReturn(HentPersoninfoRespons.builder()
         .fornavn(MOTPART.getFornavn())
         .foedselsdato(MOTPART.getFødselsdato()).build());
 
-    when(bidragPersonkonsument.hentPersoninfo(BARN_OVER_FEMTEN.getFødselsnummer())).thenReturn(HentPersoninfoRespons.builder()
+    when(bidragPersonkonsument.hentPersoninfo(BARN_OVER_FEMTEN.getIdent())).thenReturn(HentPersoninfoRespons.builder()
         .fornavn(BARN_OVER_FEMTEN.getFornavn())
         .foedselsdato(BARN_OVER_FEMTEN.getFødselsdato()).build());
 
-    when(bidragPersonkonsument.hentPersoninfo(BARN_UNDER_FEMTEN.getFødselsnummer())).thenReturn(HentPersoninfoRespons.builder()
+    when(bidragPersonkonsument.hentPersoninfo(BARN_UNDER_FEMTEN.getIdent())).thenReturn(HentPersoninfoRespons.builder()
         .fornavn(BARN_UNDER_FEMTEN.getFornavn())
         .foedselsdato(BARN_UNDER_FEMTEN.getFødselsdato()).build());
 
-    when(bidragPersonkonsument.hentPersoninfo(BARN_OVER_ATTEN.getFødselsnummer())).thenReturn(HentPersoninfoRespons.builder()
+    when(bidragPersonkonsument.hentPersoninfo(BARN_OVER_ATTEN.getIdent())).thenReturn(HentPersoninfoRespons.builder()
         .fornavn(BARN_OVER_ATTEN.getFornavn())
         .foedselsdato(BARN_OVER_ATTEN.getFødselsdato()).build());
   }
@@ -251,7 +252,7 @@ public class MapperTest {
   private HentFamilieRespons oppretteHentFamilieRespons(Testperson hovedpart, Testperson motpart) {
     return HentFamilieRespons.builder()
         .person(Familiemedlem.builder()
-            .ident(hovedpart.getFødselsnummer())
+            .ident(hovedpart.getIdent())
             .fornavn(hovedpart.getFornavn())
             .foedselsdato(hovedpart.getFødselsdato())
             .build())
@@ -263,24 +264,24 @@ public class MapperTest {
     return MotpartBarnRelasjon.builder()
         .relasjonMotpart(FAR)
         .motpart(Familiemedlem.builder()
-            .ident(motpart.getFødselsnummer())
+            .ident(motpart.getIdent())
             .fornavn(motpart.getFornavn())
             .foedselsdato(motpart.getFødselsdato())
             .build())
         .fellesBarn(
             List.of(
                 Familiemedlem.builder()
-                    .ident(BARN_UNDER_FEMTEN.getFødselsnummer())
+                    .ident(BARN_UNDER_FEMTEN.getIdent())
                     .fornavn(BARN_UNDER_FEMTEN.getFornavn())
                     .foedselsdato(BARN_UNDER_FEMTEN.getFødselsdato())
                     .build(),
                 Familiemedlem.builder()
-                    .ident(BARN_OVER_FEMTEN.getFødselsnummer())
+                    .ident(BARN_OVER_FEMTEN.getIdent())
                     .fornavn(BARN_OVER_FEMTEN.getFornavn())
                     .foedselsdato(BARN_OVER_FEMTEN.getFødselsdato())
                     .build(),
                 Familiemedlem.builder()
-                    .ident(BARN_OVER_ATTEN.getFødselsnummer())
+                    .ident(BARN_OVER_ATTEN.getIdent())
                     .fornavn(BARN_OVER_ATTEN.getFornavn())
                     .foedselsdato(BARN_OVER_ATTEN.getFødselsdato())
                     .build()
@@ -302,18 +303,3 @@ public class MapperTest {
   }
 }
 
-@Value
-class Testperson {
-
-  String personnummer;
-  String fornavn;
-  int alder;
-
-  public LocalDate getFødselsdato() {
-    return LocalDate.now().minusYears(alder);
-  }
-
-  public String getFødselsnummer() {
-    return LocalDate.now().minusYears(alder).format(DateTimeFormatter.ofPattern("ddMMyy")) + personnummer;
-  }
-}

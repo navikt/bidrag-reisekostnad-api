@@ -1,5 +1,17 @@
 package no.nav.bidrag.reisekostnad.api;
 
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn10;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn16;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonDødMotpart;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonErDød;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonGråtass;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarBarnMedDiskresjon;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarDiskresjon;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarDødtBarn;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarMotpartMedDiskresjon;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonIkkeFunnet;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonServerfeil;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonStreng;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -16,7 +28,6 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Kjønn;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

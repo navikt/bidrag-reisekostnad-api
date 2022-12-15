@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.commons.web.HttpResponse;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
+import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Persondatafeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
@@ -79,6 +80,7 @@ public class ReisekostnadApiTjeneste {
   public HttpResponse<Void> oppdatereForespørselMedSamtykke(int idForespørsel, String personidentMotpart) {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller oppdatering av samtykke  feiler
     databasetjeneste.giSamtykke(idForespørsel, personidentMotpart);
+    sletteSamtykkeoppgave(idForespørsel, personidentMotpart);
     arkiveringstjeneste.arkivereForespørsel(idForespørsel);
     return HttpResponse.from(HttpStatus.OK, null);
   }
@@ -88,12 +90,24 @@ public class ReisekostnadApiTjeneste {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
     var deaktivertForespørsel = databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
 
-    if (deaktivertForespørsel != null && Deaktivator.MOTPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
+    if (Deaktivator.MOTPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
       brukernotifikasjonkonsument.varsleOmNeiTilSamtykke(deaktivertForespørsel.getHovedpart().getPersonident(),
           deaktivertForespørsel.getMotpart().getPersonident());
     }
 
+    // Motparts samtykkeoppgave skal slettes uavhengig av om det er hovedpart eller motpart som trekker forespørselen
+    sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident());
+
     return HttpResponse.from(HttpStatus.OK, null);
+  }
+
+  private void sletteSamtykkeoppgave(int idForespørsel, String personidentMotpart) {
+    var aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
+    log.info("Fant {} aktive brukernotifikasjonsoppgaver knyttet til motpart i forespørsel med id {}", aktiveOppgaver.size(), idForespørsel);
+    for (Oppgavebestilling oppgave:aktiveOppgaver) {
+      brukernotifikasjonkonsument.sletteSamtykkeoppgave(oppgave.getEventId(), personidentMotpart);
+      log.info("Slettet oppgave med eventId {} knyttet til forespørsel {}", oppgave.getEventId(), idForespørsel);
+    }
   }
 
   private Set<String> henteUtBarnaSomTilhørerMotpart(MotpartBarnRelasjon mBRelasjon, Set<String> valgteBarn) {
