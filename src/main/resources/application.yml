@@ -78,6 +78,7 @@ integrasjon.bidrag:
   person.url: ${BIDRAG_PERSON_URL}
 
 kjøreplan.databehandling.arkivering: ${KJOEREPLAN_ARKIVERING}
+kjøreplan.databehandling.fylt_15: ${KJOEREPLAN_FYLT_15}
 
 egenskaper:
   appnavn-reisekostnad: bidrag-reisekostnad

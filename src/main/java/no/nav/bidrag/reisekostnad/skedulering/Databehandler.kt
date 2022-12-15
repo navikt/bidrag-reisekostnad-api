@@ -25,7 +25,7 @@ class Databehandler(private val arkiveringstjeneste: Arkiveringstjeneste, privat
     }
 
     @Scheduled(cron = "\${kjøreplan.databehandling.fylt_15}")
-    @SchedulerLock(name = "forespørsel_barn_nylig_15år", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
+    @SchedulerLock(name = "forespørsel_barn_fylt_nylig_15år", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
     fun behandleForespørslerSomInneholderBarnSomHarNyligFylt15År() {
         val forespørslerOver15År = databasetjeneste.hentForespørselSomInneholderBarnSomHarFylt15år()
         log.info("Fant totalt ${forespørslerOver15År.size} forespørsler som inneholder barn som har nylig fylt 15 år")
