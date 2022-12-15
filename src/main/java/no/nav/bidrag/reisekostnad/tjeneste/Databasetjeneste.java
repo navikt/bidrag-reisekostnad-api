@@ -21,8 +21,8 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
-import no.nav.bidrag.reisekostnad.model.ConstantsKt;
-import no.nav.bidrag.reisekostnad.model.ForespørselExtensionsKt;
+import no.nav.bidrag.reisekostnad.model.KonstanterKt;
+import no.nav.bidrag.reisekostnad.model.ForespørselUtvidelserKt;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class Databasetjeneste {
   @Transactional(TxType.REQUIRES_NEW)
   public int oppdaterForespørselTilÅIkkeKreveSamtykke(int forespørselId){
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
-    if (originalForespørsel.getBarn().size() == 1){
+    if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)){
       originalForespørsel.setKreverSamtykke(false);
       log.info("Forespørsel med id {} ble endret til å ikke kreve samtykke", forespørselId);
     }
@@ -66,9 +66,9 @@ public class Databasetjeneste {
       return forespørselId;
     }
 
-    var barnSomHarFylt15år = ForespørselExtensionsKt.getIdenterBarnSomHarFylt15år(originalForespørsel);
+    var barnSomHarFylt15år = ForespørselUtvidelserKt.getIdenterBarnSomHarFylt15år(originalForespørsel);
 
-    ForespørselExtensionsKt.fjernBarnSomHarFylt15år(originalForespørsel);
+    ForespørselUtvidelserKt.fjernBarnSomHarFylt15år(originalForespørsel);
 
     var hovedpartIdent = originalForespørsel.getHovedpart().getPersonident();
     var motpartIdent = originalForespørsel.getMotpart().getPersonident();
@@ -184,7 +184,7 @@ public class Databasetjeneste {
   }
 
   public List<Forespørsel> hentForespørselSomInneholderBarnSomHarFylt15år() {
-    var forespørsler = forespørselDao.henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(ConstantsKt.getDato15ÅrTilbakeFraIdag());
+    var forespørsler = forespørselDao.henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(KonstanterKt.getDato15ÅrTilbakeFraIdag());
     log.info("Fant {} aktive forespørsler om inneholder barn som har nylig fylt 15år", forespørsler.size());
 
     return forespørsler.stream().toList();
