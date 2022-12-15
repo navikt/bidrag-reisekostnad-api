@@ -75,7 +75,7 @@ public class BidragPersonkonsument {
       return hentPersoninfo.getBody();
     } catch (HttpStatusCodeException hsce) {
       SIKKER_LOGG.warn("Kall mot bidrag-person for henting av personinfo returnerte httpstatus {} for personident {}", hsce.getStatusCode(),
-          personident);
+          personident, hsce);
       var feilkode = HttpStatus.NOT_FOUND.equals(hsce.getStatusCode()) ? PDL_PERSON_IKKE_FUNNET : PDL_FEIL;
       throw new Persondatafeil(feilkode, hsce.getStatusCode());
     }
