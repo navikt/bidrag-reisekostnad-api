@@ -91,10 +91,12 @@ public class PdfGenerator {
       }
 
       try {
+        InputStream colorProfile = PdfGenerator.class.getResourceAsStream("/pdf-template/sRGB.icc");
         builder.useProtocolsStreamImplementation(new ClassPathStreamFactory(), "classpath")
             .useFastMode()
             .usePdfAConformance(PdfAConformance.PDFA_2_A)
             .withW3cDocument(doc, "classpath:/pdf-template/")
+            .useColorProfile(colorProfile.readAllBytes())
             .toStream(pdfStream)
             .run();
 
