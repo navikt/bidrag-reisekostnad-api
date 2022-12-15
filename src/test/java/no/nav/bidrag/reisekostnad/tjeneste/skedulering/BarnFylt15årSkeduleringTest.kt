@@ -85,6 +85,35 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
     }
 
     @Test
+    fun skalOppdatereForespørselHvisInneholderFlereBarnSomHarFylt15år(){
+        var originalForespørsel = oppprettForespørsel(true)
+        originalForespørsel.barn = mutableSetOf(testpersonBarn15, testpersonBarn15_3)
+
+        transactionTemplate.executeWithoutResult {
+            forespørselDao.save(originalForespørsel)
+        }
+
+        databehandler.behandleForespørslerSomInneholderBarnSomHarNyligFylt15År()
+
+        val alleForespørsler = forespørselDao.findAll().toList()
+        originalForespørsel = alleForespørsler.find { it.id == originalForespørsel.id }!!
+
+        assertSoftly {
+            alleForespørsler.size shouldBe 1
+
+            originalForespørsel.barn.size shouldBe 2
+            originalForespørsel.samtykket shouldBe null
+
+            originalForespørsel.isKreverSamtykke shouldBe false
+            originalForespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
+            originalForespørsel.journalført shouldHaveSameYearAs LocalDateTime.now()
+            originalForespørsel.idJournalpost shouldBe "1232132132"
+
+            verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
+        }
+    }
+
+    @Test
     fun skalRulleTilbakeEndringerVedFeil(){
         var forespørselMedFeil = oppprettForespørsel(true)
         forespørselMedFeil.barn = mutableSetOf(testpersonBarn11, testpersonBarn15_2)
