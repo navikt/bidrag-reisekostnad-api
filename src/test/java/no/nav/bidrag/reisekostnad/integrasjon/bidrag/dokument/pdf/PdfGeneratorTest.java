@@ -26,7 +26,7 @@ public class PdfGeneratorTest {
 
 
     // hvis
-    PdfGenerator.genererePdf(barn, hovedpart, motpart);
+    PdfGenerator.genererePdf(barn, hovedpart, motpart, null);
 
     // så
 

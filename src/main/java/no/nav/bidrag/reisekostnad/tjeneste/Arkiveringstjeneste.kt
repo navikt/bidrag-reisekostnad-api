@@ -48,7 +48,7 @@ class Arkiveringstjeneste(
         val barn = forespørsel.barn.map { mapper.tilPersonDto(it?.personident) }.toSet()
         val hovedpart = mapper.tilPersonDto(forespørsel.hovedpart.personident)
         val motpart = mapper.tilPersonDto(forespørsel.motpart.personident)
-        return PdfGenerator.genererePdf(barn, hovedpart, motpart)
+        return PdfGenerator.genererePdf(barn, hovedpart, motpart, forespørsel.samtykket)
     }
 
     companion object {

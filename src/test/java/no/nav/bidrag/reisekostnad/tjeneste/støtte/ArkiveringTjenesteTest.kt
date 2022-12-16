@@ -63,7 +63,7 @@ class ArkiveringTjenesteTest {
         clearAllMocks()
 
         mockkStatic(PdfGenerator::class)
-        every { PdfGenerator.genererePdf(any(), any(), any()) } returns produsertDokument
+        every { PdfGenerator.genererePdf(any(), any(), any(), any()) } returns produsertDokument
         every { mapper.tilPersonDto(identHovedpart) } returns hovedpartDto
         every { mapper.tilPersonDto(identMotpart) } returns motpartDto
         every { mapper.tilPersonDto(identBarn2) } returns barn2Dto
@@ -87,7 +87,7 @@ class ArkiveringTjenesteTest {
             forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel.idJournalpost shouldBe responsJournalpostId
             verify { bidragDokument.opprettJournalpost(identHovedpart, match { it.contains(forespørsel.id.toString()) }, produsertDokument) }
-            verify { PdfGenerator.genererePdf(mutableSetOf(barn1Dto, barn2Dto), hovedpartDto, motpartDto) }
+            verify { PdfGenerator.genererePdf(mutableSetOf(barn1Dto, barn2Dto), hovedpartDto, motpartDto, any()) }
         }
     }
 
@@ -159,7 +159,7 @@ class ArkiveringTjenesteTest {
             forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
             forespørsel.idJournalpost shouldBe responsJournalpostId
             verify { bidragDokument.opprettJournalpost(identHovedpart, match { it.contains(forespørsel.id.toString()) }, produsertDokument) }
-            verify { PdfGenerator.genererePdf(mutableSetOf(barn1Dto, barn2Dto), hovedpartDto, motpartDto) }
+            verify { PdfGenerator.genererePdf(mutableSetOf(barn1Dto, barn2Dto), hovedpartDto, motpartDto, any()) }
         }
     }
 
