@@ -34,7 +34,6 @@ import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikas
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -81,7 +80,6 @@ public class ReisekostnadApiTjenesteTest {
   }
 
   @Test
-  @Disabled
   void skalBestilleSlettingAvSamtykkeoppgaveDersomHovedpartTrekkerForespørsel() {
 
     // gitt
@@ -104,7 +102,6 @@ public class ReisekostnadApiTjenesteTest {
   }
 
   @Test
-  @Disabled
   void skalBestilleSlettingAvSamtykkeoppgaveDersomMotpartTrekkerForespørsel() {
 
     // gitt
