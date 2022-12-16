@@ -157,7 +157,7 @@ public class PdfGenerator {
   private static void leggTilSamtykketInfo(Element element, Skriftspråk skriftspraak, LocalDateTime samtykketDato){
     var samtykket = element.getElementsByClass(henteElementnavn(Elementnavn.SAMTYKKET, skriftspraak));
 
-    var samtykketResultat = samtykketDato == null ? "Nei" : String.format("Ja, %s", samtykketDato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+    var samtykketResultat = samtykketDato == null ? "Nei" : "Ja";
     samtykket.first().text(tekstvelger(Tekst.HAR_SAMTYKKET, skriftspraak) + ": " + samtykketResultat);
   }
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
@@ -182,6 +182,9 @@ public class PdfGenerator {
       var motpartElement = document.getElementById(henteElementnavn(Elementnavn.MOTPART, skriftspråk));
       leggeTilDataForelder(motpartElement, motpart, skriftspråk);
       leggTilSamtykketInfo(motpartElement, skriftspråk, samtykketDato);
+
+      var datoElement = document.getElementById(henteElementnavn(Elementnavn.DATO_OPPRETTET, skriftspråk));
+      datoElement.text(String.format("Dato: %s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
 
       // jsoup fjerner tagslutt for <link> og <meta> - legger på manuelt ettersom dette er påkrevd av PDFBOX
       var html = document.html().replaceFirst("charset=utf-8\">", "charset=utf-8\"/>");
@@ -250,7 +253,8 @@ public class PdfGenerator {
     PERSONIDENT,
     HOVEDPART,
     FORNAVN,
-    SAMTYKKET
+    SAMTYKKET,
+    DATO_OPPRETTET
   }
   private static String dekryptere(String kryptertPersonident) {
     return Krypteringsverktøy.dekryptere(kryptertPersonident);
