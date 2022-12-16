@@ -55,6 +55,16 @@ ul.detaljer {
     margin: 2%; /* Remove margins */
 }
 
+.header {
+    display: flex;
+    flex-direction: row;
+}
+
+#dato_opprettet {
+    position: relative;
+    top: 100px;
+}
+
 .nav-logo {
     width: 65px;
     height: 25px;
