@@ -56,15 +56,6 @@ public class ReisekostnadApiTjenesteTest {
   private @Mock Mapper mapper;
   private @InjectMocks ReisekostnadApiTjeneste reisekostnadApiTjeneste;
 
-  @BeforeEach
-  void resetteMocker() {
-    reset(brukernotifikasjonkonsument);
-    clearInvocations(brukernotifikasjonkonsument);
-    reset(mapper);
-    reset(arkiveringstjeneste);
-    reset(bidragPersonkonsument);
-  }
-
   @Test
   void skalOppretteForespørselKunForMotpartsBarn() {
 
@@ -117,6 +108,7 @@ public class ReisekostnadApiTjenesteTest {
   void skalBestilleSlettingAvSamtykkeoppgaveDersomMotpartTrekkerForespørsel() {
 
     // gitt
+    clearInvocations(brukernotifikasjonkonsument);
     var idForespørsel = 1;
     var hovedpart = testpersonGråtass;
     var motpart = testpersonStreng;
@@ -166,6 +158,7 @@ public class ReisekostnadApiTjenesteTest {
   void skalVarsleOmNeiTilSamtykke() {
 
     // gitt
+    clearInvocations(brukernotifikasjonkonsument);
     var idForespørsel = 1;
     var hovedpart = testpersonGråtass;
     var motpart = testpersonStreng;
