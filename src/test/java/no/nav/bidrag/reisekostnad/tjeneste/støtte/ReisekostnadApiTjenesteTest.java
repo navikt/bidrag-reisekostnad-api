@@ -57,6 +57,9 @@ public class ReisekostnadApiTjenesteTest {
   @BeforeEach
   void resetteMocker() {
     reset(brukernotifikasjonkonsument);
+    reset(mapper);
+    reset(arkiveringstjeneste);
+    reset(bidragPersonkonsument);
   }
 
   @Test
