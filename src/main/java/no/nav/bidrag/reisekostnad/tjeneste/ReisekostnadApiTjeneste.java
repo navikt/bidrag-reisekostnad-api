@@ -90,11 +90,13 @@ public class ReisekostnadApiTjeneste {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller deaktivering feiler
     var deaktivertForespørsel = databasetjeneste.deaktivereForespørsel(idForespørsel, personident);
 
-    if (deaktivertForespørsel != null && Deaktivator.MOTPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
+    if (Deaktivator.MOTPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
       brukernotifikasjonkonsument.varsleOmNeiTilSamtykke(deaktivertForespørsel.getHovedpart().getPersonident(),
           deaktivertForespørsel.getMotpart().getPersonident());
-      sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident());
     }
+
+    // Motparts samtykkeoppgave skal slettes uavhengig av om det er hovedpart eller motpart som trekker forespørselen
+    sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident());
 
     return HttpResponse.from(HttpStatus.OK, null);
   }
@@ -102,7 +104,7 @@ public class ReisekostnadApiTjeneste {
   private void sletteSamtykkeoppgave(int idForespørsel, String personidentMotpart) {
     var aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
     log.info("Fant {} aktive brukernotifikasjonsoppgaver knyttet til motpart i forespørsel med id {}", aktiveOppgaver.size(), idForespørsel);
-    for (Oppgavebestilling oppgave:aktiveOppgaver) {
+    for (Oppgavebestilling oppgave : aktiveOppgaver) {
       brukernotifikasjonkonsument.sletteSamtykkeoppgave(oppgave.getEventId(), personidentMotpart);
       log.info("Slettet oppgave med eventId {} knyttet til forespørsel {}", oppgave.getEventId(), idForespørsel);
     }

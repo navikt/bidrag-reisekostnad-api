@@ -75,7 +75,8 @@ public class Mapper {
         .kanSøkeOmFordelingAvReisekostnader(!hovedpersonHarDiskresjon && personHarDeltForeldreansvar(familierUtenDiskresjonEllerDødeMotparter))
         .barnMinstFemtenÅr(hovedpersonHarDiskresjon ? new HashSet<>() : henteBarnOverFemtenÅr(familierUtenDiskresjonEllerDødeMotparter))
         .forespørslerSomHovedpart(tilForespørselDto(forespørslerHvorPersonErHovedpart))
-        .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart)).motparterMedFellesBarnUnderFemtenÅr(
+        .forespørslerSomMotpart(tilForespørselDto(forespørslerHvorPersonErMotpart))
+        .motparterMedFellesBarnUnderFemtenÅr(
             hovedpersonHarDiskresjon ? new HashSet<>() : filtrereUtMotparterMedFellesBarnUnderFemtenÅr(familierUtenDiskresjonEllerDødeMotparter))
         .build();
   }
@@ -193,10 +194,6 @@ public class Mapper {
   public Set<Barn> tilEntitet(Set<String> personidenterBarn) {
     return personidenterBarn.stream().filter(Objects::nonNull).filter(s -> !s.isEmpty())
         .map(personident -> Barn.builder().personident(personident).fødselsdato(hentBarnFødselsdato(personident)).build()).collect(Collectors.toSet());
-  }
-
-  public Set<PersonDto> tilPersonDto(Set<Barn> barn) {
-    return barn.stream().filter(Objects::nonNull).map(b -> tilPersonDto(b.getPersonident())).collect(Collectors.toSet());
   }
 
   public PersonDto tilPersonDto(String personident) {

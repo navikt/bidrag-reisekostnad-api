@@ -1,15 +1,30 @@
 package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn10;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn16;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonGråtass;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonSirup;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonStreng;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import no.nav.bidrag.reisekostnad.Testperson;
+import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
+import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Familiemedlem;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.HentFamilieRespons;
@@ -19,13 +34,16 @@ import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikas
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class ReisekostnadApiTjenesteTest {
 
   private @Mock BidragPersonkonsument bidragPersonkonsument;
@@ -39,67 +57,150 @@ public class ReisekostnadApiTjenesteTest {
   void skalOppretteForespørselKunForMotpartsBarn() {
 
     // gitt
-    var personidentHovedperson = "77712365478";
-    var personidentMotpart = "90904513277";
-    var småstein = Familiemedlem.builder()
-        .ident("12345670000")
-        .fornavn("Småstein")
-        .foedselsdato(LocalDate.now().minusYears(8))
-        .build();
-    var brorAvEnAnnenMor = Familiemedlem.builder()
-        .ident("98765432154")
-        .fornavn("Bror")
-        .foedselsdato(LocalDate.now().minusYears(17))
-        .build();
-    var aDifferentMother = "975465451234";
-    var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(småstein.getIdent()), Krypteringsverktøy.kryptere(brorAvEnAnnenMor.getIdent()));
-    var familierespons = HentFamilieRespons.builder()
-        .person(
-            Familiemedlem.builder()
-                .foedselsdato(LocalDate.now().minusYears(43))
-                .ident(personidentHovedperson)
-                .fornavn("Ufin")
-                .build())
-        .personensMotpartBarnRelasjon(List.of(
-            MotpartBarnRelasjon.builder()
-                .motpart(Familiemedlem.builder()
-                    .foedselsdato(LocalDate.now().minusYears(39))
-                    .fornavn("Direkte")
-                    .ident(personidentMotpart)
-                    .build())
-                .fellesBarn(List.of(småstein))
-                .build(),
-            MotpartBarnRelasjon.builder()
-                .motpart(Familiemedlem.builder()
-                    .ident(aDifferentMother)
-                    .fornavn("Anderledes")
-                    .foedselsdato(LocalDate.now().minusYears(44))
-                    .build())
-                .fellesBarn(List.of(brorAvEnAnnenMor))
-                .build()
-        ))
-        .build();
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var barnKullA = testpersonBarn10;
+    var brorAvEnAnnenMor = testpersonBarn16;
+    var enAnnenMor = testpersonSirup;
 
-    var hentPersoninfoSmåstein = HentPersoninfoRespons.builder()
-        .foedselsdato(småstein.getFoedselsdato())
-        .fornavn(småstein.getFornavn())
-        .build();
+    var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(barnKullA.getIdent()));
+    var familierespons = oppretteHentFamilieRespons(hovedpart, Map.of(motpart, Set.of(barnKullA), enAnnenMor, Set.of(brorAvEnAnnenMor)));
 
-    var hentPersoninfoBrorAvEnAnnenMor = HentPersoninfoRespons.builder()
-        .foedselsdato(brorAvEnAnnenMor.getFoedselsdato())
-        .fornavn(brorAvEnAnnenMor.getFornavn())
-        .build();
-
-    when(bidragPersonkonsument.hentFamilie(personidentHovedperson)).thenReturn(Optional.of(familierespons));
-    when(bidragPersonkonsument.hentPersoninfo(småstein.getIdent())).thenReturn(hentPersoninfoSmåstein);
-    when(bidragPersonkonsument.hentPersoninfo(brorAvEnAnnenMor.getIdent())).thenReturn(hentPersoninfoBrorAvEnAnnenMor);
-    when(databasetjeneste.lagreNyForespørsel(personidentHovedperson, personidentMotpart, Set.of(småstein.getIdent()), true)).thenReturn(1);
+    mockHentPersoninfo(Set.of(barnKullA));
+    when(bidragPersonkonsument.hentFamilie(hovedpart.getIdent())).thenReturn(Optional.of(familierespons));
+    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barnKullA.getIdent()), true)).thenReturn(1);
     doNothing().when(brukernotifikasjonkonsument).oppretteOppgaveTilMotpartOmSamtykke(anyInt(), anyString());
 
     // hvis
-    var respons = reisekostnadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(personidentHovedperson, valgteKrypterteBarn);
+    var respons = reisekostnadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(hovedpart.getIdent(), valgteKrypterteBarn);
+
+    // så
+    verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(1, motpart.getIdent());
+    assertThat(respons.is2xxSuccessful());
+  }
+
+  @Test
+  void skalBestilleSlettingAvSamtykkeoppgaveDersomHovedpartTrekkerForespørsel() {
+
+    // gitt
+    var idForespørsel = 1;
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var deaktivertForespørsel = Forespørsel.builder().id(idForespørsel).deaktivert(LocalDateTime.now()).deaktivertAv(Deaktivator.HOVEDPART)
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build()).build();
+    var aktivOppgave = Oppgavebestilling.builder().eventId("eventId").build();
+
+    when(databasetjeneste.deaktivereForespørsel(idForespørsel, hovedpart.getIdent())).thenReturn(deaktivertForespørsel);
+    when(databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, motpart.getIdent())).thenReturn(Set.of(aktivOppgave));
+
+    // hvis
+    var respons = reisekostnadApiTjeneste.trekkeForespørsel(idForespørsel, hovedpart.getIdent());
+
+    // så
+    assertAll(() -> assertThat(respons.is2xxSuccessful()),
+        () -> verify(brukernotifikasjonkonsument, times(1)).sletteSamtykkeoppgave("eventId", motpart.getIdent()));
+  }
+
+  @Test
+  void skalBestilleSlettingAvSamtykkeoppgaveDersomMotpartTrekkerForespørsel() {
+
+    // gitt
+    var idForespørsel = 1;
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var deaktivertForespørsel = Forespørsel.builder().id(idForespørsel).deaktivert(LocalDateTime.now()).deaktivertAv(Deaktivator.MOTPART)
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build()).hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+        .build();
+    var aktivOppgave = Oppgavebestilling.builder().eventId("eventId").build();
+
+    when(databasetjeneste.deaktivereForespørsel(idForespørsel, motpart.getIdent())).thenReturn(deaktivertForespørsel);
+    when(databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, motpart.getIdent())).thenReturn(Set.of(aktivOppgave));
+
+    // hvis
+    var respons = reisekostnadApiTjeneste.trekkeForespørsel(idForespørsel, motpart.getIdent());
+
+    // så
+    assertAll(() -> assertThat(respons.is2xxSuccessful()),
+        () -> verify(brukernotifikasjonkonsument, times(1)).sletteSamtykkeoppgave("eventId", motpart.getIdent()));
+  }
+
+  @Test
+  void skalBestilleOpprettelseAvSamtykkeoppgaveVedOpprettelseAvForespørsel() {
+
+    // gitt
+    var idForespørsel = 1;
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var barn = testpersonBarn10;
+
+    var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(barn.getIdent()));
+    var familierespons = oppretteHentFamilieRespons(hovedpart, motpart, Set.of(barn));
+
+    mockHentPersoninfo(Set.of(barn));
+    when(bidragPersonkonsument.hentFamilie(hovedpart.getIdent())).thenReturn(Optional.of(familierespons));
+    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barn.getIdent()), true)).thenReturn(idForespørsel);
+    doNothing().when(brukernotifikasjonkonsument).oppretteOppgaveTilMotpartOmSamtykke(anyInt(), anyString());
+
+    // hvis
+    var respons = reisekostnadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(hovedpart.getIdent(), valgteKrypterteBarn);
+
+    // så
+    verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(1, motpart.getIdent());
+    assertAll(() -> assertThat(respons.is2xxSuccessful()),
+        () -> verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, motpart.getIdent()));
+  }
+
+  @Test
+  void skalVarsleOmNeiTilSamtykke() {
+
+    // gitt
+    var idForespørsel = 1;
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var deaktivertForespørsel = Forespørsel.builder().id(idForespørsel).deaktivert(LocalDateTime.now()).deaktivertAv(Deaktivator.MOTPART)
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build()).hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+        .build();
+    var aktivOppgave = Oppgavebestilling.builder().eventId("eventId").build();
+
+    when(databasetjeneste.deaktivereForespørsel(idForespørsel, motpart.getIdent())).thenReturn(deaktivertForespørsel);
+    when(databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, motpart.getIdent())).thenReturn(Set.of(aktivOppgave));
+
+    // hvis
+    var respons = reisekostnadApiTjeneste.trekkeForespørsel(idForespørsel, motpart.getIdent());
 
     // så
     assertThat(respons.is2xxSuccessful());
+    verify(brukernotifikasjonkonsument, times(1)).sletteSamtykkeoppgave("eventId", motpart.getIdent());
+    //verify(brukernotifikasjonkonsument, times(1)).varsleOmNeiTilSamtykke(hovedpart.getIdent(), motpart.getIdent());
+
+  }
+
+  private HentFamilieRespons oppretteHentFamilieRespons(Testperson hovedpart, Map<Testperson, Set<Testperson>> motpartBarnrelasjoner) {
+
+    return HentFamilieRespons.builder().person(tilFamiliemedlem(hovedpart)).personensMotpartBarnRelasjon(
+        motpartBarnrelasjoner.entrySet().stream().map(b -> tilMotpartBarnRelasjon(b.getKey(), b.getValue())).collect(Collectors.toList())).build();
+  }
+
+  private HentFamilieRespons oppretteHentFamilieRespons(Testperson hovedpart, Testperson motpart, Set<Testperson> fellesBarn) {
+    return oppretteHentFamilieRespons(hovedpart, Map.of(motpart, fellesBarn));
+  }
+
+  private void mockHentPersoninfo(Set<Testperson> testpersoner) {
+
+    for (Testperson testperson : testpersoner) {
+      var respons = HentPersoninfoRespons.builder().foedselsdato(testperson.getFødselsdato()).fornavn(testperson.getFornavn()).build();
+
+      when(bidragPersonkonsument.hentPersoninfo(testperson.getIdent())).thenReturn(respons);
+    }
+  }
+
+  private MotpartBarnRelasjon tilMotpartBarnRelasjon(Testperson motpart, Set<Testperson> fellesBarn) {
+    return MotpartBarnRelasjon.builder().motpart(tilFamiliemedlem(motpart))
+        .fellesBarn(fellesBarn.stream().map(this::tilFamiliemedlem).collect(Collectors.toList())).build();
+  }
+
+  private Familiemedlem tilFamiliemedlem(Testperson testperson) {
+    return Familiemedlem.builder().ident(testperson.getIdent()).fornavn(testperson.getFornavn())
+        .foedselsdato(LocalDate.now().minusYears(testperson.getAlder())).build();
   }
 }

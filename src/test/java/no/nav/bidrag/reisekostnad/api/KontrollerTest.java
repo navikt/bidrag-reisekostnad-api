@@ -92,19 +92,6 @@ public class KontrollerTest {
     urlTrekkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_TREKKE_FORESPØRSEL + "?id=%s";
   }
 
-  protected static Testperson testpersonGråtass = new Testperson("12345678910", "Gråtass", 40);
-  protected static Testperson testpersonStreng = new Testperson("11111122222", "Streng", 38);
-  protected static Testperson testpersonBarn16 = new Testperson("77777700000", "Grus", 16);
-  protected static Testperson testpersonBarn10 = new Testperson("33333355555", "Småstein", 10);
-  protected static Testperson testpersonIkkeFunnet = new Testperson("00000001231", "Utenfor", 29);
-  protected static Testperson testpersonHarDiskresjon = new Testperson("23451644512", "Diskos", 29);
-  protected static Testperson testpersonHarMotpartMedDiskresjon = new Testperson("56472134561", "Tordivel", 44);
-  protected static Testperson testpersonHarBarnMedDiskresjon = new Testperson("32456849111", "Kaktus", 48);
-  protected static Testperson testpersonErDød = new Testperson("77765415234", "Steindød", 35);
-  protected static Testperson testpersonHarDødtBarn = new Testperson("05784456310", "Albueskjell", 53);
-  protected static Testperson testpersonDødMotpart = new Testperson("445132456487", "Bunkers", 41);
-  protected static Testperson testpersonServerfeil = new Testperson("12000001231", "Feil", 78);
-
   protected static String opprettetJournalpostId = "1232132132";
   protected static class CustomHeader {
 

@@ -1,10 +1,13 @@
 package no.nav.bidrag.reisekostnad.api;
 
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn10;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn16;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonGråtass;
+import static no.nav.bidrag.reisekostnad.Testperson.testpersonStreng;
 import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument.BEHANDLINGSTEMA_REISEKOSTNADER;
 import static no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument.DOKUMENTTITTEL;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.time.LocalDate;
@@ -24,7 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
-public class OppretteForespørselOmFordelingAvReisekostnaderTest extends KontrollerTest{
+public class OppretteForespørselOmFordelingAvReisekostnaderTest extends KontrollerTest {
 
   @BeforeEach
   public void sletteTestdata() {
@@ -56,8 +59,9 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
         () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
-            .size()).isEqualTo(1));
+        () -> AssertionsForClassTypes.assertThat(
+            brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
+                .size()).isEqualTo(1));
 
     var motpart = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getMotpart();
     var barnUnder15År = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
@@ -87,7 +91,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getIdent()).isEqualTo(Krypteringsverktøy.kryptere(
             testpersonGråtass.getIdent())),
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFornavn()).isEqualTo(testpersonGråtass.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFødselsdato()).isEqualTo(testpersonGråtass.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getHovedpart().getFødselsdato())
+            .isEqualTo(testpersonGråtass.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getIdent()).isEqualTo(Krypteringsverktøy.kryptere(
             testpersonStreng.getIdent())),
         () -> AssertionsForClassTypes.assertThat(lagretForespørsel.get().getMotpart().getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
@@ -100,7 +105,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
     assertAll(
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel).isPresent(),
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent())).isEqualTo(testpersonBarn10.getIdent()),
+        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent()))
+            .isEqualTo(testpersonBarn10.getIdent()),
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato())
     );
 
@@ -135,8 +141,9 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
         () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
-        () -> AssertionsForClassTypes.assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
-            .size()).isEqualTo(1));
+        () -> AssertionsForClassTypes.assertThat(
+            brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
+                .size()).isEqualTo(1));
 
     var motpart = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getMotpart();
     var barnUnder15År = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
@@ -165,12 +172,16 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().isKreverSamtykke()).isTrue(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getIdent()).isEqualTo(
             Krypteringsverktøy.kryptere(testpersonGråtass.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFornavn()).isEqualTo(testpersonGråtass.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFødselsdato()).isEqualTo(testpersonGråtass.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFornavn())
+            .isEqualTo(testpersonGråtass.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getHovedpart().getFødselsdato())
+            .isEqualTo(testpersonGråtass.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getIdent()).isEqualTo(
             Krypteringsverktøy.kryptere(testpersonStreng.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFornavn())
+            .isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getMotpart().getFødselsdato())
+            .isEqualTo(testpersonStreng.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnUnder15.get().getBarn().size()).isEqualTo(1)
     );
 
@@ -179,7 +190,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
     assertAll(
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel).isPresent(),
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent())).isEqualTo(testpersonBarn10.getIdent()),
+        () -> AssertionsForClassTypes.assertThat(Krypteringsverktøy.dekryptere(barnILagretForespørsel.get().getIdent()))
+            .isEqualTo(testpersonBarn10.getIdent()),
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato())
     );
 
@@ -193,12 +205,16 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().isKreverSamtykke()).isFalse(),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getIdent()).isEqualTo(
             Krypteringsverktøy.kryptere(testpersonGråtass.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFornavn()).isEqualTo(testpersonGråtass.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFødselsdato()).isEqualTo(testpersonGråtass.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFornavn())
+            .isEqualTo(testpersonGråtass.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getHovedpart().getFødselsdato())
+            .isEqualTo(testpersonGråtass.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getIdent()).isEqualTo(
             Krypteringsverktøy.kryptere(testpersonStreng.getIdent())),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
-        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFornavn())
+            .isEqualTo(testpersonStreng.getFornavn()),
+        () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getMotpart().getFødselsdato())
+            .isEqualTo(testpersonStreng.getFødselsdato()),
         () -> AssertionsForClassTypes.assertThat(lagretForespørselBarnOver15.get().getBarn().size()).isEqualTo(1)
     );
 
@@ -230,7 +246,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     var responsOpprett = httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel), Void.class);
 
-    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null), BrukerinformasjonDto.class);
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
 
     assertAll(
         () -> assertThat(responsOpprett.getStatusCode()).isEqualTo(HttpStatus.CREATED),
@@ -242,26 +259,27 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     assertThat(allForespørsler.size()).isEqualTo(2);
 
-    var forespørselMedBarnMinst15år = allForespørsler.stream().filter(p->p.getBarn().stream().anyMatch((b)->b.getIdent().equals(barnMinst15År.getIdent()))).findFirst().get();
+    var forespørselMedBarnMinst15år = allForespørsler.stream()
+        .filter(p -> p.getBarn().stream().anyMatch((b) -> b.getIdent().equals(barnMinst15År.getIdent()))).findFirst().get();
 
     StubsKt.verifiserDokumentArkivertForForespørsel(forespørselMedBarnMinst15år.getId());
 
     var arkiveringRequest = hentOpprettDokumentRequestBodyForForespørsel(forespørselMedBarnMinst15år.getId());
-    var forespørselEntity  = forespørselDao.findById(forespørselMedBarnMinst15år.getId());
+    var forespørselEntity = forespørselDao.findById(forespørselMedBarnMinst15år.getId());
 
     assertAll(
-        ()->assertThat(forespørselMedBarnMinst15år.getJournalført()).isNotNull(),
-        ()->assertThat(forespørselEntity.get().getIdJournalpost()).isEqualTo(opprettetJournalpostId),
-        ()->assertThat(arkiveringRequest.size()).isEqualTo(1),
-        ()->assertThat(arkiveringRequest.get(0).getDokumenter().size()).isEqualTo(1),
-        ()->assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getFysiskDokument()).isNotEmpty(),
-        ()->assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getTittel()).isEqualTo(DOKUMENTTITTEL),
-        ()->assertThat(arkiveringRequest.get(0).getGjelderIdent()).isEqualTo(hovedPerson.getIdent()),
-        ()->assertThat(arkiveringRequest.get(0).getAvsenderMottaker().getIdent()).isEqualTo(hovedPerson.getIdent()),
-        ()->assertThat(arkiveringRequest.get(0).getJournalposttype()).isEqualTo(JournalpostType.INNGÅENDE),
-        ()->assertThat(arkiveringRequest.get(0).getBehandlingstema()).isEqualTo(BEHANDLINGSTEMA_REISEKOSTNADER),
-        ()->assertThat(arkiveringRequest.get(0).getTittel()).isNull(),
-        ()->assertThat(arkiveringRequest.get(0).getReferanseId()).isEqualTo(String.format("REISEKOSTNAD_%s", forespørselMedBarnMinst15år.getId()))
+        () -> assertThat(forespørselMedBarnMinst15år.getJournalført()).isNotNull(),
+        () -> assertThat(forespørselEntity.get().getIdJournalpost()).isEqualTo(opprettetJournalpostId),
+        () -> assertThat(arkiveringRequest.size()).isEqualTo(1),
+        () -> assertThat(arkiveringRequest.get(0).getDokumenter().size()).isEqualTo(1),
+        () -> assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getFysiskDokument()).isNotEmpty(),
+        () -> assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getTittel()).isEqualTo(DOKUMENTTITTEL),
+        () -> assertThat(arkiveringRequest.get(0).getGjelderIdent()).isEqualTo(hovedPerson.getIdent()),
+        () -> assertThat(arkiveringRequest.get(0).getAvsenderMottaker().getIdent()).isEqualTo(hovedPerson.getIdent()),
+        () -> assertThat(arkiveringRequest.get(0).getJournalposttype()).isEqualTo(JournalpostType.INNGÅENDE),
+        () -> assertThat(arkiveringRequest.get(0).getBehandlingstema()).isEqualTo(BEHANDLINGSTEMA_REISEKOSTNADER),
+        () -> assertThat(arkiveringRequest.get(0).getTittel()).isNull(),
+        () -> assertThat(arkiveringRequest.get(0).getReferanseId()).isEqualTo(String.format("REISEKOSTNAD_%s", forespørselMedBarnMinst15år.getId()))
     );
   }
 
@@ -276,7 +294,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     var responsOpprett = httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel), Void.class);
 
-    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null), BrukerinformasjonDto.class);
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
 
     assertAll(
         () -> assertThat(responsOpprett.getStatusCode()).isEqualTo(HttpStatus.CREATED),
@@ -295,7 +314,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
     // Pålogget som motpart
     initTokenForPåloggetPerson(Krypteringsverktøy.dekryptere(motpart.getIdent()));
 
-    var samtykkeRespons = httpHeaderTestRestTemplateApi.exchange(urlSamtykkeForespørsel+"?id="+forespørselIdUnder15år, HttpMethod.PUT, initHttpEntity(null), Void.class);
+    var samtykkeRespons = httpHeaderTestRestTemplateApi.exchange(urlSamtykkeForespørsel + "?id=" + forespørselIdUnder15år, HttpMethod.PUT,
+        initHttpEntity(null), Void.class);
     assertThat(samtykkeRespons.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     // Pålogget som hovedperson
@@ -307,21 +327,21 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     var arkiveringRequest = hentOpprettDokumentRequestBodyForForespørsel(forespørselIdUnder15år);
 
-    var forespørselEntity  = forespørselDao.findById(forespørselIdUnder15år);
+    var forespørselEntity = forespørselDao.findById(forespørselIdUnder15år);
     assertAll(
-        ()->assertThat(forespørselUnder15årFørSamtykke.getJournalført()).isNull(),
-        ()->assertThat(forespørselEntity.get().getIdJournalpost()).isEqualTo(opprettetJournalpostId),
-        ()->assertThat(forespørselMedBarnUnder15årEtterSamtykke.getJournalført()).isNotNull(),
-        ()->assertThat(arkiveringRequest.size()).isEqualTo(1),
-        ()->assertThat(arkiveringRequest.get(0).getDokumenter().size()).isEqualTo(1),
-        ()->assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getFysiskDokument()).isNotEmpty(),
-        ()->assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getTittel()).isEqualTo(DOKUMENTTITTEL),
-        ()->assertThat(arkiveringRequest.get(0).getGjelderIdent()).isEqualTo(hovedPerson.getIdent()),
-        ()->assertThat(arkiveringRequest.get(0).getAvsenderMottaker().getIdent()).isEqualTo(hovedPerson.getIdent()),
-        ()->assertThat(arkiveringRequest.get(0).getJournalposttype()).isEqualTo(JournalpostType.INNGÅENDE),
-        ()->assertThat(arkiveringRequest.get(0).getBehandlingstema()).isEqualTo(BEHANDLINGSTEMA_REISEKOSTNADER),
-        ()->assertThat(arkiveringRequest.get(0).getTittel()).isNull(),
-        ()->assertThat(arkiveringRequest.get(0).getReferanseId()).isEqualTo(String.format("REISEKOSTNAD_%s", forespørselIdUnder15år))
+        () -> assertThat(forespørselUnder15årFørSamtykke.getJournalført()).isNull(),
+        () -> assertThat(forespørselEntity.get().getIdJournalpost()).isEqualTo(opprettetJournalpostId),
+        () -> assertThat(forespørselMedBarnUnder15årEtterSamtykke.getJournalført()).isNotNull(),
+        () -> assertThat(arkiveringRequest.size()).isEqualTo(1),
+        () -> assertThat(arkiveringRequest.get(0).getDokumenter().size()).isEqualTo(1),
+        () -> assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getFysiskDokument()).isNotEmpty(),
+        () -> assertThat(arkiveringRequest.get(0).getDokumenter().get(0).getTittel()).isEqualTo(DOKUMENTTITTEL),
+        () -> assertThat(arkiveringRequest.get(0).getGjelderIdent()).isEqualTo(hovedPerson.getIdent()),
+        () -> assertThat(arkiveringRequest.get(0).getAvsenderMottaker().getIdent()).isEqualTo(hovedPerson.getIdent()),
+        () -> assertThat(arkiveringRequest.get(0).getJournalposttype()).isEqualTo(JournalpostType.INNGÅENDE),
+        () -> assertThat(arkiveringRequest.get(0).getBehandlingstema()).isEqualTo(BEHANDLINGSTEMA_REISEKOSTNADER),
+        () -> assertThat(arkiveringRequest.get(0).getTittel()).isNull(),
+        () -> assertThat(arkiveringRequest.get(0).getReferanseId()).isEqualTo(String.format("REISEKOSTNAD_%s", forespørselIdUnder15år))
     );
 
   }
@@ -344,7 +364,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
       WireMock.removeStub(stub);
     }
 
-    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null), BrukerinformasjonDto.class);
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
     assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     var barnMinst15År = hentBarnMinst15år(brukerinformasjon.getBody());
@@ -352,31 +373,34 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
 
     assertThat(allForespørsler.size()).isEqualTo(2);
 
-    var forespørselMedBarnMinst15år = allForespørsler.stream().filter(p->p.getBarn().stream().anyMatch((b)->b.getIdent().equals(barnMinst15År.getIdent()))).findFirst().get();
+    var forespørselMedBarnMinst15år = allForespørsler.stream()
+        .filter(p -> p.getBarn().stream().anyMatch((b) -> b.getIdent().equals(barnMinst15År.getIdent()))).findFirst().get();
 
     StubsKt.verifiserDokumentArkivertForForespørsel(forespørselMedBarnMinst15år.getId());
-    var forespørselEntity  = forespørselDao.findById(forespørselMedBarnMinst15år.getId());
+    var forespørselEntity = forespørselDao.findById(forespørselMedBarnMinst15år.getId());
 
     assertThat(forespørselMedBarnMinst15år.getJournalført()).isNull();
     assertThat(forespørselEntity.get().getIdJournalpost()).isNull();
   }
 
 
-  private PersonDto hentMotpart(BrukerinformasjonDto brukerinformasjon){
+  private PersonDto hentMotpart(BrukerinformasjonDto brukerinformasjon) {
     return brukerinformasjon.getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getMotpart();
   }
 
-  private PersonDto hentBarnMinst15år(BrukerinformasjonDto brukerinformasjon){
+  private PersonDto hentBarnMinst15år(BrukerinformasjonDto brukerinformasjon) {
     return brukerinformasjon.getBarnMinstFemtenÅr().stream().findFirst().get();
   }
 
-  private ForespørselDto hentForespørselForBarn(String barnIdent){
-    var brukerinformasjonEtterSamtykke = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null), BrukerinformasjonDto.class);
+  private ForespørselDto hentForespørselForBarn(String barnIdent) {
+    var brukerinformasjonEtterSamtykke = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
     var allForespørslerEtterSamtykke = brukerinformasjonEtterSamtykke.getBody().getForespørslerSomHovedpart();
-    return allForespørslerEtterSamtykke.stream().filter(p->p.getBarn().stream().anyMatch((b)->b.getIdent().equals(barnIdent))).findFirst().get();
+    return allForespørslerEtterSamtykke.stream().filter(p -> p.getBarn().stream().anyMatch((b) -> b.getIdent().equals(barnIdent))).findFirst().get();
   }
-  private PersonDto hentBarnUnder15År(BrukerinformasjonDto brukerinformasjon){
-   return brukerinformasjon.getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
+
+  private PersonDto hentBarnUnder15År(BrukerinformasjonDto brukerinformasjon) {
+    return brukerinformasjon.getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
         .stream().findFirst().get();
   }
 }
