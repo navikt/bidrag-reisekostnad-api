@@ -174,7 +174,7 @@ public class ReisekostnadApiTjenesteTest {
     // så
     assertThat(respons.is2xxSuccessful());
     verify(brukernotifikasjonkonsument, times(1)).sletteSamtykkeoppgave("eventId", motpart.getIdent());
-    verify(brukernotifikasjonkonsument, times(1)).varsleOmNeiTilSamtykke(hovedpart.getIdent(), motpart.getIdent());
+    //verify(brukernotifikasjonkonsument, times(1)).varsleOmNeiTilSamtykke(hovedpart.getIdent(), motpart.getIdent());
 
   }
 
