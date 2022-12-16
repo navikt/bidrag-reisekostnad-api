@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,6 +35,7 @@ import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikas
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,6 +53,11 @@ public class ReisekostnadApiTjenesteTest {
   private @Mock Databasetjeneste databasetjeneste;
   private @Mock Mapper mapper;
   private @InjectMocks ReisekostnadApiTjeneste reisekostnadApiTjeneste;
+
+  @BeforeEach
+  void resetteMocker() {
+    reset(brukernotifikasjonkonsument);
+  }
 
   @Test
   void skalOppretteForespørselKunForMotpartsBarn() {
