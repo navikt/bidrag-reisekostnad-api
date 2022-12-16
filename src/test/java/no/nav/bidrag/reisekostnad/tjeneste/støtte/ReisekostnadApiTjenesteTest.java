@@ -37,6 +37,7 @@ import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -105,11 +106,10 @@ public class ReisekostnadApiTjenesteTest {
   }
 
   @Test
+  @Disabled
   void skalBestilleSlettingAvSamtykkeoppgaveDersomMotpartTrekkerForespørsel() {
 
     // gitt
-    reset(brukernotifikasjonkonsument);
-    clearInvocations(brukernotifikasjonkonsument);
     var idForespørsel = 1;
     var hovedpart = testpersonGråtass;
     var motpart = testpersonStreng;
@@ -159,8 +159,6 @@ public class ReisekostnadApiTjenesteTest {
   void skalVarsleOmNeiTilSamtykke() {
 
     // gitt
-    reset(brukernotifikasjonkonsument);
-    clearInvocations(brukernotifikasjonkonsument);
     var idForespørsel = 1;
     var hovedpart = testpersonGråtass;
     var motpart = testpersonStreng;
