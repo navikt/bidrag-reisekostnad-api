@@ -108,6 +108,7 @@ public class ReisekostnadApiTjenesteTest {
   void skalBestilleSlettingAvSamtykkeoppgaveDersomMotpartTrekkerForespørsel() {
 
     // gitt
+    reset(brukernotifikasjonkonsument);
     clearInvocations(brukernotifikasjonkonsument);
     var idForespørsel = 1;
     var hovedpart = testpersonGråtass;
@@ -158,6 +159,7 @@ public class ReisekostnadApiTjenesteTest {
   void skalVarsleOmNeiTilSamtykke() {
 
     // gitt
+    reset(brukernotifikasjonkonsument);
     clearInvocations(brukernotifikasjonkonsument);
     var idForespørsel = 1;
     var hovedpart = testpersonGråtass;
