@@ -1,6 +1,7 @@
 package no.nav.bidrag.reisekostnad.database.datamodell;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +28,7 @@ public class Barn implements Person, Serializable {
   private int id;
 
   private String personident;
+  private LocalDate fødselsdato;
 
   @ManyToOne(cascade = CascadeType.PERSIST)
   private Forespørsel forespørsel;

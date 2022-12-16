@@ -1,0 +1,23 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/bidrag-person/informasjon",
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "ident": "235515232323455555"
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{ \"ident\": \"235515232323455555\",\"kortnavn\": \"Middelstein Etterstein\", \"fornavn\": \"Middelstein\", \"foedselsdato\": \"{{now offset='-15 years'}}\" }",
+    "transformers": [
+      "response-template"
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -69,6 +69,8 @@ spec:
       value: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
     - name: KJOEREPLAN_ARKIVERING
       value: "0 0 7 * * ?"
+    - name: KJOEREPLAN_FYLT_15
+      value: "0 0 7 * * ?"
   accessPolicy:
     inbound:
       rules:

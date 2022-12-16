@@ -19,6 +19,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -40,6 +42,7 @@ public class BidragPersonkonsument {
   }
 
   @UserCacheable(CACHE_FAMILIE)
+  @Retryable(value = Exception.class, backoff = @Backoff(delay = 5000, multiplier = 2.0))
   public Optional<HentFamilieRespons> hentFamilie(String personident) {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
 
@@ -62,6 +65,7 @@ public class BidragPersonkonsument {
   }
 
   @UserCacheable(CACHE_PERSON)
+  @Retryable(value = Exception.class, backoff = @Backoff(delay = 1000, multiplier = 2.0))
   public HentPersoninfoRespons hentPersoninfo(String personident) {
     var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
     try {
@@ -71,7 +75,7 @@ public class BidragPersonkonsument {
       return hentPersoninfo.getBody();
     } catch (HttpStatusCodeException hsce) {
       SIKKER_LOGG.warn("Kall mot bidrag-person for henting av personinfo returnerte httpstatus {} for personident {}", hsce.getStatusCode(),
-          personident);
+          personident, hsce);
       var feilkode = HttpStatus.NOT_FOUND.equals(hsce.getStatusCode()) ? PDL_PERSON_IKKE_FUNNET : PDL_FEIL;
       throw new Persondatafeil(feilkode, hsce.getStatusCode());
     }

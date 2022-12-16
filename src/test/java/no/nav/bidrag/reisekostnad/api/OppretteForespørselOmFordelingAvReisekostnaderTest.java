@@ -10,6 +10,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import java.time.LocalDate;
 import java.util.Set;
 import no.nav.bidrag.dokument.dto.JournalpostType;
 import no.nav.bidrag.reisekostnad.StubsKt;
@@ -108,6 +109,12 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
             .isEqualTo(testpersonBarn10.getIdent()),
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato())
     );
+
+
+    var forespørselDO = forespørselDao.henteAktivForespørsel(lagretForespørsel.get().getId());
+    var barn10År = forespørselDO.get().getBarn().stream().filter(b->b.getPersonident().equals(testpersonBarn10.getIdent())).findFirst();
+    assertThat(barn10År.isPresent()).isTrue();
+    assertThat(barn10År.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10));
   }
 
   @Test
@@ -220,6 +227,11 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
             testpersonBarn16.getIdent()),
         () -> AssertionsForClassTypes.assertThat(barnOver15ILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato())
     );
+
+    var forespørselDO = forespørselDao.henteAktivForespørsel(lagretForespørselBarnOver15.get().getId());
+    var barn16År = forespørselDO.get().getBarn().stream().filter(b->b.getPersonident().equals(testpersonBarn16.getIdent())).findFirst();
+    assertThat(barn16År.isPresent()).isTrue();
+    assertThat(barn16År.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(16));
   }
 
   @Test
