@@ -1,5 +1,6 @@
 package no.nav.bidrag.reisekostnad.database.dao;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
@@ -27,4 +28,8 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
   @Query("select f.id from Forespørsel  f "
       + "where f.deaktivert is null and f.samtykket is null and f.journalført is null and f.kreverSamtykke is false")
   Set<Integer> henteAktiveForespørslerSomIkkeKreverSamtykkOgErKlareForInnsending();
+
+  @Query("select f from Forespørsel f inner join f.barn b "
+      + "where f.deaktivert is null and f.kreverSamtykke is true and f.samtykket is null and b.fødselsdato <= :date")
+  Set<Forespørsel> henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(LocalDate date);
 }

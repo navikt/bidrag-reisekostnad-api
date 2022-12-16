@@ -14,6 +14,12 @@ Flyt for testing av endepunktene brukerinformasjon
         http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
      2. Trykk execute for brukerinformasjon-endepunktet
 
+Flyt for testing av endepunktene brukerinformasjon med Råtass som innlogget bruker
+
+     1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke: 
+        http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=55555678910
+     2. Trykk execute for brukerinformasjon-endepunktet
+
 Flyt for tedsting av forespoersel/ny-endepunktet fra lokal Swagger:
      
      1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke:

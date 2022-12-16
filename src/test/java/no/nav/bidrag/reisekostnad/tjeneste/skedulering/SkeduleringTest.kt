@@ -22,11 +22,14 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
 @ActiveProfiles(value = [Profil.TEST, Profil.HENDELSE])
@@ -44,7 +47,13 @@ class SkeduleringTest {
     lateinit var forespørselDao: ForespørselDao
 
     @Autowired
+    lateinit var transactionTemplate: TransactionTemplate
+
+    @Autowired
     lateinit var forelderDao: ForelderDao
+
+    @Autowired
+    lateinit var entityManager: EntityManager
 
     @Autowired
     lateinit var barnDao: BarnDao
@@ -62,99 +71,22 @@ class SkeduleringTest {
 
     protected var testpersonGråtass = Forelder.builder().personident("12345678910").build()
     protected var testpersonStreng = Forelder.builder().personident("11111122222").build()
-    protected var testpersonBarn16 = Barn.builder().personident("77777700000").build()
-    protected var testpersonBarn10 = Barn.builder().personident("33333355555").build()
+    protected var testpersonBarn16 = Barn.builder().personident("77777700000").fødselsdato(LocalDate.now().minusYears(16)).build()
+    protected var testpersonBarn10 = Barn.builder().personident("33333355555").fødselsdato(LocalDate.now().minusYears(10)).build()
+    protected var testpersonBarn11 = Barn.builder().personident("42124124").fødselsdato(LocalDate.now().minusYears(11)).build()
+    protected var testpersonBarn12 = Barn.builder().personident("335533133355555").fødselsdato(LocalDate.now().minusYears(12)).build()
+    protected var testpersonBarn15 = Barn.builder().personident("23232323455555").fødselsdato(LocalDate.now().minusYears(15)).build()
+    protected var testpersonBarn15_2 = Barn.builder().personident("5515155").fødselsdato(LocalDate.now().minusYears(15)).build()
+    protected var testpersonBarn15_3 = Barn.builder().personident("235515232323455555").fødselsdato(LocalDate.now().minusYears(15)).build()
 
-    fun oppprettForespørsel(): Forespørsel{
+    fun oppprettForespørsel(kreverSamtykke: Boolean = false): Forespørsel{
         return Forespørsel.builder()
             .opprettet(LocalDateTime.now())
             .hovedpart(testpersonGråtass)
             .motpart(testpersonStreng)
             .barn(mutableSetOf(testpersonBarn10, testpersonBarn16))
-            .kreverSamtykke(false)
+            .kreverSamtykke(kreverSamtykke)
             .samtykkefrist(LocalDate.now().plusDays(4))
             .build()
-    }
-
-    @Test
-    @Transactional
-    fun skalArkivereFlereForespørsler(){
-        val forespørsel = oppprettForespørsel()
-        val forespørsel2 = oppprettForespørsel()
-        val forespørsel3 = oppprettForespørsel()
-        forespørselDao.save(forespørsel)
-        forespørselDao.save(forespørsel2)
-        forespørselDao.save(forespørsel3)
-        databehandler.arkiverForespørslerSomErKlareForInnsending()
-
-        assertSoftly {
-            forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
-            forespørsel2.journalført shouldHaveSameDayAs LocalDateTime.now()
-            forespørsel3.journalført shouldHaveSameDayAs LocalDateTime.now()
-            forespørsel.idJournalpost shouldBe "1232132132"
-            verifiserDokumentArkivertForForespørsel(forespørsel.id)
-            verifiserDokumentArkivertForForespørsel(forespørsel2.id)
-            verifiserDokumentArkivertForForespørsel(forespørsel3.id)
-        }
-    }
-    @Test
-    @Transactional
-    fun skalArkivereForespørslerSomIkkeKreverSamtykke(){
-        val forespørsel = oppprettForespørsel()
-        forespørsel.isKreverSamtykke = false
-        forespørsel.samtykket = null
-        forespørselDao.save(forespørsel)
-        databehandler.arkiverForespørslerSomErKlareForInnsending()
-
-        assertSoftly {
-            forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
-            forespørsel.idJournalpost shouldBe "1232132132"
-            verifiserDokumentArkivertForForespørsel(forespørsel.id)
-        }
-    }
-
-    @Test
-    @Transactional
-    fun skalArkivereForespørslerSomErSamtykket(){
-        val forespørsel = oppprettForespørsel()
-        forespørsel.isKreverSamtykke = true
-        forespørsel.samtykket = LocalDateTime.now()
-        forespørselDao.save(forespørsel)
-        databehandler.arkiverForespørslerSomErKlareForInnsending()
-
-        assertSoftly {
-            forespørsel.journalført shouldHaveSameDayAs LocalDateTime.now()
-            forespørsel.idJournalpost shouldBe "1232132132"
-            verifiserDokumentArkivertForForespørsel(forespørsel.id)
-        }
-    }
-
-    @Test
-    @Transactional
-    fun skalIkkeArkivereForespørslerSomIkkeErSamtykket(){
-        val forespørsel = oppprettForespørsel()
-        forespørsel.isKreverSamtykke = true
-
-        val forespørsel2 = oppprettForespørsel()
-        forespørsel2.isKreverSamtykke = true
-
-        val forespørselDeaktivert = oppprettForespørsel()
-        forespørselDeaktivert.deaktivert = LocalDateTime.now()
-        forespørselDao.save(forespørsel)
-        forespørselDao.save(forespørselDeaktivert)
-        forespørselDao.save(forespørsel2)
-        databehandler.arkiverForespørslerSomErKlareForInnsending()
-
-        assertSoftly {
-            forespørsel.journalført shouldBe null
-            forespørsel.idJournalpost shouldBe null
-            forespørsel2.journalført shouldBe null
-            forespørsel2.idJournalpost shouldBe null
-            forespørselDeaktivert.journalført shouldBe null
-            forespørselDeaktivert.idJournalpost shouldBe null
-            verifiserDokumentIkkeArkivertForForespørsel(forespørsel.id)
-            verifiserDokumentIkkeArkivertForForespørsel(forespørselDeaktivert.id)
-            verifiserDokumentIkkeArkivertForForespørsel(forespørsel2.id)
-        }
     }
 }

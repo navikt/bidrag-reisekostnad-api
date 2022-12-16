@@ -193,12 +193,17 @@ public class Mapper {
 
   public Set<Barn> tilEntitet(Set<String> personidenterBarn) {
     return personidenterBarn.stream().filter(Objects::nonNull).filter(s -> !s.isEmpty())
-        .map(personident -> Barn.builder().personident(personident).build()).collect(Collectors.toSet());
+        .map(personident -> Barn.builder().personident(personident).fødselsdato(hentBarnFødselsdato(personident)).build()).collect(Collectors.toSet());
   }
 
   public PersonDto tilPersonDto(String personident) {
     var personinfo = bidragPersonkonsument.hentPersoninfo(personident);
     return new PersonDto(kryptere(personident), personinfo.getFornavn(), personinfo.getKortnavn(), personinfo.getFoedselsdato());
+  }
+
+  private LocalDate hentBarnFødselsdato(String personIdent) {
+    var barn = bidragPersonkonsument.hentPersoninfo(personIdent);
+    return barn.getFoedselsdato();
   }
 
   private String kryptere(String ukryptertPersonident) {
