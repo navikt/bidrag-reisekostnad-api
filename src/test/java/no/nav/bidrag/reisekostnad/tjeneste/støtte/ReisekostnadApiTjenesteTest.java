@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.nav.bidrag.reisekostnad.Testperson;
+import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
@@ -65,10 +66,15 @@ public class ReisekostnadApiTjenesteTest {
 
     var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(barnKullA.getIdent()));
     var familierespons = oppretteHentFamilieRespons(hovedpart, Map.of(motpart, Set.of(barnKullA), enAnnenMor, Set.of(brorAvEnAnnenMor)));
+    var lagretForespørsel = Forespørsel.builder().id(1)
+        .hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build())
+        .barn(Set.of(Barn.builder().personident(barnKullA.getIdent()).build()))
+        .build();
 
     mockHentPersoninfo(Set.of(barnKullA));
     when(bidragPersonkonsument.hentFamilie(hovedpart.getIdent())).thenReturn(Optional.of(familierespons));
-    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barnKullA.getIdent()), true)).thenReturn(1);
+    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barnKullA.getIdent()), true)).thenReturn(lagretForespørsel);
     doNothing().when(brukernotifikasjonkonsument).oppretteOppgaveTilMotpartOmSamtykke(anyInt(), anyString());
 
     // hvis
@@ -136,9 +142,15 @@ public class ReisekostnadApiTjenesteTest {
     var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(barn.getIdent()));
     var familierespons = oppretteHentFamilieRespons(hovedpart, motpart, Set.of(barn));
 
+    var lagretForespørsel = Forespørsel.builder().id(1)
+        .hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build())
+        .barn(Set.of(Barn.builder().personident(barn.getIdent()).build()))
+        .build();
+
     mockHentPersoninfo(Set.of(barn));
     when(bidragPersonkonsument.hentFamilie(hovedpart.getIdent())).thenReturn(Optional.of(familierespons));
-    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barn.getIdent()), true)).thenReturn(idForespørsel);
+    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barn.getIdent()), true)).thenReturn(lagretForespørsel);
     doNothing().when(brukernotifikasjonkonsument).oppretteOppgaveTilMotpartOmSamtykke(anyInt(), anyString());
 
     // hvis

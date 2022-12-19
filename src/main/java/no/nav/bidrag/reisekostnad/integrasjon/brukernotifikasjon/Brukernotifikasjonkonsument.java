@@ -48,10 +48,22 @@ public class Brukernotifikasjonkonsument {
   }
 
   public void varsleMorOmUtgaattOppgaveForSignering(String personidentHovedperson) {
-    log.info("Sender varsel til mor om utgått signeringsoppgave");
-    var noekkel = oppretteNokkel(personidentHovedperson);
-    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedperson, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true, noekkel);
-    log.info("Ekstern melding med eventId: {}, ble sendt til mor", noekkel.getEventId());
+    log.info("Sender varsel til hovedpart om utgått samtykkeoppgave");
+    var nøkkel = oppretteNokkel(personidentHovedperson);
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedperson, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true, nøkkel);
+    log.info("Ekstern melding med eventId: {}, ble sendt til mor", nøkkel.getEventId());
+  }
+
+  public void varsleOmAutomatiskInnsending(String personidentHovedpart, String personidentMotpart, LocalDate fødselsdatoBarn) {
+    log.info("Varsler foreldre om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år", fødselsdatoBarn);
+    SIKKER_LOGG.info("Varsler foreldre (hovedpart: {} og motpart: {}) om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år",
+        personidentHovedpart, personidentMotpart, fødselsdatoBarn);
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true,
+        oppretteNokkel(personidentHovedpart));
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true,
+        oppretteNokkel(personidentMotpart));
+    log.info("Varsel om automatisk innsending av forespørsel sendt til begge foreldre");
+    SIKKER_LOGG.info("Varsel om automatisk innsending av  forespørsel sendt til {} og {})", personidentHovedpart, personidentMotpart);
   }
 
   public void varsleOmNeiTilSamtykke(String personidentHovedpart, String personidentMotpart) {

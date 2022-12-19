@@ -1,4 +1,4 @@
-package no.nav.bidrag.reisekostnad.tjeneste.skedulering
+package no.nav.bidrag.reisekostnad.skedulering
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.date.shouldHaveSameDayAs
@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @DisplayName("ArkiverSkeduleringTest")
-class ArkiverSkeduleringTest: SkeduleringTest() {
+class ArkiverTest: DatabehandlerTest() {
 
     @Test
     @Transactional

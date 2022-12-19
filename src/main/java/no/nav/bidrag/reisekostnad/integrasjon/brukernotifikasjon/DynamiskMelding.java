@@ -32,7 +32,8 @@ enum Melding {
   MELDING_OM_MANGLENDE_SAMTYKKE(
       "Aksjon kreves: Farskapserklæring opprettet den %s for barn med %s er ikke ferdigstilt. Våre systemer mangler informasjon om at far har signert. Far må logge inn på Farskapsportal og forsøke å signere eller oppdatere status på ny. Ta kontakt med NAV ved problemer."),
   MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE(
-      "Motpart har ikke gitt samtykke innen firsten til at NAV skal behandle fordeling av reisekostnader for felles barn.");
+      "Motpart har ikke gitt samtykke innen firsten til at NAV skal behandle fordeling av reisekostnader for felles barn."),
+  MELDING_OM_AUTOMATISK_INNSENDING("Forespørsel om fordeling av reisekostnader for barn med fødselsdato %s ble automatisk sendt til behandling da barnet fylte femten år");
   private String tekst;
 
   Melding(String tekst) {
