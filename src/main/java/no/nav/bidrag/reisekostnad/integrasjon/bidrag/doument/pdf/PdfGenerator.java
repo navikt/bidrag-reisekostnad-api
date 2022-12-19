@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +50,8 @@ public class PdfGenerator {
       Tekst.PERSONIDENT, "Fødselsnummer",
       Tekst.FOEDESTED, "Fødested",
       Tekst.FORNAVN, "Navn",
-      Tekst.OPPLYSNINGER_OM_BARNET, "Opplysninger om barnet"
+      Tekst.OPPLYSNINGER_OM_BARNET, "Opplysninger om barnet",
+      Tekst.HAR_SAMTYKKET, "Har samtykket"
   );
 
   private static final Map<Tekst, String> tekstNynorsk = Map.of(
@@ -62,13 +65,13 @@ public class PdfGenerator {
       Tekst.FORNAVN, "Name"
   );
 
-  public static byte[] genererePdf(Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart) {
+  public static byte[] genererePdf(Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart, LocalDateTime samtykketDato) {
 
     var skriftspråk = Skriftspråk.BOKMÅL;
 
     log.info("Oppretter dokument for reisekostnad på språk {}", skriftspråk);
 
-    var html = byggeHtmlstrengFraMal(STI_TIL_PDF_TEMPLATE, skriftspråk, barn, hovedperson, motpart);
+    var html = byggeHtmlstrengFraMal(STI_TIL_PDF_TEMPLATE, skriftspråk, barn, hovedperson, motpart, samtykketDato);
     try (final ByteArrayOutputStream pdfStream = new ByteArrayOutputStream()) {
 
       var htmlSomStrøm = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
@@ -151,6 +154,12 @@ public class PdfGenerator {
     }
   }
 
+  private static void leggTilSamtykketInfo(Element element, Skriftspråk skriftspraak, LocalDateTime samtykketDato){
+    var samtykket = element.getElementsByClass(henteElementnavn(Elementnavn.SAMTYKKET, skriftspraak));
+
+    var samtykketResultat = samtykketDato == null ? "Nei" : "Ja";
+    samtykket.first().text(tekstvelger(Tekst.HAR_SAMTYKKET, skriftspraak) + ": " + samtykketResultat);
+  }
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
     var navn = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspraak));
 
@@ -160,7 +169,7 @@ public class PdfGenerator {
     foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + dekryptere(forelder.getIdent()));
   }
 
-  private static String byggeHtmlstrengFraMal(String pdfmal, Skriftspråk skriftspråk, Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart) {
+  private static String byggeHtmlstrengFraMal(String pdfmal, Skriftspråk skriftspråk, Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart, LocalDateTime samtykketDato) {
     try {
       var input = new ClassPathResource(pdfmal + skriftspråk.toString().toLowerCase() + ".html").getInputStream();
       var document = Jsoup.parse(input, "UTF-8", "");
@@ -170,7 +179,12 @@ public class PdfGenerator {
       // Legge til informasjon om mor
       leggeTilDataForelder(document.getElementById(henteElementnavn(Elementnavn.HOVEDPART, skriftspråk)), hovedperson, skriftspråk);
       // Legge til informasjon om far
-      leggeTilDataForelder(document.getElementById(henteElementnavn(Elementnavn.MOTPART, skriftspråk)), motpart, skriftspråk);
+      var motpartElement = document.getElementById(henteElementnavn(Elementnavn.MOTPART, skriftspråk));
+      leggeTilDataForelder(motpartElement, motpart, skriftspråk);
+      leggTilSamtykketInfo(motpartElement, skriftspråk, samtykketDato);
+
+      var datoElement = document.getElementById(henteElementnavn(Elementnavn.DATO_OPPRETTET, skriftspråk));
+      datoElement.text(String.format("Dato: %s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
 
       // jsoup fjerner tagslutt for <link> og <meta> - legger på manuelt ettersom dette er påkrevd av PDFBOX
       var html = document.html().replaceFirst("charset=utf-8\">", "charset=utf-8\"/>");
@@ -223,6 +237,7 @@ public class PdfGenerator {
     PERSONIDENT,
     FOEDESTED,
     FORNAVN,
+    HAR_SAMTYKKET,
     OPPLYSNINGER_OM_BARNET,
     TERMINDATO;
   }
@@ -237,7 +252,9 @@ public class PdfGenerator {
     FØDSELSDATO,
     PERSONIDENT,
     HOVEDPART,
-    FORNAVN
+    FORNAVN,
+    SAMTYKKET,
+    DATO_OPPRETTET
   }
   private static String dekryptere(String kryptertPersonident) {
     return Krypteringsverktøy.dekryptere(kryptertPersonident);
