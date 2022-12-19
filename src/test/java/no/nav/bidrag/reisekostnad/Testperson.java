@@ -31,5 +31,4 @@ public class Testperson {
     this.alder = alder;
     this.fødselsdato = LocalDate.now().minusYears(alder);
   }
-
 }

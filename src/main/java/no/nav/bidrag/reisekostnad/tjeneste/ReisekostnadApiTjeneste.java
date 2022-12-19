@@ -156,11 +156,11 @@ public class ReisekostnadApiTjeneste {
   }
 
   private int lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke) {
-    var forespørselId = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barn, kreverSamtykke);
+    var forespørsel = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barn, kreverSamtykke);
     if (!kreverSamtykke) {
-      arkiveringstjeneste.arkivereForespørsel(forespørselId);
+      arkiveringstjeneste.arkivereForespørsel(forespørsel.getId());
     }
-    return forespørselId;
+    return forespørsel.getId();
   }
 
   private void validereRelasjonTilBarn(Set<String> personidenterBarn, Optional<HentFamilieRespons> familieRespons) {

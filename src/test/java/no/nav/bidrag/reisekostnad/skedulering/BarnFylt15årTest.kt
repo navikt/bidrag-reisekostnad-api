@@ -1,22 +1,28 @@
-package no.nav.bidrag.reisekostnad.tjeneste.skedulering
+package no.nav.bidrag.reisekostnad.skedulering
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.date.shouldHaveSameYearAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import no.nav.bidrag.reisekostnad.model.hovedpartIdent
+import no.nav.bidrag.reisekostnad.model.motpartIdent
 import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørsel
 import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørselAntallGanger
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@DisplayName("BarnFylt15årSkeduleringTest")
-class BarnFylt15årSkeduleringTest: SkeduleringTest() {
+@DisplayName("BarnFylt15årTest")
+class BarnFylt15årTest : DatabehandlerTest() {
 
     @Test
-    fun skalOppretteNyForespørselForBarnSomHarFylt15år(){
+    fun skalOppretteNyForespørselForBarnSomHarFylt15år() {
+
+        // gitt
         var forespørselUtenBarnOver15år = oppprettForespørsel(true)
         forespørselUtenBarnOver15år.barn = mutableSetOf(testpersonBarn11, testpersonBarn12)
 
@@ -28,8 +34,10 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             forespørselDao.save(forespørselUtenBarnOver15år)
         }
 
+        // hvis
         databehandler.behandleForespørslerSomInneholderBarnSomHarNyligFylt15År()
 
+        // så
         val alleForespørsler = forespørselDao.findAll().toList()
         originalForespørsel = alleForespørsler.find { it.id == originalForespørsel.id }!!
         forespørselUtenBarnOver15år = alleForespørsler.find { it.id == forespørselUtenBarnOver15år.id }!!
@@ -52,11 +60,18 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             originalForespørsel.barn.first().fødselsdato shouldBe LocalDate.now().minusYears(10)
 
             verifiserDokumentArkivertForForespørsel(forespørselMedBarnFylt15År.id)
+            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
+                originalForespørsel.hovedpartIdent,
+                originalForespørsel.motpartIdent,
+                testpersonBarn15.fødselsdato
+            )
         }
     }
 
     @Test
-    fun skalOppdatereForespørselHvisInneholderBareEnBarn(){
+    fun skalOppdatereForespørselHvisInneholderBareEnBarn() {
+
+        // gitt
         var originalForespørsel = oppprettForespørsel(true)
         originalForespørsel.barn = mutableSetOf(testpersonBarn15)
 
@@ -64,8 +79,10 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             forespørselDao.save(originalForespørsel)
         }
 
+        // hvis
         databehandler.behandleForespørslerSomInneholderBarnSomHarNyligFylt15År()
 
+        // så
         val alleForespørsler = forespørselDao.findAll().toList()
         originalForespørsel = alleForespørsler.find { it.id == originalForespørsel.id }!!
 
@@ -81,11 +98,18 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             originalForespørsel.idJournalpost shouldBe "1232132132"
 
             verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
+            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
+                originalForespørsel.hovedpartIdent,
+                originalForespørsel.motpartIdent,
+                testpersonBarn15.fødselsdato
+            )
         }
     }
 
     @Test
-    fun skalOppdatereForespørselHvisInneholderFlereBarnSomHarFylt15år(){
+    fun skalOppdatereForespørselHvisInneholderFlereBarnSomHarFylt15år() {
+
+        // gitt
         var originalForespørsel = oppprettForespørsel(true)
         originalForespørsel.barn = mutableSetOf(testpersonBarn15, testpersonBarn15_3)
 
@@ -93,8 +117,10 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             forespørselDao.save(originalForespørsel)
         }
 
+        // hvis
         databehandler.behandleForespørslerSomInneholderBarnSomHarNyligFylt15År()
 
+        // så
         val alleForespørsler = forespørselDao.findAll().toList()
         originalForespørsel = alleForespørsler.find { it.id == originalForespørsel.id }!!
 
@@ -110,11 +136,18 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             originalForespørsel.idJournalpost shouldBe "1232132132"
 
             verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
+            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
+                originalForespørsel.hovedpartIdent,
+                originalForespørsel.motpartIdent,
+                testpersonBarn15.fødselsdato
+            )
         }
     }
 
     @Test
-    fun skalRulleTilbakeEndringerVedFeil(){
+    fun skalRulleTilbakeEndringerVedFeil() {
+
+        // gitt
         var forespørselMedFeil = oppprettForespørsel(true)
         forespørselMedFeil.barn = mutableSetOf(testpersonBarn11, testpersonBarn15_2)
         forespørselMedFeil.hovedpart = null
@@ -122,20 +155,22 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
         var forespørselMedToBarn = oppprettForespørsel(true)
         forespørselMedToBarn.barn = mutableSetOf(testpersonBarn10, testpersonBarn15)
 
-        var forespørselMedEnBarn = oppprettForespørsel(true)
-        forespørselMedEnBarn.barn = mutableSetOf(testpersonBarn15_3)
+        var forespørselMedEttBarn = oppprettForespørsel(true)
+        forespørselMedEttBarn.barn = mutableSetOf(testpersonBarn15_3)
 
         transactionTemplate.executeWithoutResult {
             forespørselDao.save(forespørselMedToBarn)
             forespørselDao.save(forespørselMedFeil)
-            forespørselDao.save(forespørselMedEnBarn)
+            forespørselDao.save(forespørselMedEttBarn)
         }
 
+        // hvis
         databehandler.behandleForespørslerSomInneholderBarnSomHarNyligFylt15År()
 
+        // så
         val alleForespørsler = transactionTemplate.execute { forespørselDao.findAll().toList() }!!
 
-        forespørselMedEnBarn = alleForespørsler.find { it.id == forespørselMedEnBarn.id }!!
+        forespørselMedEttBarn = alleForespørsler.find { it.id == forespørselMedEttBarn.id }!!
         forespørselMedToBarn = alleForespørsler.find { it.id == forespørselMedToBarn.id }!!
         forespørselMedFeil = alleForespørsler.find { it.id == forespørselMedFeil.id }!!
         val forespørselMedBarnFylt15År = alleForespørsler.find { it.id != forespørselMedToBarn.id && it.id != forespørselMedFeil.id }
@@ -144,16 +179,16 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
             alleForespørsler.size shouldBe 4
             forespørselMedFeil.barn.size shouldBe 2
             forespørselMedToBarn.barn.size shouldBe 1
-            forespørselMedEnBarn.barn.size shouldBe 1
+            forespørselMedEttBarn.barn.size shouldBe 1
 
             forespørselMedToBarn.barn.size shouldBe 1
             forespørselMedToBarn.barn.first().fødselsdato shouldBe LocalDate.now().minusYears(10)
 
-            forespørselMedEnBarn.isKreverSamtykke shouldBe false
-            forespørselMedEnBarn.journalført shouldHaveSameDayAs LocalDateTime.now()
-            forespørselMedEnBarn.idJournalpost shouldBe "1232132132"
+            forespørselMedEttBarn.isKreverSamtykke shouldBe false
+            forespørselMedEttBarn.journalført shouldHaveSameDayAs LocalDateTime.now()
+            forespørselMedEttBarn.idJournalpost shouldBe "1232132132"
 
-            verifiserDokumentArkivertForForespørsel(forespørselMedEnBarn.id)
+            verifiserDokumentArkivertForForespørsel(forespørselMedEttBarn.id)
 
             forespørselMedBarnFylt15År shouldNotBe null
             forespørselMedBarnFylt15År!!.barn.size shouldBe 1
@@ -164,6 +199,22 @@ class BarnFylt15årSkeduleringTest: SkeduleringTest() {
 
             verifiserDokumentArkivertForForespørsel(forespørselMedBarnFylt15År.id)
             verifiserDokumentArkivertForForespørselAntallGanger(2)
+
+            verify(brukernotifikasjonkonsument, times(0)).varsleOmAutomatiskInnsending(
+                testpersonGråtass.personident,
+                testpersonStreng.personident,
+                testpersonBarn15_2.fødselsdato
+            )
+            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
+                testpersonGråtass.personident,
+                testpersonStreng.personident,
+                testpersonBarn15.fødselsdato
+            )
+            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
+                testpersonGråtass.personident,
+                testpersonStreng.personident,
+                testpersonBarn15_3.fødselsdato
+            )
         }
     }
 }

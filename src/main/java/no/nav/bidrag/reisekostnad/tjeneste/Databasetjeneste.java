@@ -48,22 +48,22 @@ public class Databasetjeneste {
   }
 
   @Transactional(TxType.REQUIRES_NEW)
-  public int oppdaterForespørselTilÅIkkeKreveSamtykke(int forespørselId){
+  public Forespørsel oppdaterForespørselTilÅIkkeKreveSamtykke(int forespørselId){
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
     if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)){
       originalForespørsel.setKreverSamtykke(false);
       log.info("Forespørsel med id {} ble endret til å ikke kreve samtykke", forespørselId);
     }
 
-    return forespørselId;
+    return originalForespørsel;
   }
   @Transactional(TxType.REQUIRES_NEW)
-  public int overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId){
+  public Forespørsel overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId){
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
 
     if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)){
       log.warn("Forespørsel {} som inneholder barn fylt 15 år ble forsøket splittet til ny forespørsel. Splitting er ikke mulig fordi alle barn i forespørselen har fylt 15 år. Gjør ingen endring", forespørselId);
-      return forespørselId;
+      return originalForespørsel;
     }
 
     var barnSomHarFylt15år = ForespørselUtvidelserKt.getIdenterBarnSomHarFylt15år(originalForespørsel);
@@ -78,7 +78,7 @@ public class Databasetjeneste {
   }
 
   @Transactional
-  public int lagreNyForespørsel(String hovedpart, String motpart, Set<String> identerBarn, boolean kreverSamtykke) {
+  public Forespørsel lagreNyForespørsel(String hovedpart, String motpart, Set<String> identerBarn, boolean kreverSamtykke) {
 
     for (String ident : identerBarn) {
       var barn = barnDao.henteBarnTilknyttetAktivForespørsel(ident);
@@ -99,9 +99,7 @@ public class Databasetjeneste {
         .motpart(eksisterendeMotpart.orElseGet(() -> Forelder.builder().personident(motpart).build())).barn(mapper.tilEntitet(identerBarn))
         .kreverSamtykke(kreverSamtykke).samtykkefrist(samtykkefrist).build();
 
-    var lagretForespørsel = forespørselDao.save(nyForespørsel);
-
-    return lagretForespørsel.getId();
+    return forespørselDao.save(nyForespørsel);
   }
 
   @Transactional
