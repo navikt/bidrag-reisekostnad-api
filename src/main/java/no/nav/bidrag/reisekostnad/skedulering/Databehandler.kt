@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument
 import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
-import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG
 import no.nav.bidrag.reisekostnad.model.alleBarnHarFylt15år
 import no.nav.bidrag.reisekostnad.model.hovedpartIdent
 import no.nav.bidrag.reisekostnad.model.motpartIdent
@@ -67,16 +66,20 @@ class Databehandler(
     fun deaktivereJournalførteOgUtgåtteForespørsler() {
 
         var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now(), true);
-
         var iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
             LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay(), false
         )
 
+        log.info("Starter deaktivering av ${journalførteAktiveForespørsler.size} journalførte forespørsler.")
         // Deaktivere journalførte forespørsler
         journalførteAktiveForespørsler.forEach { id ->
             databasetjeneste.deaktivereForespørsel(id, null);
         }
 
+        log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert uten problemer.")
+
+        log.info("Starter deaktivering av ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size} forespørsler med utgått samtykkefrist.")
+        var varselSendt = 0;
         // Deaktivere forespørsler med utgått samtykkefrist, og sende varsel til foreldre
         iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.forEach { id ->
             var forespørsel = databasetjeneste.henteAktivForespørsel(id);
@@ -96,11 +99,22 @@ class Databehandler(
                         forespørsel.motpartIdent,
                         forespørsel.opprettet.toLocalDate()
                     )
+                    varselSendt++;
                 } catch (e: Exception) {
                     e.printStackTrace();
                     log.error("En feil oppstod ved varsling om manglende samtykke av forespørsel {}", forespørsel.id);
                 }
             }
         }
+
+        var antallForespørslerDeaktivert = iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size
+        var alleForeldreBleVarslet = varselSendt == antallForespørslerDeaktivert
+        var loggStrengDeaktivert = "Alle de $antallForespørslerDeaktivert forespørsler med utgått samtykkefrist ble deaktivert."
+        var loggstreng =
+            if (alleForeldreBleVarslet)
+                "$loggStrengDeaktivert Samtlige foreldre ble varslet."
+            else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallForespørslerDeaktivert forespørsler"
+
+        log.info(loggstreng)
     }
 }
