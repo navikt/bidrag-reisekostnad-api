@@ -1,6 +1,6 @@
 package no.nav.bidrag.reisekostnad.tjeneste;
 
-import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
 
 import java.time.LocalDate;
@@ -21,8 +21,8 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil;
-import no.nav.bidrag.reisekostnad.model.KonstanterKt;
 import no.nav.bidrag.reisekostnad.model.ForespørselUtvidelserKt;
+import no.nav.bidrag.reisekostnad.model.KonstanterKt;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,8 @@ public class Databasetjeneste {
   private Mapper mapper;
 
   @Autowired
-  public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, OppgavebestillingDao oppgavebestillingDao, Mapper mapper) {
+  public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, OppgavebestillingDao oppgavebestillingDao,
+      Mapper mapper) {
     this.barnDao = barnDao;
     this.forelderDao = forelderDao;
     this.forespørselDao = forespørselDao;
@@ -48,21 +49,24 @@ public class Databasetjeneste {
   }
 
   @Transactional(TxType.REQUIRES_NEW)
-  public Forespørsel oppdaterForespørselTilÅIkkeKreveSamtykke(int forespørselId){
+  public Forespørsel oppdaterForespørselTilÅIkkeKreveSamtykke(int forespørselId) {
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
-    if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)){
+    if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)) {
       originalForespørsel.setKreverSamtykke(false);
       log.info("Forespørsel med id {} ble endret til å ikke kreve samtykke", forespørselId);
     }
 
     return originalForespørsel;
   }
+
   @Transactional(TxType.REQUIRES_NEW)
-  public Forespørsel overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId){
+  public Forespørsel overførBarnSomHarFylt15årTilNyForespørsel(int forespørselId) {
     var originalForespørsel = forespørselDao.henteAktivForespørsel(forespørselId).get();
 
-    if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)){
-      log.warn("Forespørsel {} som inneholder barn fylt 15 år ble forsøket splittet til ny forespørsel. Splitting er ikke mulig fordi alle barn i forespørselen har fylt 15 år. Gjør ingen endring", forespørselId);
+    if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)) {
+      log.warn(
+          "Forespørsel {} som inneholder barn fylt 15 år ble forsøket splittet til ny forespørsel. Splitting er ikke mulig fordi alle barn i forespørselen har fylt 15 år. Gjør ingen endring",
+          forespørselId);
       return originalForespørsel;
     }
 
@@ -92,7 +96,7 @@ public class Databasetjeneste {
     var ekisterendeHovedpart = forelderDao.finnMedPersonident(hovedpart);
     var eksisterendeMotpart = forelderDao.finnMedPersonident(motpart);
 
-    var samtykkefrist = kreverSamtykke ? LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE) : null;
+    var samtykkefrist = kreverSamtykke ? LocalDate.now().plusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING) : null;
 
     var nyForespørsel = Forespørsel.builder().opprettet(LocalDateTime.now())
         .hovedpart(ekisterendeHovedpart.orElseGet(() -> Forelder.builder().personident(hovedpart).build()))
@@ -120,9 +124,15 @@ public class Databasetjeneste {
   public Forespørsel deaktivereForespørsel(int idForespørsel, String personident) {
     log.info("Deaktiverer forespørsel med id {}", idForespørsel);
     var forespørsel = forespørselDao.henteAktivForespørsel(idForespørsel);
-    if (forespørsel.isPresent() && erPartIForespørsel(personident, forespørsel.get())) {
+    var deaktiveresAvSystem = personident == null;
+    if (forespørsel.isPresent() && (deaktiveresAvSystem || personErPartIForespørsel(personident, forespørsel.get()))) {
       var nå = LocalDateTime.now();
-      var deaktivertAv = erHovedpart(personident, forespørsel.get()) ? Deaktivator.HOVEDPART : Deaktivator.MOTPART;
+
+      var deaktivertAv = personident == null
+          ? Deaktivator.SYSTEM
+          : erHovedpart(personident, forespørsel.get())
+              ? Deaktivator.HOVEDPART : Deaktivator.MOTPART;
+
       SIKKER_LOGG.info("Forelder med ident: {} deaktiverer forespørsel med id {}", personident, idForespørsel);
       forespørsel.get().setDeaktivert(nå);
       forespørsel.get().setDeaktivertAv(deaktivertAv);
@@ -175,8 +185,14 @@ public class Databasetjeneste {
     return aktiveForespørslerMedSamtykke;
   }
 
+  public Set<Integer> henteIdTilAktiveForespørsler(LocalDateTime opprettetFør, boolean erJournalført) {
+    return erJournalført ? forespørselDao.henteIdTilAktiveJournalførteForespørsler(opprettetFør)
+        : forespørselDao.henteIdTilAktiveForespørsler(opprettetFør);
+  }
+
   public List<Forespørsel> hentForespørselSomInneholderBarnSomHarFylt15år() {
-    var forespørsler = forespørselDao.henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(KonstanterKt.getDato15ÅrTilbakeFraIdag());
+    var forespørsler = forespørselDao.henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(
+        KonstanterKt.getDato15ÅrTilbakeFraIdag());
     log.info("Fant {} aktive forespørsler om inneholder barn som har nylig fylt 15år", forespørsler.size());
 
     return forespørsler.stream().toList();
@@ -186,7 +202,7 @@ public class Databasetjeneste {
     return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident()));
   }
 
-  private boolean erPartIForespørsel(String personident, Forespørsel forespørsel) {
+  private boolean personErPartIForespørsel(String personident, Forespørsel forespørsel) {
     return !StringUtils.isEmpty(personident) && (personident.equals(forespørsel.getHovedpart().getPersonident()) || personident.equals(
         forespørsel.getMotpart().getPersonident()));
   }

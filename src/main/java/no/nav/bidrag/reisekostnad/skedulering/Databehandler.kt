@@ -3,6 +3,8 @@ package no.nav.bidrag.reisekostnad.skedulering
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument
+import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
+import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG
 import no.nav.bidrag.reisekostnad.model.alleBarnHarFylt15år
 import no.nav.bidrag.reisekostnad.model.hovedpartIdent
 import no.nav.bidrag.reisekostnad.model.motpartIdent
@@ -10,6 +12,8 @@ import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
 
@@ -56,5 +60,47 @@ class Databehandler(
             }
         }
         log.info("Behandlet alle forespørsler ${forespørslerOver15År.size} som inneholder barn som har nylig fylt 15 år")
+    }
+
+    @Scheduled(cron = "\${kjøreplan.databehandling.deaktivere")
+    @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
+    fun deaktivereJournalførteOgUtgåtteForespørsler() {
+
+        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now(), true);
+
+        var iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay(), false
+        )
+
+        // Deaktivere journalførte forespørsler
+        journalførteAktiveForespørsler.forEach { id ->
+            databasetjeneste.deaktivereForespørsel(id, null);
+        }
+
+        // Deaktivere forespørsler med utgått samtykkefrist, og sende varsel til foreldre
+        iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.forEach { id ->
+            var forespørsel = databasetjeneste.henteAktivForespørsel(id);
+
+            var samtykketidspunkt = forespørsel.samtykket;
+            if (forespørsel.journalført == null || samtykketidspunkt == null || LocalDate.now()
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong())
+                    .atStartOfDay().isAfter(samtykketidspunkt)
+            ) {
+                databasetjeneste.deaktivereForespørsel(id, null);
+                val aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(forespørsel.id, forespørsel.motpartIdent)
+                // Sletter motparts samtykkeoppgave (normalt kun én)  knyttet til aktuell forepørsel
+                aktiveOppgaver.forEach { brukernotifikasjonkonsument.sletteSamtykkeoppgave(it.eventId, forespørsel.motpartIdent) }
+                try {
+                    brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(
+                        forespørsel.hovedpartIdent,
+                        forespørsel.motpartIdent,
+                        forespørsel.opprettet.toLocalDate()
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                    log.error("En feil oppstod ved varsling om manglende samtykke av forespørsel {}", forespørsel.id);
+                }
+            }
+        }
     }
 }

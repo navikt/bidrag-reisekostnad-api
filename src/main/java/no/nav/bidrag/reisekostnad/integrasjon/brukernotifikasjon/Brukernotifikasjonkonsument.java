@@ -1,8 +1,8 @@
 package no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon;
 
-import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE;
-import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_MANGLENDE_SAMTYKKE;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_AUTOMATISK_INNSENDING;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_VENTENDE_FORESPØRSEL;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
@@ -41,26 +41,20 @@ public class Brukernotifikasjonkonsument {
         personidentMotpart, opprettetDato);
 
     var dato = opprettetDato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    var melding = new DynamiskMelding(MELDING_OM_MANGLENDE_SAMTYKKE, List.of(dato));
+    var melding = new DynamiskMelding(MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST, List.of(dato));
 
     beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, melding, true, oppretteNokkel(personidentHovedpart));
     beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, melding, true, oppretteNokkel(personidentMotpart));
   }
 
-  public void varsleMorOmUtgaattOppgaveForSignering(String personidentHovedperson) {
-    log.info("Sender varsel til hovedpart om utgått samtykkeoppgave");
-    var nøkkel = oppretteNokkel(personidentHovedperson);
-    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedperson, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true, nøkkel);
-    log.info("Ekstern melding med eventId: {}, ble sendt til mor", nøkkel.getEventId());
-  }
-
   public void varsleOmAutomatiskInnsending(String personidentHovedpart, String personidentMotpart, LocalDate fødselsdatoBarn) {
     log.info("Varsler foreldre om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år", fødselsdatoBarn);
-    SIKKER_LOGG.info("Varsler foreldre (hovedpart: {} og motpart: {}) om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år",
+    SIKKER_LOGG.info(
+        "Varsler foreldre (hovedpart: {} og motpart: {}) om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år",
         personidentHovedpart, personidentMotpart, fødselsdatoBarn);
-    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true,
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_OM_AUTOMATISK_INNSENDING), true,
         oppretteNokkel(personidentHovedpart));
-    beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_OM_IKKE_UTFOERT_SAMTYKKEOPPGAVE), true,
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_OM_AUTOMATISK_INNSENDING), true,
         oppretteNokkel(personidentMotpart));
     log.info("Varsel om automatisk innsending av forespørsel sendt til begge foreldre");
     SIKKER_LOGG.info("Varsel om automatisk innsending av  forespørsel sendt til {} og {})", personidentHovedpart, personidentMotpart);
@@ -85,7 +79,7 @@ public class Brukernotifikasjonkonsument {
   public void sletteSamtykkeoppgave(String eventId, String personidentMotpart) {
     log.info("Sletter samtykkeoppgave med eventId {}", eventId);
     try {
-      ferdigprodusent.ferdigstilleFarsSigneringsoppgave(oppretteNokkel(eventId, personidentMotpart));
+      ferdigprodusent.ferdigstilleSamtykkeoppgave(oppretteNokkel(eventId, personidentMotpart));
     } catch (InternFeil internFeilException) {
       log.error("En feil oppstod ved sending av ferdigmelding for oppgave med eventId {}.", eventId);
     }

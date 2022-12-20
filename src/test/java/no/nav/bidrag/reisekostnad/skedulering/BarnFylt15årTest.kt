@@ -23,10 +23,10 @@ class BarnFylt15årTest : DatabehandlerTest() {
     fun skalOppretteNyForespørselForBarnSomHarFylt15år() {
 
         // gitt
-        var forespørselUtenBarnOver15år = oppprettForespørsel(true)
+        var forespørselUtenBarnOver15år = opppretteForespørsel(true)
         forespørselUtenBarnOver15år.barn = mutableSetOf(testpersonBarn11, testpersonBarn12)
 
-        var originalForespørsel = oppprettForespørsel(true)
+        var originalForespørsel = opppretteForespørsel(true)
         originalForespørsel.barn = mutableSetOf(testpersonBarn10, testpersonBarn15)
 
         transactionTemplate.executeWithoutResult {
@@ -72,7 +72,7 @@ class BarnFylt15årTest : DatabehandlerTest() {
     fun skalOppdatereForespørselHvisInneholderBareEnBarn() {
 
         // gitt
-        var originalForespørsel = oppprettForespørsel(true)
+        var originalForespørsel = opppretteForespørsel(true)
         originalForespørsel.barn = mutableSetOf(testpersonBarn15)
 
         transactionTemplate.executeWithoutResult {
@@ -110,7 +110,7 @@ class BarnFylt15årTest : DatabehandlerTest() {
     fun skalOppdatereForespørselHvisInneholderFlereBarnSomHarFylt15år() {
 
         // gitt
-        var originalForespørsel = oppprettForespørsel(true)
+        var originalForespørsel = opppretteForespørsel(true)
         originalForespørsel.barn = mutableSetOf(testpersonBarn15, testpersonBarn15_3)
 
         transactionTemplate.executeWithoutResult {
@@ -148,14 +148,14 @@ class BarnFylt15årTest : DatabehandlerTest() {
     fun skalRulleTilbakeEndringerVedFeil() {
 
         // gitt
-        var forespørselMedFeil = oppprettForespørsel(true)
+        var forespørselMedFeil = opppretteForespørsel(true)
         forespørselMedFeil.barn = mutableSetOf(testpersonBarn11, testpersonBarn15_2)
         forespørselMedFeil.hovedpart = null
 
-        var forespørselMedToBarn = oppprettForespørsel(true)
+        var forespørselMedToBarn = opppretteForespørsel(true)
         forespørselMedToBarn.barn = mutableSetOf(testpersonBarn10, testpersonBarn15)
 
-        var forespørselMedEttBarn = oppprettForespørsel(true)
+        var forespørselMedEttBarn = opppretteForespørsel(true)
         forespørselMedEttBarn.barn = mutableSetOf(testpersonBarn15_3)
 
         transactionTemplate.executeWithoutResult {

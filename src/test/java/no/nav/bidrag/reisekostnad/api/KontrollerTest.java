@@ -1,22 +1,20 @@
 package no.nav.bidrag.reisekostnad.api;
 
-import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.matching.ContainsPattern;
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Value;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
@@ -52,7 +50,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import java.util.Set;
 
 @ActiveProfiles(Profil.TEST)
 @EnableMockOAuth2Server
@@ -93,6 +90,7 @@ public class KontrollerTest {
   }
 
   protected static String opprettetJournalpostId = "1232132132";
+
   protected static class CustomHeader {
 
     String headerName;
@@ -124,7 +122,8 @@ public class KontrollerTest {
     return "Bearer " + token.serialize();
   }
 
-  protected Forespørsel lagreForespørselForEttBarn(String personidentHovedpart, String personidentMotpart, String personidentBarn, boolean barnErUnder15){
+  protected Forespørsel lagreForespørselForEttBarn(String personidentHovedpart, String personidentMotpart, String personidentBarn,
+      boolean barnErUnder15) {
 
     var hovedpart = Forelder.builder().personident(personidentHovedpart).build();
     var motpart = Forelder.builder().personident(personidentMotpart).build();
@@ -135,27 +134,27 @@ public class KontrollerTest {
         .motpart(motpart)
         .barn(Set.of(barn))
         .kreverSamtykke(barnErUnder15)
-        .samtykkefrist(LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE))
+        .samtykkefrist(LocalDate.now().plusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING))
         .build();
 
     return forespørselDao.save(forespørsel);
   }
 
-  protected void initTokenForPåloggetPerson(String personident){
+  protected void initTokenForPåloggetPerson(String personident) {
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(personident));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(personident), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
   }
 
-  protected List<OpprettJournalpostRequest> hentOpprettDokumentRequestBodyForForespørsel(Integer forespørselId){
+  protected List<OpprettJournalpostRequest> hentOpprettDokumentRequestBodyForForespørsel(Integer forespørselId) {
     var objectMapper = new ObjectMapper().findAndRegisterModules();
     var results = WireMock.findAll(StubsKt.getBidragDokumentRequestPatternBuilder(forespørselId));
-    if (results.isEmpty()){
+    if (results.isEmpty()) {
       return null;
     }
 
-    return results.stream().map((p)-> {
+    return results.stream().map((p) -> {
       try {
         return objectMapper.readValue(p.getBodyAsString(), OpprettJournalpostRequest.class);
       } catch (JsonProcessingException e) {
@@ -165,7 +164,7 @@ public class KontrollerTest {
 
   }
 
-  protected StubMapping stubArkiverDokumentFeiler(){
+  protected StubMapping stubArkiverDokumentFeiler() {
     return WireMock.stubFor(
         WireMock.post(WireMock.urlEqualTo("/bidrag-dokument/journalpost/JOARK")).willReturn(
             aResponse()
