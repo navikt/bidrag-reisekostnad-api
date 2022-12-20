@@ -62,7 +62,7 @@ class Databehandler(
         log.info("Behandlet alle forespørsler ${forespørslerOver15År.size} som inneholder barn som har nylig fylt 15 år")
     }
 
-    @Scheduled(cron = "\${kjøreplan.databehandling.deaktivere")
+    @Scheduled(cron = "\${kjøreplan.databehandling.deaktivere}")
     @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
     fun deaktivereJournalførteOgUtgåtteForespørsler() {
 
