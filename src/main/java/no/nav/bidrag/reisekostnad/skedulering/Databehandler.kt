@@ -65,22 +65,29 @@ class Databehandler(
     @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
     fun deaktivereJournalførteOgUtgåtteForespørsler() {
 
+        // Deaktivere journalførte forespørsler
+        deaktivereJournalførteForespørsler()
+
+        // Deaktivere forespørsler med utgått samtykkefrist, samt sende varsel til foreldre
+        deaktivereForespørslerMedUtgåttSamtykkefrist()
+    }
+
+    private fun deaktivereJournalførteForespørsler() {
         var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now(), true);
+
+        log.info("Fant ${journalførteAktiveForespørsler.size} journalførte forespørsler som skal deaktiveres.")
+
+        journalførteAktiveForespørsler.forEach { id -> databasetjeneste.deaktivereForespørsel(id, null); }
+
+        if (journalførteAktiveForespørsler.size > 0) log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert uten problemer.")
+    }
+
+    private fun deaktivereForespørslerMedUtgåttSamtykkefrist() {
         var iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
             LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay(), false
         )
-
-        log.info("Starter deaktivering av ${journalførteAktiveForespørsler.size} journalførte forespørsler.")
-        // Deaktivere journalførte forespørsler
-        journalførteAktiveForespørsler.forEach { id ->
-            databasetjeneste.deaktivereForespørsel(id, null);
-        }
-
-        log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert uten problemer.")
-
-        log.info("Starter deaktivering av ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size} forespørsler med utgått samtykkefrist.")
+        log.info("Fant ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size} forespørsler med utgått samtykkefrist som skal deaktiveres.")
         var varselSendt = 0;
-        // Deaktivere forespørsler med utgått samtykkefrist, og sende varsel til foreldre
         iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.forEach { id ->
             var forespørsel = databasetjeneste.henteAktivForespørsel(id);
 
@@ -105,16 +112,19 @@ class Databehandler(
                     log.error("En feil oppstod ved varsling om manglende samtykke av forespørsel {}", forespørsel.id);
                 }
             }
+            ferdiglogg(varselSendt, iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size)
         }
+    }
 
-        var antallForespørslerDeaktivert = iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size
-        var alleForeldreBleVarslet = varselSendt == antallForespørslerDeaktivert
-        var loggStrengDeaktivert = "Alle de $antallForespørslerDeaktivert forespørsler med utgått samtykkefrist ble deaktivert."
+    private fun ferdiglogg(varselSendt: Int, antallVurderteForespørsler: Int) {
+        var alleForeldreBleVarslet = varselSendt == antallVurderteForespørsler
+        var loggStrengDeaktivert =
+            "Alle de ${antallVurderteForespørsler} forespørslene med utgått samtykkefrist ble deaktivert."
         var loggstreng =
             if (alleForeldreBleVarslet)
                 "$loggStrengDeaktivert Samtlige foreldre ble varslet."
-            else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallForespørslerDeaktivert forespørsler"
+            else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallVurderteForespørsler.size forespørsler"
 
-        log.info(loggstreng)
+        if (antallVurderteForespørsler > 0) log.info(loggstreng)
     }
 }
