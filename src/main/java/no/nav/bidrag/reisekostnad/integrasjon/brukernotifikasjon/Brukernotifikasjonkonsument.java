@@ -4,6 +4,7 @@ import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_OM_VENTENDE_FORESPØRSEL;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Brukernotifikasjonskonfig.NAMESPACE_BIDRAG;
@@ -56,8 +57,17 @@ public class Brukernotifikasjonkonsument {
         oppretteNokkel(personidentHovedpart));
     beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_OM_AUTOMATISK_INNSENDING), true,
         oppretteNokkel(personidentMotpart));
-    log.info("Varsel om automatisk innsending av forespørsel sendt til begge foreldre");
-    SIKKER_LOGG.info("Varsel om automatisk innsending av  forespørsel sendt til {} og {})", personidentHovedpart, personidentMotpart);
+  }
+
+  /**
+   * Varsler hovedpart om nyopprettet forespørsel som venter på samtykke. Dette gjøres hovedsaklig av hensyn til kontaktsenteret ettersom
+   * de med dette får mulighet til å spore påbegynte forespørsler via Modia.
+   * @param personidentHovedpart
+   */
+  public void varsleOmNyForespørselSomVenterPåSamtykke(String personidentHovedpart){
+    log.info("Varsler hovedpart om ny forespørsel som venter på samtykke fra den andre forelderen.");
+    SIKKER_LOGG.info("Varsler hovedpart med personident {} om ny forespørsel som venter på samtykke fra den andre forelderen.", personidentHovedpart);
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE), false, true, oppretteNokkel(personidentHovedpart));
   }
 
   public void varsleOmNeiTilSamtykke(String personidentHovedpart, String personidentMotpart) {

@@ -82,6 +82,7 @@ public class ReisekostnadApiTjenesteTest {
 
     // så
     verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(1, motpart.getIdent());
+    verify(brukernotifikasjonkonsument, times(1)).varsleOmNyForespørselSomVenterPåSamtykke(hovedpart.getIdent());
     assertThat(respons.is2xxSuccessful());
   }
 
@@ -131,7 +132,7 @@ public class ReisekostnadApiTjenesteTest {
   }
 
   @Test
-  void skalBestilleOpprettelseAvSamtykkeoppgaveVedOpprettelseAvForespørsel() {
+  void skalBestilleOpprettelseAvSamtykkeoppgaveOgVarsleHovedpartVedOpprettelseAvForespørsel() {
 
     // gitt
     var idForespørsel = 1;
@@ -158,6 +159,7 @@ public class ReisekostnadApiTjenesteTest {
 
     // så
     verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(1, motpart.getIdent());
+    verify(brukernotifikasjonkonsument, times(1)).varsleOmNyForespørselSomVenterPåSamtykke(hovedpart.getIdent());
     assertAll(() -> assertThat(respons.is2xxSuccessful()),
         () -> verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, motpart.getIdent()));
   }

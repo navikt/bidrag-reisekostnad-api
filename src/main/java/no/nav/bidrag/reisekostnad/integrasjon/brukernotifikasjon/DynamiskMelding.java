@@ -25,12 +25,16 @@ public class DynamiskMelding {
 
 enum Melding {
 
+  MELDING_OM_AUTOMATISK_INNSENDING(
+      "Forespørsel om fordeling av reisekostnader for barn med fødselsdato %s ble automatisk sendt til behandling da barnet fylte femten år"),
   MELDING_OM_VENTENDE_FORESPØRSEL("Trykk her for å se en forespørsel du har fått om fordeling av reisekostnader for barn."),
-  MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE(
-      "Den andre forelderen samtykket ikke til at NAV skal behandle fordeling av reisekostnader"),
-  MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE("Du har avslått en forespørsel om fordeling av reisekostnader."),
-  MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST("Forespørselen om fordeling av reisekostnader kan ikke behandles av NAV. Dette er fordi vi ikke har mottatt samtykke til dette."),
-  MELDING_OM_AUTOMATISK_INNSENDING("Forespørsel om fordeling av reisekostnader for barn med fødselsdato %s ble automatisk sendt til behandling da barnet fylte femten år");
+  MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST(
+      "Forespørselen om fordeling av reisekostnader kan ikke behandles av NAV. Dette er fordi vi ikke har mottatt samtykke til dette."),
+  MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE("Den andre forelderen samtykket ikke til at NAV skal behandle fordeling av reisekostnader"),
+  MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE(
+      "Du har sendt forespørsel om fordeling av reisekostnader for barn under 15 år. Forespørselen venter på samtykke fra den andre forelderen."),
+  MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE("Du har avslått en forespørsel om fordeling av reisekostnader.");
+
   private String tekst;
 
   Melding(String tekst) {
