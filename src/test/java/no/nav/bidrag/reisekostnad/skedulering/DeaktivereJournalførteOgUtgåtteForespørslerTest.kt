@@ -23,7 +23,10 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
 
         // gitt
         var journalførtForespørsel = opppretteForespørsel(true)
-        journalførtForespørsel.journalført = LocalDateTime.now()
+
+        journalførtForespørsel.opprettet = LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 13)
+        journalførtForespørsel.journalført = LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay()
+
         var lagretForespørsel = forespørselDao.save(journalførtForespørsel)
 
         // hvis

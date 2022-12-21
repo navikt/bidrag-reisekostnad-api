@@ -90,7 +90,7 @@ class Databehandler(
     }
 
     private fun deaktivereJournalførteForespørsler() {
-        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now(), true);
+        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()), true);
 
         log.info("Fant ${journalførteAktiveForespørsler.size} journalførte forespørsler som skal deaktiveres.")
 

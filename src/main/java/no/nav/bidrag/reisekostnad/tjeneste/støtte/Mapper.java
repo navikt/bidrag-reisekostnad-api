@@ -56,9 +56,9 @@ public class Mapper {
   }
 
   public BrukerinformasjonDto tilDto(HentFamilieRespons familieRespons) {
-    var forespørslerHvorPersonErHovedpart = forespørselDao.henteSynligeForespørslerHvorPersonErHovedpart(familieRespons.getPerson().getIdent(),
+    var forespørslerHvorPersonErHovedpart = forespørselDao.henteSynligeForespørslerForHovedpart(familieRespons.getPerson().getIdent(),
         henteGrenseForSisteEndring());
-    var forespørslerHvorPersonErMotpart = forespørselDao.henteSynligeForespørslerHvorPersonErMotpart(familieRespons.getPerson().getIdent(),
+    var forespørslerHvorPersonErMotpart = forespørselDao.henteSynligeForespørslerForMotpart(familieRespons.getPerson().getIdent(),
         henteGrenseForSisteEndring());
 
     var hovedpersonHarDiskresjon = Diskresjonskode.harDiskresjon(familieRespons.getPerson());
