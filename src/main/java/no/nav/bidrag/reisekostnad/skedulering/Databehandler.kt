@@ -64,6 +64,7 @@ class Databehandler(
     @Scheduled(cron = "\${kjøreplan.databehandling.deaktivere}")
     @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
     fun deaktivereJournalførteOgUtgåtteForespørsler() {
+        log.info("Deaktivere journalførte og utgåtte forepørsler, varsle foreldre om utløpt samtykkefrist, og slette relaterte samtykkeoppgaver")
 
         // Deaktivere journalførte forespørsler
         deaktivereJournalførteForespørsler()
