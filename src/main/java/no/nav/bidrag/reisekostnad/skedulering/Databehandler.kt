@@ -3,6 +3,7 @@ package no.nav.bidrag.reisekostnad.skedulering
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument
+import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
 import no.nav.bidrag.reisekostnad.model.alleBarnHarFylt15år
 import no.nav.bidrag.reisekostnad.model.hovedpartIdent
 import no.nav.bidrag.reisekostnad.model.motpartIdent
@@ -10,6 +11,8 @@ import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
 
@@ -56,5 +59,86 @@ class Databehandler(
             }
         }
         log.info("Behandlet alle forespørsler ${forespørslerOver15År.size} som inneholder barn som har nylig fylt 15 år")
+    }
+
+    @Scheduled(cron = "\${kjøreplan.databehandling.deaktivere}")
+    @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
+    fun deaktivereJournalførteOgUtgåtteForespørsler() {
+        log.info("Deaktivere journalførte og utgåtte forepørsler, varsle foreldre om utløpt samtykkefrist, og slette relaterte samtykkeoppgaver")
+
+        // Deaktivere journalførte forespørsler
+        deaktivereJournalførteForespørsler()
+
+        // Deaktivere forespørsler med utgått samtykkefrist, samt sende varsel til foreldre
+        deaktivereForespørslerMedUtgåttSamtykkefrist()
+
+        // Aktive samtykkeoppgaver skal ferdigstilles dersom relatert forespørsel er deaktivert
+        ferdigstilleUtgåtteSamtykkeoppgaver()
+    }
+
+    private fun ferdigstilleUtgåtteSamtykkeoppgaver() {
+        var oppgaverSomSkalFerdigstilles = databasetjeneste.henteOppgaverSomSkalFerdigstilles()
+        log.info("Fant ${oppgaverSomSkalFerdigstilles.size} aktive oppgaver som skal ferdigstilles.")
+        var antallFerdigstilteOppgaver = 0;
+
+        oppgaverSomSkalFerdigstilles.forEach {
+            var oppgaveBleFerdigstilt = brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(it.eventId, it.forelder.personident)
+            if (oppgaveBleFerdigstilt) antallFerdigstilteOppgaver++
+        }
+
+        log.info("$antallFerdigstilteOppgaver av de ${oppgaverSomSkalFerdigstilles.size} identifiserte oppgavene ble ferdigstilt.")
+    }
+
+    private fun deaktivereJournalførteForespørsler() {
+        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()), true);
+
+        log.info("Fant ${journalførteAktiveForespørsler.size} journalførte forespørsler som skal deaktiveres.")
+
+        journalførteAktiveForespørsler.forEach { id -> databasetjeneste.deaktivereForespørsel(id, null); }
+
+        if (journalførteAktiveForespørsler.size > 0) log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert.")
+    }
+
+    private fun deaktivereForespørslerMedUtgåttSamtykkefrist() {
+        var iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay(), false
+        )
+        log.info("Antall forespørsler med utgått samtykkefrist som vil bli forsøkt deaktivert: ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size}.")
+        var varselSendt = 0;
+        iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.forEach { id ->
+            var forespørsel = databasetjeneste.henteAktivForespørsel(id);
+
+            var samtykketidspunkt = forespørsel.samtykket;
+            if (forespørsel.journalført == null || samtykketidspunkt == null || LocalDate.now()
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong())
+                    .atStartOfDay().isAfter(samtykketidspunkt)
+            ) {
+                databasetjeneste.deaktivereForespørsel(id, null);
+                try {
+                    brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(
+                        forespørsel.hovedpartIdent,
+                        forespørsel.motpartIdent,
+                        forespørsel.opprettet.toLocalDate()
+                    )
+                    varselSendt++;
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                    log.error("En feil oppstod ved varsling om manglende samtykke av forespørsel {}", forespørsel.id);
+                }
+            }
+            ferdiglogg(varselSendt, iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size)
+        }
+    }
+
+    private fun ferdiglogg(varselSendt: Int, antallVurderteForespørsler: Int) {
+        var alleForeldreBleVarslet = varselSendt == antallVurderteForespørsler
+        var loggStrengDeaktivert =
+            "Alle de ${antallVurderteForespørsler} forespørslene med utgått samtykkefrist ble deaktivert."
+        var loggstreng =
+            if (alleForeldreBleVarslet)
+                "$loggStrengDeaktivert Samtlige foreldre ble varslet."
+            else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallVurderteForespørsler.size forespørsler"
+
+        if (antallVurderteForespørsler > 0) log.info(loggstreng)
     }
 }

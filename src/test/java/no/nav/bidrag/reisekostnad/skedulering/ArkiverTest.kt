@@ -16,9 +16,9 @@ class ArkiverTest: DatabehandlerTest() {
     @Test
     @Transactional
     fun skalArkivereFlereForespørsler(){
-        val forespørsel = oppprettForespørsel()
-        val forespørsel2 = oppprettForespørsel()
-        val forespørsel3 = oppprettForespørsel()
+        val forespørsel = opppretteForespørsel()
+        val forespørsel2 = opppretteForespørsel()
+        val forespørsel3 = opppretteForespørsel()
         forespørselDao.save(forespørsel)
         forespørselDao.save(forespørsel2)
         forespørselDao.save(forespørsel3)
@@ -37,7 +37,7 @@ class ArkiverTest: DatabehandlerTest() {
     @Test
     @Transactional
     fun skalArkivereForespørslerSomIkkeKreverSamtykke(){
-        val forespørsel = oppprettForespørsel()
+        val forespørsel = opppretteForespørsel()
         forespørsel.isKreverSamtykke = false
         forespørsel.samtykket = null
         forespørselDao.save(forespørsel)
@@ -53,7 +53,7 @@ class ArkiverTest: DatabehandlerTest() {
     @Test
     @Transactional
     fun skalArkivereForespørslerSomErSamtykket(){
-        val forespørsel = oppprettForespørsel()
+        val forespørsel = opppretteForespørsel()
         forespørsel.isKreverSamtykke = true
         forespørsel.samtykket = LocalDateTime.now()
         forespørselDao.save(forespørsel)
@@ -69,13 +69,13 @@ class ArkiverTest: DatabehandlerTest() {
     @Test
     @Transactional
     fun skalIkkeArkivereForespørslerSomIkkeErSamtykket(){
-        val forespørsel = oppprettForespørsel()
+        val forespørsel = opppretteForespørsel()
         forespørsel.isKreverSamtykke = true
 
-        val forespørsel2 = oppprettForespørsel()
+        val forespørsel2 = opppretteForespørsel()
         forespørsel2.isKreverSamtykke = true
 
-        val forespørselDeaktivert = oppprettForespørsel()
+        val forespørselDeaktivert = opppretteForespørsel()
         forespørselDeaktivert.deaktivert = LocalDateTime.now()
         forespørselDao.save(forespørsel)
         forespørselDao.save(forespørselDeaktivert)

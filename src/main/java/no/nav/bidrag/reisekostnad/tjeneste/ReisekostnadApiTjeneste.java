@@ -62,17 +62,19 @@ public class ReisekostnadApiTjeneste {
     return HttpResponse.from(HttpStatus.OK, mapper.tilDto(familierespons.get()));
   }
 
-  public HttpResponse<Void> oppretteForespørselOmFordelingAvReisekostnader(String hovedperson, Set<String> krypterteIdenterBarn) {
-    SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedperson {}", hovedperson);
-    var familierespons = bidragPersonkonsument.hentFamilie(hovedperson);
+  public HttpResponse<Void> oppretteForespørselOmFordelingAvReisekostnader(String personidentHovedpart, Set<String> krypterteIdenterBarn) {
+    SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedpart {}", personidentHovedpart);
+    var familierespons = bidragPersonkonsument.hentFamilie(personidentHovedpart);
     validerePåloggetPerson(familierespons);
     var personidenterBarn = krypterteIdenterBarn.stream().map(k -> dekryptere(k)).collect(Collectors.toSet());
 
-    // Kaster Valideringsfeil dersom hovedperson ikke er registrert med familierelasjoner eller mangler relasjon til minst ett av de oppgitte barna.
+    // Kaster Valideringsfeil dersom hovedpart ikke er registrert med familierelasjoner eller mangler relasjon til minst ett av de oppgitte barna.
     validereRelasjonTilBarn(personidenterBarn, familierespons);
 
     familierespons.get().getPersonensMotpartBarnRelasjon().stream().filter(Objects::nonNull)
-        .forEach(m -> lagreForespørsel(hovedperson, m.getMotpart().getIdent(), henteUtBarnaSomTilhørerMotpart(m, personidenterBarn)));
+        .forEach(m -> lagreForespørsel(personidentHovedpart, m.getMotpart().getIdent(), henteUtBarnaSomTilhørerMotpart(m, personidenterBarn)));
+
+    brukernotifikasjonkonsument.varsleOmNyForespørselSomVenterPåSamtykke(personidentHovedpart);
 
     return HttpResponse.from(HttpStatus.CREATED);
   }
@@ -105,7 +107,7 @@ public class ReisekostnadApiTjeneste {
     var aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
     log.info("Fant {} aktive brukernotifikasjonsoppgaver knyttet til motpart i forespørsel med id {}", aktiveOppgaver.size(), idForespørsel);
     for (Oppgavebestilling oppgave : aktiveOppgaver) {
-      brukernotifikasjonkonsument.sletteSamtykkeoppgave(oppgave.getEventId(), personidentMotpart);
+      brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(oppgave.getEventId(), personidentMotpart);
       log.info("Slettet oppgave med eventId {} knyttet til forespørsel {}", oppgave.getEventId(), idForespørsel);
     }
   }

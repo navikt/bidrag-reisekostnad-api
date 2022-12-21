@@ -6,13 +6,12 @@ import no.nav.bidrag.reisekostnad.Testperson
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao
 import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao
+import no.nav.bidrag.reisekostnad.database.dao.OppgavebestillingDao
 import no.nav.bidrag.reisekostnad.database.datamodell.Barn
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument
-import no.nav.bidrag.reisekostnad.konfigurasjon.Brukernotifikasjon
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil
-import no.nav.bidrag.reisekostnad.skedulering.Databehandler
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -59,9 +58,13 @@ class DatabehandlerTest {
     @Autowired
     lateinit var databehandler: Databehandler
 
+    @Autowired
+    lateinit var oppgavebestillingDao: OppgavebestillingDao
+
     @BeforeEach
     fun sletteTestdata() {
         WireMock.resetAllRequests()
+        oppgavebestillingDao.deleteAll()
         barnDao.deleteAll()
         forespørselDao.deleteAll()
         forelderDao.deleteAll()
@@ -77,7 +80,7 @@ class DatabehandlerTest {
     protected var testpersonBarn15_2 = Barn.builder().personident("5515155").fødselsdato(LocalDate.now().minusYears(15).minusDays(7)).build()
     protected var testpersonBarn15_3 = Barn.builder().personident("235515232323455555").fødselsdato(LocalDate.now().minusYears(15).minusDays(1)).build()
 
-    fun oppprettForespørsel(kreverSamtykke: Boolean = false): Forespørsel{
+    fun opppretteForespørsel(kreverSamtykke: Boolean = false): Forespørsel{
         return Forespørsel.builder()
             .opprettet(LocalDateTime.now())
             .hovedpart(testpersonGråtass)

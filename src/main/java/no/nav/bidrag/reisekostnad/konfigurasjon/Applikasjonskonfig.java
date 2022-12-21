@@ -49,7 +49,6 @@ public class Applikasjonskonfig {
   public static final String ISSUER_TOKENX = "tokenx";
   public static final Logger SIKKER_LOGG = LoggerFactory.getLogger("secureLogger");
   public static final int FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING = 30;
-  public static final int FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE = 30;
 
   @Bean
   public OpenAPI openAPI() {

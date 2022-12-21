@@ -13,7 +13,6 @@ import static no.nav.bidrag.reisekostnad.Testperson.testpersonIkkeFunnet;
 import static no.nav.bidrag.reisekostnad.Testperson.testpersonServerfeil;
 import static no.nav.bidrag.reisekostnad.Testperson.testpersonStreng;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
-import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -222,7 +221,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
 
     assertAll(
         () -> assertThat(forespørselBarnUnder15.get().getSamtykkefrist()).isEqualTo(
-            LocalDate.now().plusDays(FRIST_SAMTYKKE_I_ANTALL_DAGER_ETTER_OPPRETTELSE)),
+            LocalDate.now().plusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING)),
         () -> assertThat(forespørselBarnOver15.get().getSamtykkefrist()).isNull()
     );
   }

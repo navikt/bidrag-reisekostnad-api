@@ -23,7 +23,7 @@ public class Ferdigprodusent {
   OppgavebestillingDao oppgavebestillingDao;
   Egenskaper egenskaper;
 
-  public void ferdigstilleFarsSigneringsoppgave(NokkelInput nokkel) {
+  public void ferdigstilleSamtykkeoppgave(NokkelInput nokkel) {
 
     var oppgaveSomSkalFerdigstilles = oppgavebestillingDao.henteOppgavebestilling(nokkel.getEventId());
 
