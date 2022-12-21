@@ -105,7 +105,7 @@ public class ReisekostnadApiTjeneste {
     var aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
     log.info("Fant {} aktive brukernotifikasjonsoppgaver knyttet til motpart i forespørsel med id {}", aktiveOppgaver.size(), idForespørsel);
     for (Oppgavebestilling oppgave : aktiveOppgaver) {
-      brukernotifikasjonkonsument.sletteSamtykkeoppgave(oppgave.getEventId(), personidentMotpart);
+      brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(oppgave.getEventId(), personidentMotpart);
       log.info("Slettet oppgave med eventId {} knyttet til forespørsel {}", oppgave.getEventId(), idForespørsel);
     }
   }

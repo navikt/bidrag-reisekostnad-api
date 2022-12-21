@@ -221,4 +221,8 @@ public class Databasetjeneste {
   public Set<Oppgavebestilling> henteAktiveOppgaverMotpart(int idForespørsel, String personidentMotpart) {
     return oppgavebestillingDao.henteAktiveOppgaver(idForespørsel, personidentMotpart);
   }
+
+  public Set<Oppgavebestilling> henteOppgaverSomSkalFerdigstilles() {
+    return oppgavebestillingDao.henteAktiveOppgaverKnyttetTilDeaktiverteForespørsler();
+  }
 }

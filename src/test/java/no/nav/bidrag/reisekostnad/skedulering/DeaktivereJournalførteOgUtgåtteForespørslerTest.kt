@@ -66,7 +66,7 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
             assertThat(deaktivertForespørsel.get().deaktivert.toLocalDate()).isEqualTo(LocalDate.now())
             assertThat(deaktivertForespørsel.get().samtykket).isNull()
             assertThat(deaktivertForespørsel.get().journalført).isNull()
-            Mockito.verify(brukernotifikasjonkonsument, times(1)).sletteSamtykkeoppgave(anyString(), anyString())
+            Mockito.verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave(anyString(), anyString())
             Mockito.verify(
                 brukernotifikasjonkonsument, times(1)
             ).varsleForeldreOmManglendeSamtykke(
@@ -106,7 +106,7 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
             assertThat(deaktivertForespørselMedFeilOgUtløptSamtykkefrist.get().deaktivert.toLocalDate()).isEqualTo(LocalDate.now())
             assertThat(deaktivertForespørselMedFeilOgUtløptSamtykkefrist.get().samtykket).isNull()
             assertThat(deaktivertForespørselMedFeilOgUtløptSamtykkefrist.get().journalført).isNull()
-            Mockito.verify(brukernotifikasjonkonsument, times(1)).sletteSamtykkeoppgave(anyString(), anyString())
+            Mockito.verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave(anyString(), anyString())
         }
     }
 }

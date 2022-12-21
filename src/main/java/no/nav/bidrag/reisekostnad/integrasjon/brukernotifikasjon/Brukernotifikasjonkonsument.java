@@ -76,12 +76,14 @@ public class Brukernotifikasjonkonsument {
     }
   }
 
-  public void sletteSamtykkeoppgave(String eventId, String personidentMotpart) {
-    log.info("Sletter samtykkeoppgave med eventId {}", eventId);
+  public boolean ferdigstilleSamtykkeoppgave(String eventId, String personidentMotpart) {
+    log.info("Ferdigstiller samtykkeoppgave med eventId {}", eventId);
     try {
       ferdigprodusent.ferdigstilleSamtykkeoppgave(oppretteNokkel(eventId, personidentMotpart));
+      return true;
     } catch (InternFeil internFeilException) {
       log.error("En feil oppstod ved sending av ferdigmelding for oppgave med eventId {}.", eventId);
+      return false;
     }
   }
 

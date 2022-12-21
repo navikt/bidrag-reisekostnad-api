@@ -70,6 +70,22 @@ class Databehandler(
 
         // Deaktivere forespørsler med utgått samtykkefrist, samt sende varsel til foreldre
         deaktivereForespørslerMedUtgåttSamtykkefrist()
+
+        // Aktive samtykkeoppgaver skal ferdigstilles dersom relatert forespørsel er deaktivert
+        ferdigstilleUtgåtteSamtykkeoppgaver()
+    }
+
+    private fun ferdigstilleUtgåtteSamtykkeoppgaver() {
+        var oppgaverSomSkalFerdigstilles = databasetjeneste.henteOppgaverSomSkalFerdigstilles()
+        log.info("Fant ${oppgaverSomSkalFerdigstilles.size} aktive oppgaver som skal ferdigstilles.")
+        var antallFerdigstilteOppgaver = 0;
+
+        oppgaverSomSkalFerdigstilles.forEach {
+            var oppgaveBleFerdigstilt = brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(it.eventId, it.forelder.personident)
+            if (oppgaveBleFerdigstilt) antallFerdigstilteOppgaver++
+        }
+
+        log.info("$antallFerdigstilteOppgaver av de ${oppgaverSomSkalFerdigstilles.size} identifiserte oppgavene ble ferdigstilt.")
     }
 
     private fun deaktivereJournalførteForespørsler() {
@@ -79,14 +95,14 @@ class Databehandler(
 
         journalførteAktiveForespørsler.forEach { id -> databasetjeneste.deaktivereForespørsel(id, null); }
 
-        if (journalførteAktiveForespørsler.size > 0) log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert uten problemer.")
+        if (journalførteAktiveForespørsler.size > 0) log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert.")
     }
 
     private fun deaktivereForespørslerMedUtgåttSamtykkefrist() {
         var iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
             LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay(), false
         )
-        log.info("Fant ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size} forespørsler med utgått samtykkefrist som skal deaktiveres.")
+        log.info("Antall forespørsler med utgått samtykkefrist som vil bli forsøkt deaktivert: ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size}.")
         var varselSendt = 0;
         iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.forEach { id ->
             var forespørsel = databasetjeneste.henteAktivForespørsel(id);
@@ -97,9 +113,6 @@ class Databehandler(
                     .atStartOfDay().isAfter(samtykketidspunkt)
             ) {
                 databasetjeneste.deaktivereForespørsel(id, null);
-                val aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(forespørsel.id, forespørsel.motpartIdent)
-                // Sletter motparts samtykkeoppgave (normalt kun én)  knyttet til aktuell forepørsel
-                aktiveOppgaver.forEach { brukernotifikasjonkonsument.sletteSamtykkeoppgave(it.eventId, forespørsel.motpartIdent) }
                 try {
                     brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(
                         forespørsel.hovedpartIdent,

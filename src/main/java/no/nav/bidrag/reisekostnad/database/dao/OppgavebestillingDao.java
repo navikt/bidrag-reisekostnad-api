@@ -16,7 +16,7 @@ public interface OppgavebestillingDao extends CrudRepository<Oppgavebestilling, 
   @Query("select o from Oppgavebestilling o where o.eventId = :eventId")
   Optional<Oppgavebestilling> henteOppgavebestilling(String eventId);
 
-  @Query("select o.forespørsel.id from Oppgavebestilling o where o.ferdigstilt is null")
-  Set<Integer> henteIdTilForespørslerMedAktiveOppgaver();
+  @Query("select o from Oppgavebestilling o where o.ferdigstilt is null and o.forespørsel.deaktivert is not null")
+  Set<Oppgavebestilling> henteAktiveOppgaverKnyttetTilDeaktiverteForespørsler();
 
 }
