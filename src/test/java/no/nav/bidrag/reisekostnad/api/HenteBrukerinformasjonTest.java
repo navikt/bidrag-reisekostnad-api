@@ -19,9 +19,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
+import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Kjønn;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
@@ -182,6 +184,49 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         () -> assertThat(
             brukerinformasjonForespørselDeaktivertI31Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
                 .findFirst()).isPresent()
+    );
+
+    sletteData();
+  }
+
+  @Test
+  void skalIkkeViseJournalførteForespørslerSomHarBlittDeaktivert() {
+
+    // gitt
+    var påloggetPerson = testpersonGråtass;
+    httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+
+    var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+    when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+    var nyForespørsel = new NyForespørselDto(
+        Set.of(Krypteringsverktøy.kryptere(testpersonBarn16.getIdent()), Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
+
+    httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel), Void.class);
+    var lagredeForespørsler = forespørselDao.henteForespørslerForHovedpart(påloggetPerson.getIdent());
+
+    assertThat(lagredeForespørsler.size()).isEqualTo(2);
+    var journalførtOgDeaktivertForespørsel = lagredeForespørsler.stream().findFirst().get();
+    journalførtOgDeaktivertForespørsel.setJournalført(LocalDateTime.now());
+    journalførtOgDeaktivertForespørsel.setDeaktivert(LocalDateTime.now());
+    journalførtOgDeaktivertForespørsel.setDeaktivertAv(Deaktivator.SYSTEM);
+
+    var journalførtForespørsel = lagredeForespørsler.stream().filter(f -> f.getId() != journalførtOgDeaktivertForespørsel.getId()).findFirst().get();
+    journalførtForespørsel.setJournalført(LocalDateTime.now());
+
+    Set.of(journalførtOgDeaktivertForespørsel, journalførtForespørsel).forEach(f -> forespørselDao.save(f));
+
+    // hvis
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    // så
+    assertAll(
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtOgDeaktivertForespørsel.getId()).findFirst()).isEmpty(),
+        () -> assertThat(
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtForespørsel.getId()).findFirst()).isPresent()
     );
 
     sletteData();
