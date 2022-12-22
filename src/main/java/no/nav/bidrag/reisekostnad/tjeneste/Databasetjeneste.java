@@ -181,6 +181,16 @@ public class Databasetjeneste {
     var foreldreSomSkalSlettes = forelderDao.henteForeldreUtenTilknytningTilAktiveForespørsler(
         LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING));
 
+    var opprinneligAntallForeldreSomSkalSlettes = foreldreSomSkalSlettes.size();
+
+    // Fjerner evntuelle foreldre som har ikke-ferdigstilte brukernotifikasjonsoppgaver
+    foreldreSomSkalSlettes = foreldreSomSkalSlettes.stream().filter(f -> !harAktivOppgave(f)).collect(Collectors.toSet());
+    if (opprinneligAntallForeldreSomSkalSlettes > foreldreSomSkalSlettes.size()) {
+      log.warn(
+          "Det opprinnelige uttrekket over slettbare foreldre inneholdt {} foreldre med aktive brukernotifikasjonsoppgaver,  disse ble ikke slettet.",
+          opprinneligAntallForeldreSomSkalSlettes - foreldreSomSkalSlettes.size());
+    }
+
     log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", foreldreSomSkalSlettes.size());
     forelderDao.deleteAll(foreldreSomSkalSlettes);
     return foreldreSomSkalSlettes.size();
@@ -253,5 +263,11 @@ public class Databasetjeneste {
 
   public Set<Oppgavebestilling> henteOppgaverSomSkalFerdigstilles() {
     return oppgavebestillingDao.henteAktiveOppgaverKnyttetTilDeaktiverteForespørsler();
+  }
+
+  private boolean harAktivOppgave(Forelder forelder) {
+    var aktiveOppgaver = oppgavebestillingDao.henteAktiveOppgaver(forelder.getPersonident());
+    log.info("Fant {} aktive oppgaver for forelder med id {}", forelder.getId());
+    return aktiveOppgaver.size() > 0;
   }
 }
