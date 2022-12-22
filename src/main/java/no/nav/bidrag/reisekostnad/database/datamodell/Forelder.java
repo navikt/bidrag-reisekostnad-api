@@ -11,14 +11,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PostRemove;
 import javax.persistence.PreRemove;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.NaturalId;
 
+@Slf4j
 @Entity
 @Builder
 @Getter
@@ -35,17 +38,22 @@ public class Forelder implements Person, Serializable {
   @Column(updatable = false)
   private String personident;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "hovedpart", cascade = CascadeType.MERGE)
+  @OneToMany(fetch = FetchType.LAZY,  mappedBy = "hovedpart", cascade = CascadeType.PERSIST)
   private final Set<Forespørsel> forespørslerHovdedpart = new HashSet<>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "motpart", cascade = CascadeType.MERGE)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "motpart", cascade = CascadeType.PERSIST)
   private final Set<Forespørsel> forespørslerMotpart = new HashSet<>();
 
   @PreRemove
-  private void fjerneHovedpart() {
-    for (Forespørsel f : forespørslerHovdedpart) {
-      //
-    }
+  public void logUserRemovalAttempt() {
+    log.info("Attempting to delete user: " + personident);
+    forespørslerMotpart.forEach(f -> f.setMotpart(null));
+    forespørslerHovdedpart.forEach(f -> f.setHovedpart(null));
+  }
+
+  @PostRemove
+  public void logUserRemoval() {
+    log.info("Deleted user: " + personident);
   }
 
   @Override

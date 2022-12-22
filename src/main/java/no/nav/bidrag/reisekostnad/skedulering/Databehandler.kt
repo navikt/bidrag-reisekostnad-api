@@ -22,7 +22,7 @@ class Databehandler(
     private val brukernotifikasjonkonsument: Brukernotifikasjonkonsument,
     private val databasetjeneste: Databasetjeneste
 ) {
-    @Scheduled(cron = "\${kjøreplan.databehandling.arkivering}")
+    @Scheduled(cron = "\${kjøreplan.databehandling.arkivere}")
     @SchedulerLock(name = "forespørsel_til_arkiv", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
     fun arkiverForespørslerSomErKlareForInnsending() {
         val idForespørslerForInnsending = databasetjeneste.henteForespørslerSomErKlareForInnsending()
@@ -41,15 +41,13 @@ class Databehandler(
         log.info("Fant totalt ${forespørslerOver15År.size} forespørsler som inneholder barn som har nylig fylt 15 år")
         forespørslerOver15År.forEach { originalForespørsel ->
             try {
-                val nyForespørsel = if (originalForespørsel.alleBarnHarFylt15år)
-                    databasetjeneste.oppdaterForespørselTilÅIkkeKreveSamtykke(originalForespørsel.id)
-                else databasetjeneste.overførBarnSomHarFylt15årTilNyForespørsel(originalForespørsel.id)
+                val nyForespørsel =
+                    if (originalForespørsel.alleBarnHarFylt15år) databasetjeneste.oppdaterForespørselTilÅIkkeKreveSamtykke(originalForespørsel.id)
+                    else databasetjeneste.overførBarnSomHarFylt15årTilNyForespørsel(originalForespørsel.id)
                 arkiveringstjeneste.arkivereForespørsel(nyForespørsel.id)
                 log.info("Antall barn i forespørselen som nettopp har fylt 15 år: {}", nyForespørsel.barn.size);
                 brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
-                    nyForespørsel.hovedpartIdent,
-                    nyForespørsel.motpartIdent,
-                    nyForespørsel.barn.stream().findFirst().get().fødselsdato
+                    nyForespørsel.hovedpartIdent, nyForespørsel.motpartIdent, nyForespørsel.barn.stream().findFirst().get().fødselsdato
                 )
             } catch (e: Exception) {
                 log.error(
@@ -76,6 +74,23 @@ class Databehandler(
         ferdigstilleUtgåtteSamtykkeoppgaver()
     }
 
+    @Scheduled(cron = "\${kjøreplan.databehandling.anonymisere}")
+    @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
+    fun anonymisereBarnOgSletteForeldreSomIkkeErKnyttetTilAktiveForespørsler() {
+
+        log.info(
+            "Sletter personidenter som kun er tilknyttet forespørsler som har vært deaktive i minst {} dager",
+            FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
+        )
+
+        var antallBarnSomBleAnonymisert = databasetjeneste.anonymisereBarnUtenTilknytningTilAktiveForespørsler();
+        log.info("Anonymiserte totalt $antallBarnSomBleAnonymisert barn.")
+
+        var antallForeldreSomBleSlettet = databasetjeneste.sletteForeldreUtenTilknytningTilAktiveForespørsler()
+        log.info("Slettet totalt $antallForeldreSomBleSlettet foreldre.")
+    }
+
+
     private fun ferdigstilleUtgåtteSamtykkeoppgaver() {
         var oppgaverSomSkalFerdigstilles = databasetjeneste.henteOppgaverSomSkalFerdigstilles()
         log.info("Fant ${oppgaverSomSkalFerdigstilles.size} aktive oppgaver som skal ferdigstilles.")
@@ -90,7 +105,9 @@ class Databehandler(
     }
 
     private fun deaktivereJournalførteForespørsler() {
-        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()), true);
+        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(
+            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()), true
+        );
 
         log.info("Fant ${journalførteAktiveForespørsler.size} journalførte forespørsler som skal deaktiveres.")
 
@@ -110,15 +127,12 @@ class Databehandler(
 
             var samtykketidspunkt = forespørsel.samtykket;
             if (forespørsel.journalført == null || samtykketidspunkt == null || LocalDate.now()
-                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong())
-                    .atStartOfDay().isAfter(samtykketidspunkt)
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay().isAfter(samtykketidspunkt)
             ) {
                 databasetjeneste.deaktivereForespørsel(id, null);
                 try {
                     brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(
-                        forespørsel.hovedpartIdent,
-                        forespørsel.motpartIdent,
-                        forespørsel.opprettet.toLocalDate()
+                        forespørsel.hovedpartIdent, forespørsel.motpartIdent, forespørsel.opprettet.toLocalDate()
                     )
                     varselSendt++;
                 } catch (e: Exception) {
@@ -132,12 +146,9 @@ class Databehandler(
 
     private fun ferdiglogg(varselSendt: Int, antallVurderteForespørsler: Int) {
         var alleForeldreBleVarslet = varselSendt == antallVurderteForespørsler
-        var loggStrengDeaktivert =
-            "Alle de ${antallVurderteForespørsler} forespørslene med utgått samtykkefrist ble deaktivert."
-        var loggstreng =
-            if (alleForeldreBleVarslet)
-                "$loggStrengDeaktivert Samtlige foreldre ble varslet."
-            else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallVurderteForespørsler.size forespørsler"
+        var loggStrengDeaktivert = "Alle de ${antallVurderteForespørsler} forespørslene med utgått samtykkefrist ble deaktivert."
+        var loggstreng = if (alleForeldreBleVarslet) "$loggStrengDeaktivert Samtlige foreldre ble varslet."
+        else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallVurderteForespørsler.size forespørsler"
 
         if (antallVurderteForespørsler > 0) log.info(loggstreng)
     }

@@ -6,7 +6,9 @@ import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 import lombok.extern.slf4j.Slf4j;
@@ -154,7 +156,34 @@ public class Databasetjeneste {
   }
 
   @Transactional
-  public void oppdatereInnsendingsstatus(int idForespørsel) {
+  public int anonymisereBarnUtenTilknytningTilAktiveForespørsler() {
+
+    var barnSomSkalAnonymiseres = barnDao.henteBarnUtenTilknytningTilAktivForespørsel(
+        LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay());
+
+    // Dobbelsjekker at uttrekket kun inneholder barn som skal anonymiseres
+    barnSomSkalAnonymiseres = barnSomSkalAnonymiseres.stream()
+        .filter(Objects::nonNull)
+        .filter(b -> b.getPersonident() != null)
+        .filter(b -> b.getForespørsel().getDeaktivert() != null)
+        .filter(b -> b.getForespørsel().getDeaktivert()
+            .isBefore(LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay()))
+        .collect(Collectors.toSet());
+
+    log.info("Fant {} barn uten tilknytning til aktive forespørsler. Anonymiserer disse", barnSomSkalAnonymiseres.size());
+    barnSomSkalAnonymiseres.forEach(b -> b.setPersonident(null));
+    return barnSomSkalAnonymiseres.size();
+  }
+
+  @Transactional
+  public int sletteForeldreUtenTilknytningTilAktiveForespørsler() {
+    log.info("Sletter foreldre uten tilknytning til aktive forespørsler");
+    var foreldreSomSkalSlettes = forelderDao.henteForeldreUtenTilknytningTilAktiveForespørsler(
+        LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING));
+
+    log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", foreldreSomSkalSlettes.size());
+    forelderDao.deleteAll(foreldreSomSkalSlettes);
+    return foreldreSomSkalSlettes.size();
   }
 
   public Oppgavebestilling lagreNyOppgavebestilling(int idFarskapserklaering, String eventId) {
