@@ -121,9 +121,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     var idLagretForespørsel = brukerinformasjonMedAktivForespørsel.getBody().getForespørslerSomHovedpart().stream().findFirst().get().getId();
-
-    var url = String.format(urlTrekkeForespørsel, idLagretForespørsel);
-    httpHeaderTestRestTemplateApi.exchange(url, HttpMethod.PUT, initHttpEntity(null), Void.class);
+    databasetjeneste.deaktivereForespørsel(idLagretForespørsel, null);
 
     // hvis
     var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),

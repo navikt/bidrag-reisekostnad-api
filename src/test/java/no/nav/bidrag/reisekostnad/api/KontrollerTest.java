@@ -29,6 +29,7 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
+import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.token.support.client.core.ClientProperties;
@@ -49,10 +50,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@DirtiesContext
 @ActiveProfiles(Profil.TEST)
 @EnableMockOAuth2Server
 @AutoConfigureTestDatabase(replace = Replace.ANY)
@@ -71,6 +70,7 @@ public class KontrollerTest {
   protected @Autowired ForelderDao forelderDao;
   protected @Autowired BarnDao barnDao;
   protected @Autowired Mapper mapper;
+  protected @Autowired Databasetjeneste databasetjeneste;
 
   protected static final String KONTROLLERKONTEKST = "/api/v1/reisekostnad";
   protected final static String ENDEPUNKT_BRUKERINFORMASJON = KONTROLLERKONTEKST + "/brukerinformasjon";
