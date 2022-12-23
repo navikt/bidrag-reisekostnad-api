@@ -103,7 +103,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   }
 
   @Test
-  void skalViseForespørslerSomHarBlittDeaktivertInnenGyldighetsperioden() {
+  void skalViseForespørslerSomHarBlittDeaktivertInnenGyldighetsperioden() throws InterruptedException {
 
     // gitt
     var påloggetPerson = testpersonGråtass;
@@ -122,6 +122,9 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
 
     var idLagretForespørsel = brukerinformasjonMedAktivForespørsel.getBody().getForespørslerSomHovedpart().stream().findFirst().get().getId();
     databasetjeneste.deaktivereForespørsel(idLagretForespørsel, null);
+
+    // Omgå problemer med oppdatering av testdata på byggserver
+    Thread.sleep(2000);
 
     // hvis
     var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
