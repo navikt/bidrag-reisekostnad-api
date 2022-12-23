@@ -29,8 +29,8 @@ public class TrekkeForespørselTest extends KontrollerTest {
   @BeforeEach
   public void sletteTestdata() {
     barnDao.deleteAll();
-    forespørselDao.deleteAll();
     forelderDao.deleteAll();
+    forespørselDao.deleteAll();
   }
 
   @Test
