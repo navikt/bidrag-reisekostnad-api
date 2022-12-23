@@ -26,13 +26,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 public class TrekkeForespørselTest extends KontrollerTest {
 
-  @BeforeEach
-  public void sletteTestdata() {
-    barnDao.deleteAll();
-    forelderDao.deleteAll();
-    forespørselDao.deleteAll();
-  }
-
   @Test
   void hovedpartSkalKunneTrekkeForespørsel() {
 

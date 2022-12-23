@@ -38,12 +38,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 public class HenteBrukerinformasjonTest extends KontrollerTest {
 
-  private void sletteData() {
-    barnDao.deleteAll();
-    forespørselDao.deleteAll();
-    forelderDao.deleteAll();
-  }
-
   @Test
   void skalHenteBrukerinformasjonForHovedpartMedFamilierelasjoner() {
 
@@ -185,8 +179,6 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
             brukerinformasjonForespørselDeaktivertI31Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
                 .findFirst()).isPresent()
     );
-
-    sletteData();
   }
 
   @Test
@@ -228,8 +220,6 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         () -> assertThat(
             brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtForespørsel.getId()).findFirst()).isPresent()
     );
-
-    sletteData();
   }
 
   @Test

@@ -29,13 +29,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 public class OppretteForespørselOmFordelingAvReisekostnaderTest extends KontrollerTest {
 
-  @BeforeEach
-  public void sletteTestdata() {
-    barnDao.deleteAll();
-    forespørselDao.deleteAll();
-    forelderDao.deleteAll();
-  }
-
   @Test
   void skalOppretteForespørselOmFordelingAvReisekostnaderForEttAvToFellesBarn() {
 

@@ -83,10 +83,17 @@ public class KontrollerTest {
 
   @BeforeEach
   public void oppsett() {
+    sletteTestdata();
     urlBrukerinformasjon = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_BRUKERINFORMASJON;
     urlNyForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_NY_FORESPØRSEL;
     urlSamtykkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_SAMTYKKE_FORESPØRSEL;
     urlTrekkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_TREKKE_FORESPØRSEL + "?id=%s";
+  }
+
+  private void sletteTestdata() {
+    barnDao.deleteAll();
+    forelderDao.deleteAll();
+    forespørselDao.deleteAll();
   }
 
   protected static String opprettetJournalpostId = "1232132132";
