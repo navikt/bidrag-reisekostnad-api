@@ -75,7 +75,7 @@ class Databehandler(
     }
 
     @Scheduled(cron = "\${kjøreplan.databehandling.anonymisere}")
-    @SchedulerLock(name = "deaktivere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
+    @SchedulerLock(name = "anonymisere", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
     fun anonymisereBarnOgSletteForeldreSomIkkeErKnyttetTilAktiveForespørsler() {
 
         log.info(
