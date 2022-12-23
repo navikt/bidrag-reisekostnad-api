@@ -33,9 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 
-@DirtiesContext
 public class HenteBrukerinformasjonTest extends KontrollerTest {
 
   @Test
@@ -216,9 +214,11 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(
-            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtOgDeaktivertForespørsel.getId()).findFirst()).isEmpty(),
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtOgDeaktivertForespørsel.getId())
+                .findFirst()).isEmpty(),
         () -> assertThat(
-            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtForespørsel.getId()).findFirst()).isPresent()
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtForespørsel.getId())
+                .findFirst()).isPresent()
     );
   }
 

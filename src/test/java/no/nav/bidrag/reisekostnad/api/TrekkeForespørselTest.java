@@ -10,20 +10,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Set;
+import javax.transaction.Transactional;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 
-@DirtiesContext
 public class TrekkeForespørselTest extends KontrollerTest {
 
   @Test
@@ -166,6 +164,7 @@ public class TrekkeForespørselTest extends KontrollerTest {
   }
 
   @Test
+  @Transactional
   void skalKunneOppretteNyForespørselForBarnMedTrukketForespørsel() {
 
     // gitt

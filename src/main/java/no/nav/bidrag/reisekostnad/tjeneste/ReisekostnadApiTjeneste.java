@@ -52,7 +52,6 @@ public class ReisekostnadApiTjeneste {
   }
 
   public HttpResponse<BrukerinformasjonDto> henteBrukerinformasjon(String fnrPaaloggetBruker) {
-    SIKKER_LOGG.info("Henter brukerinformasjon for person med ident {}", fnrPaaloggetBruker);
     var familierespons = bidragPersonkonsument.hentFamilie(fnrPaaloggetBruker);
     try {
       validerePåloggetPerson(familierespons);

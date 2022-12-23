@@ -20,13 +20,11 @@ import no.nav.bidrag.reisekostnad.api.dto.ut.ForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.PersonDto;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
-@DirtiesContext
 public class OppretteForespørselOmFordelingAvReisekostnaderTest extends KontrollerTest {
 
   @Test
@@ -103,9 +101,8 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
         () -> AssertionsForClassTypes.assertThat(barnILagretForespørsel.get().getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato())
     );
 
-
     var forespørselDO = forespørselDao.henteAktivForespørsel(lagretForespørsel.get().getId());
-    var barn10År = forespørselDO.get().getBarn().stream().filter(b->b.getPersonident().equals(testpersonBarn10.getIdent())).findFirst();
+    var barn10År = forespørselDO.get().getBarn().stream().filter(b -> b.getPersonident().equals(testpersonBarn10.getIdent())).findFirst();
     assertThat(barn10År.isPresent()).isTrue();
     assertThat(barn10År.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10));
   }
@@ -222,7 +219,7 @@ public class OppretteForespørselOmFordelingAvReisekostnaderTest extends Kontrol
     );
 
     var forespørselDO = forespørselDao.henteAktivForespørsel(lagretForespørselBarnOver15.get().getId());
-    var barn16År = forespørselDO.get().getBarn().stream().filter(b->b.getPersonident().equals(testpersonBarn16.getIdent())).findFirst();
+    var barn16År = forespørselDO.get().getBarn().stream().filter(b -> b.getPersonident().equals(testpersonBarn16.getIdent())).findFirst();
     assertThat(barn16År.isPresent()).isTrue();
     assertThat(barn16År.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(16));
   }
