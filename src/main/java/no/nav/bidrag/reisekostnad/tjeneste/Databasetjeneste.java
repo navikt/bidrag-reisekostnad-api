@@ -196,18 +196,18 @@ public class Databasetjeneste {
     return foreldreSomSkalSlettes.size();
   }
 
-  public Oppgavebestilling lagreNyOppgavebestilling(int idFarskapserklaering, String eventId) {
-    var forespørsel = henteForespørselForId(idFarskapserklaering);
+  public Oppgavebestilling lagreNyOppgavebestilling(int idForespørsel, String eventId) {
+    var forespørsel = henteForespørselForId(idForespørsel);
 
     var oppgavebestilling = Oppgavebestilling.builder().forespørsel(forespørsel).forelder(forespørsel.getMotpart()).eventId(eventId)
         .opprettet(LocalDateTime.now()).build();
     return oppgavebestillingDao.save(oppgavebestilling);
   }
 
-  public Forespørsel henteForespørselForId(int idFarskapserklaering) {
-    var farskapserklaering = forespørselDao.findById(idFarskapserklaering);
-    if (farskapserklaering.isPresent() && farskapserklaering.get().getDeaktivert() == null) {
-      return farskapserklaering.get();
+  public Forespørsel henteForespørselForId(int idForespørsel) {
+    var forespørsel = forespørselDao.findById(idForespørsel);
+    if (forespørsel.isPresent() && forespørsel.get().getDeaktivert() == null) {
+      return forespørsel.get();
     }
     throw new InternFeil(Feilkode.FANT_IKKE_FORESPØRSEL);
   }

@@ -176,9 +176,9 @@ public class PdfGenerator {
 
       // Legge til informasjon om barn
       leggeTilDataBarn(document.getElementById(henteElementnavn(Elementnavn.BARN, skriftspråk)), barn, skriftspråk);
-      // Legge til informasjon om mor
+      // Legge til informasjon om hovedpart
       leggeTilDataForelder(document.getElementById(henteElementnavn(Elementnavn.HOVEDPART, skriftspråk)), hovedperson, skriftspråk);
-      // Legge til informasjon om far
+      // Legge til informasjon om motpart
       var motpartElement = document.getElementById(henteElementnavn(Elementnavn.MOTPART, skriftspråk));
       leggeTilDataForelder(motpartElement, motpart, skriftspråk);
       leggTilSamtykketInfo(motpartElement, skriftspråk, samtykketDato);

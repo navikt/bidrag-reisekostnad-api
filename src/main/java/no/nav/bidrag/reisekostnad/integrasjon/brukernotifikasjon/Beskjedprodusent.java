@@ -18,8 +18,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 public class Beskjedprodusent {
 
   KafkaTemplate<NokkelInput, BeskjedInput> kafkaTemplate;
-  URL farskapsportalUrlForside;
-  URL farskapsportalUrlOversikt;
+  URL reisekostnadForside;
   Egenskaper egenskaper;
 
   public void oppretteBeskjedTilBruker(String personidentForelder, DynamiskMelding meldingTilBruker, boolean medEksternVarsling, NokkelInput nokkel) {
@@ -30,8 +29,7 @@ public class Beskjedprodusent {
       boolean lenkeTilOversikt,
       NokkelInput nokkel) {
 
-    var farskapsportalUrl = lenkeTilOversikt ? farskapsportalUrlOversikt : farskapsportalUrlForside;
-    var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), medEksternVarsling, farskapsportalUrl);
+    var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), medEksternVarsling, reisekostnadForside);
 
     if (!egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
       log.warn("Brukernotifikasjoner er skrudd av - {} ble derfor ikke sendt.", meldingTilBruker.getMelding());

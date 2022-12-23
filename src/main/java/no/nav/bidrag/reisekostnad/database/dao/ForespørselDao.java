@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
+  Set<Forespørsel> findAll();
 
   @Query("select f from Forespørsel f where f.hovedpart.personident = :personidentHovedpart")
   Set<Forespørsel> henteForespørslerForHovedpart(String personidentHovedpart);
@@ -55,7 +58,9 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
     var journalført = forespørsel.getJournalført();
     var deaktivert = forespørsel.getDeaktivert();
 
-    return (journalført == null && (deaktivert == null || deaktivert.isAfter(deaktivertEtter))
+    var erSynlig = (journalført == null && (deaktivert == null || deaktivert.isAfter(deaktivertEtter))
         || !(journalført != null && deaktivert != null));
+
+    return erSynlig;
   }
 }
