@@ -82,6 +82,35 @@ class AnonymisereTest : DatabehandlerTest() {
     }
 
     @Test
+    fun skalIkkeAnonymisereForespørslerSomIkkeErDeaktivert() {
+
+        // gitt
+        var ikkeAnonymiseringsklarForespørsel = opppretteForespørsel(true)
+
+        ikkeAnonymiseringsklarForespørsel.opprettet =
+            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
+        ikkeAnonymiseringsklarForespørsel.journalført =
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2).atStartOfDay()
+
+        var lagretAnonymiseringsklarForespørsel = forespørselDao.save(ikkeAnonymiseringsklarForespørsel)
+
+        // hvis
+        databehandler.anonymisereBarnOgSletteForeldreSomIkkeErKnyttetTilAktiveForespørsler();
+
+        // så
+        var ikkeAnonymisertForespørsel = forespørselDao.findById(lagretAnonymiseringsklarForespørsel.id);
+
+        assertSoftly {
+            assertThat(ikkeAnonymisertForespørsel.isPresent)
+            assertThat(ikkeAnonymisertForespørsel.get().deaktivert).isNull()
+            assertThat(ikkeAnonymisertForespørsel.get().journalført).isNotNull
+            assertThat(ikkeAnonymisertForespørsel.get().hovedpart).isNotNull
+            assertThat(ikkeAnonymisertForespørsel.get().motpart).isNotNull
+            assertThat(ikkeAnonymisertForespørsel.get().barn.stream().findFirst().get().personident).isNotNull()
+        }
+    }
+
+    @Test
     fun skalIkkeASletteForeldreMedAktiveBrukernotifikasjonsoppgaver() {
 
         // gitt

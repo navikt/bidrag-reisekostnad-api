@@ -17,14 +17,20 @@ public interface ForelderDao extends CrudRepository<Forelder, Integer> {
   Optional<Forelder> finnMedPersonident(String personident);
 
   default Set<Forelder> henteForeldreUtenTilknytningTilAktiveForespørsler(LocalDate forespørslerDeaktivertFør) {
-    return findAll().stream()
+    var alleForeldre = findAll();
+
+    var sletteklareForeldre = alleForeldre.stream()
         .filter(f -> erAnonymiseringsklar(f.getForespørslerHovdedpart(), forespørslerDeaktivertFør))
         .filter(f -> erAnonymiseringsklar(f.getForespørslerMotpart(), forespørslerDeaktivertFør))
         .collect(Collectors.toSet());
+
+    return sletteklareForeldre;
   }
 
   default boolean erAnonymiseringsklar(Set<Forespørsel> forespørsler, LocalDate deaktivertFør) {
-    return forespørsler == null || forespørsler.size() < 1 ||
-        forespørsler.stream().filter(f -> deaktivertFør.atStartOfDay().isBefore(f.getDeaktivert())).collect(Collectors.toSet()).size() < 1;
+    return forespørsler == null
+        || forespørsler.size() < 1
+        || forespørsler.stream()
+        .filter(f -> f.getDeaktivert() == null || deaktivertFør.atStartOfDay().isBefore(f.getDeaktivert())).findFirst().isEmpty();
   }
 }
