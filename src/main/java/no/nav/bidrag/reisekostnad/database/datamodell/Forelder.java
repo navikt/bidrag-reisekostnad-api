@@ -1,5 +1,7 @@
 package no.nav.bidrag.reisekostnad.database.datamodell;
 
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +48,7 @@ public class Forelder implements Person, Serializable {
 
   @PreRemove
   public void logUserRemovalAttempt() {
-    log.info("Attempting to delete user: " + personident);
+    SIKKER_LOGG.info("Forsøker å slette forelder: " + personident);
     forespørslerMotpart.forEach(f -> f.setMotpart(null));
     forespørslerHovdedpart.forEach(f -> f.setHovedpart(null));
   }
