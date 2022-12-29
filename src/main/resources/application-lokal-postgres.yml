@@ -44,7 +44,10 @@ integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
+KJOEREPLAN_ANONYMISERING: "*/2 * * * * ?"
 KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
+KJOEREPLAN_DEAKTIVERING: "0 0 7 * * ?"
+KJOEREPLAN_FYLT_15: "0 0 7 * * ?"
 
 integrasjon.bidrag:
   dokument.url: ${WIREMOCK_URL}

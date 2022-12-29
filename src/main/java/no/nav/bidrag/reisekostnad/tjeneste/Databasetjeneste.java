@@ -171,7 +171,11 @@ public class Databasetjeneste {
         .collect(Collectors.toSet());
 
     log.info("Fant {} barn uten tilknytning til aktive forespørsler. Anonymiserer disse", barnSomSkalAnonymiseres.size());
-    barnSomSkalAnonymiseres.forEach(b -> b.setPersonident(null));
+    var anonymiseringstidspunkt = LocalDateTime.now();
+    barnSomSkalAnonymiseres.forEach(b -> {
+      b.setPersonident(null);
+      b.setAnonymisert(anonymiseringstidspunkt);
+    });
     return barnSomSkalAnonymiseres.size();
   }
 

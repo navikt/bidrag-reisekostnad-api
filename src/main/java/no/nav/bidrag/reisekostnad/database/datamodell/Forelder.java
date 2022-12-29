@@ -3,6 +3,7 @@ package no.nav.bidrag.reisekostnad.database.datamodell;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -40,22 +41,31 @@ public class Forelder implements Person, Serializable {
   @Column(updatable = false)
   private String personident;
 
-  @OneToMany(fetch = FetchType.LAZY,  mappedBy = "hovedpart", cascade = CascadeType.PERSIST)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "hovedpart", cascade = CascadeType.PERSIST)
   private final Set<Forespørsel> forespørslerHovdedpart = new HashSet<>();
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "motpart", cascade = CascadeType.PERSIST)
   private final Set<Forespørsel> forespørslerMotpart = new HashSet<>();
 
   @PreRemove
-  public void logUserRemovalAttempt() {
+  public void oppdatereForelderFeltIForespørselVedSletting() {
     SIKKER_LOGG.info("Forsøker å slette forelder: " + personident);
-    forespørslerMotpart.forEach(f -> f.setMotpart(null));
-    forespørslerHovdedpart.forEach(f -> f.setHovedpart(null));
+    var slettetidspunkt = LocalDateTime.now();
+    forespørslerMotpart.forEach(
+        f -> {
+          f.setMotpart(null);
+          f.setAnonymisert(slettetidspunkt);
+        }
+    );
+    forespørslerHovdedpart.forEach(f -> {
+      f.setHovedpart(null);
+      f.setAnonymisert(slettetidspunkt);
+    });
   }
 
   @PostRemove
-  public void logUserRemoval() {
-    log.info("Deleted user: " + personident);
+  public void loggeFullførtSletteoperasjon() {
+    SIKKER_LOGG.info("Slettet forelder: " + personident);
   }
 
   @Override

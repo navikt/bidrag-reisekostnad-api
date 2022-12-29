@@ -54,6 +54,7 @@ public class Forespørsel implements Serializable {
   private LocalDate samtykkefrist;
   private LocalDateTime journalført;
   private LocalDateTime deaktivert;
+  private LocalDateTime anonymisert;
   @Enumerated(EnumType.STRING)
   private Deaktivator deaktivertAv;
 
