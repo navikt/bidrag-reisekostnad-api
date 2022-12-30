@@ -49,7 +49,7 @@ public class Forelder implements Person, Serializable {
 
   @PreRemove
   public void oppdatereForelderFeltIForespørselVedSletting() {
-    SIKKER_LOGG.info("Forsøker å slette forelder: " + personident);
+    SIKKER_LOGG.info("Forsøker å slette forelder: {}", personident);
     var slettetidspunkt = LocalDateTime.now();
     forespørslerMotpart.forEach(
         f -> {
@@ -65,7 +65,7 @@ public class Forelder implements Person, Serializable {
 
   @PostRemove
   public void loggeFullførtSletteoperasjon() {
-    SIKKER_LOGG.info("Slettet forelder: " + personident);
+    SIKKER_LOGG.info("Slettet forelder: {}", personident);
   }
 
   @Override
