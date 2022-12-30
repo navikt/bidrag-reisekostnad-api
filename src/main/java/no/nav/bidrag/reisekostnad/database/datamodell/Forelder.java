@@ -41,10 +41,10 @@ public class Forelder implements Person, Serializable {
   @Column(updatable = false)
   private String personident;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "hovedpart", cascade = CascadeType.PERSIST)
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "hovedpart", cascade = CascadeType.PERSIST)
   private final Set<Forespørsel> forespørslerHovdedpart = new HashSet<>();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "motpart", cascade = CascadeType.PERSIST)
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "motpart", cascade = CascadeType.PERSIST)
   private final Set<Forespørsel> forespørslerMotpart = new HashSet<>();
 
   @PreRemove
