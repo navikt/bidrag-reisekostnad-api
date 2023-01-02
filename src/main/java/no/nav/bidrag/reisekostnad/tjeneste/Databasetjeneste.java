@@ -6,7 +6,9 @@ import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 import lombok.extern.slf4j.Slf4j;
@@ -154,21 +156,78 @@ public class Databasetjeneste {
   }
 
   @Transactional
-  public void oppdatereInnsendingsstatus(int idForespørsel) {
+  public int anonymisereBarnUtenTilknytningTilAktiveForespørsler() {
+
+    var barnSomSkalAnonymiseres = barnDao.henteBarnUtenTilknytningTilAktivForespørsel(
+        LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay());
+
+    // Dobbelsjekker at uttrekket kun inneholder barn som skal anonymiseres
+    barnSomSkalAnonymiseres = barnSomSkalAnonymiseres.stream()
+        .filter(Objects::nonNull)
+        .filter(b -> b.getPersonident() != null)
+        .filter(b -> b.getForespørsel().getDeaktivert() != null)
+        .filter(b -> b.getForespørsel().getDeaktivert()
+            .isBefore(LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay()))
+        .collect(Collectors.toSet());
+
+    log.info("Fant {} barn uten tilknytning til aktive forespørsler. Anonymiserer disse", barnSomSkalAnonymiseres.size());
+    var anonymiseringstidspunkt = LocalDateTime.now();
+    barnSomSkalAnonymiseres.forEach(b -> {
+      b.setPersonident(null);
+      b.setAnonymisert(anonymiseringstidspunkt);
+    });
+    return barnSomSkalAnonymiseres.size();
   }
 
-  public Oppgavebestilling lagreNyOppgavebestilling(int idFarskapserklaering, String eventId) {
-    var forespørsel = henteForespørselForId(idFarskapserklaering);
+  @Transactional
+  public int sletteForeldreUtenTilknytningTilAktiveForespørsler() {
+    log.info("Sletter foreldre uten tilknytning til aktive forespørsler");
+    var foreldreSomSkalSlettes = forelderDao.henteForeldreUtenTilknytningTilAktiveForespørsler(
+        LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING));
+
+    var opprinneligAntallForeldreSomSkalSlettes = foreldreSomSkalSlettes.size();
+
+    // Fjerner evntuelle foreldre som har ikke-ferdigstilte brukernotifikasjonsoppgaver
+    foreldreSomSkalSlettes = foreldreSomSkalSlettes.stream().filter(f -> !harAktivOppgave(f)).collect(Collectors.toSet());
+    if (opprinneligAntallForeldreSomSkalSlettes > foreldreSomSkalSlettes.size()) {
+      log.warn(
+          "Det opprinnelige uttrekket over slettbare foreldre inneholdt {} foreldre med aktive brukernotifikasjonsoppgaver,  disse ble ikke slettet.",
+          opprinneligAntallForeldreSomSkalSlettes - foreldreSomSkalSlettes.size());
+    }
+
+    log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", foreldreSomSkalSlettes.size());
+
+    foreldreSomSkalSlettes.forEach(f -> {
+      forelderDao.delete(f);
+
+      var hovedpart = forespørselDao.henteForespørslerForHovedpart(f.getPersonident());
+      hovedpart.forEach(h -> {
+        h.setHovedpart(null);
+        h.setAnonymisert(LocalDateTime.now());
+      });
+
+      var motpart = forespørselDao.henteForespørslerForMotpart(f.getPersonident());
+      motpart.forEach(m -> {
+        m.setMotpart(null);
+        m.setAnonymisert(LocalDateTime.now());
+      });
+    });
+
+    return foreldreSomSkalSlettes.size();
+  }
+
+  public Oppgavebestilling lagreNyOppgavebestilling(int idForespørsel, String eventId) {
+    var forespørsel = henteForespørselForId(idForespørsel);
 
     var oppgavebestilling = Oppgavebestilling.builder().forespørsel(forespørsel).forelder(forespørsel.getMotpart()).eventId(eventId)
         .opprettet(LocalDateTime.now()).build();
     return oppgavebestillingDao.save(oppgavebestilling);
   }
 
-  public Forespørsel henteForespørselForId(int idFarskapserklaering) {
-    var farskapserklaering = forespørselDao.findById(idFarskapserklaering);
-    if (farskapserklaering.isPresent() && farskapserklaering.get().getDeaktivert() == null) {
-      return farskapserklaering.get();
+  public Forespørsel henteForespørselForId(int idForespørsel) {
+    var forespørsel = forespørselDao.findById(idForespørsel);
+    if (forespørsel.isPresent() && forespørsel.get().getDeaktivert() == null) {
+      return forespørsel.get();
     }
     throw new InternFeil(Feilkode.FANT_IKKE_FORESPØRSEL);
   }
@@ -224,5 +283,11 @@ public class Databasetjeneste {
 
   public Set<Oppgavebestilling> henteOppgaverSomSkalFerdigstilles() {
     return oppgavebestillingDao.henteAktiveOppgaverKnyttetTilDeaktiverteForespørsler();
+  }
+
+  private boolean harAktivOppgave(Forelder forelder) {
+    var aktiveOppgaver = oppgavebestillingDao.henteAktiveOppgaver(forelder.getPersonident());
+    log.info("Fant {} aktive oppgaver for forelder med id {}", forelder.getId());
+    return aktiveOppgaver.size() > 0;
   }
 }

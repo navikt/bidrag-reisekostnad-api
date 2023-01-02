@@ -2,6 +2,7 @@ package no.nav.bidrag.reisekostnad.database.datamodell;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.NaturalId;
 
 @Entity
 @Builder
@@ -29,6 +29,7 @@ public class Barn implements Person, Serializable {
 
   private String personident;
   private LocalDate fødselsdato;
+  private LocalDateTime anonymisert;
 
   @ManyToOne(cascade = CascadeType.PERSIST)
   private Forespørsel forespørsel;

@@ -60,14 +60,14 @@ public class Brukernotifikasjonkonsument {
   }
 
   /**
-   * Varsler hovedpart om nyopprettet forespørsel som venter på samtykke. Dette gjøres hovedsaklig av hensyn til kontaktsenteret ettersom
-   * de med dette får mulighet til å spore påbegynte forespørsler via Modia.
-   * @param personidentHovedpart
+   * Varsler hovedpart om nyopprettet forespørsel som venter på samtykke. Dette gjøres hovedsaklig av hensyn til kontaktsenteret ettersom de med dette
+   * får mulighet til å spore påbegynte forespørsler via Modia.
    */
-  public void varsleOmNyForespørselSomVenterPåSamtykke(String personidentHovedpart){
+  public void varsleOmNyForespørselSomVenterPåSamtykke(String personidentHovedpart) {
     log.info("Varsler hovedpart om ny forespørsel som venter på samtykke fra den andre forelderen.");
     SIKKER_LOGG.info("Varsler hovedpart med personident {} om ny forespørsel som venter på samtykke fra den andre forelderen.", personidentHovedpart);
-    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE), false, true, oppretteNokkel(personidentHovedpart));
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE),
+        false, true, oppretteNokkel(personidentHovedpart));
   }
 
   public void varsleOmNeiTilSamtykke(String personidentHovedpart, String personidentMotpart) {

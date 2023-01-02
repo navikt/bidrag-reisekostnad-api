@@ -24,7 +24,7 @@ public class Oppgaveprodusent {
 
   private KafkaTemplate kafkaTemplate;
   private Databasetjeneste databasetjeneste;
-  private URL farskapsportalUrl;
+  private URL reisekostnadUrl;
   private Egenskaper egenskaper;
 
   public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst,
@@ -38,10 +38,10 @@ public class Oppgaveprodusent {
         .withNamespace(NAMESPACE_BIDRAG)
         .build();
 
-    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), medEksternVarsling, farskapsportalUrl);
-    var farsAktiveSigneringsoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
+    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), medEksternVarsling, reisekostnadUrl);
+    var motpartsAktiveSamtykkeoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
-    if (farsAktiveSigneringsoppgaver.isEmpty()) {
+    if (motpartsAktiveSamtykkeoppgaver.isEmpty()) {
       log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
 
       if (egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
@@ -63,12 +63,12 @@ public class Oppgaveprodusent {
     }
   }
 
-  private OppgaveInput oppretteOppgave(String oppgavetekst, boolean medEksternVarsling, URL farskapsportalUrl) {
+  private OppgaveInput oppretteOppgave(String oppgavetekst, boolean medEksternVarsling, URL reisekostnadUrl) {
 
     return new OppgaveInputBuilder()
         .withTidspunkt(ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime())
         .withEksternVarsling(medEksternVarsling)
-        .withLink(farskapsportalUrl)
+        .withLink(reisekostnadUrl)
         .withSikkerhetsnivaa(egenskaper.getBrukernotifikasjon().getSikkerhetsnivaaOppgave())
         .withSynligFremTil(
             ZonedDateTime.now(ZoneId.of("UTC")).plusDays(egenskaper.getBrukernotifikasjon().getLevetidOppgaveAntallDager())

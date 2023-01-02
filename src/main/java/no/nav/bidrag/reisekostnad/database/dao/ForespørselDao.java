@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
 
+  Set<Forespørsel> findAll();
+
   @Query("select f from Forespørsel f where f.hovedpart.personident = :personidentHovedpart")
   Set<Forespørsel> henteForespørslerForHovedpart(String personidentHovedpart);
 
@@ -40,13 +42,13 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
       + "where f.deaktivert is null and f.kreverSamtykke is true and f.samtykket is null and b.fødselsdato <= :date")
   Set<Forespørsel> henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(LocalDate date);
 
-  default  Set<Forespørsel>  henteSynligeForespørslerForHovedpart(String personident, LocalDateTime deaktivertEtter) {
-   return  henteForespørslerForHovedpart(personident).stream()
-       .filter(f -> erSynlig(f, deaktivertEtter)).collect(Collectors.toSet());
+  default Set<Forespørsel> henteSynligeForespørslerForHovedpart(String personident, LocalDateTime deaktivertEtter) {
+    return henteForespørslerForHovedpart(personident).stream()
+        .filter(f -> erSynlig(f, deaktivertEtter)).collect(Collectors.toSet());
   }
 
-  default  Set<Forespørsel>  henteSynligeForespørslerForMotpart(String personident, LocalDateTime deaktivertEtter) {
-    return  henteForespørslerForMotpart(personident).stream()
+  default Set<Forespørsel> henteSynligeForespørslerForMotpart(String personident, LocalDateTime deaktivertEtter) {
+    return henteForespørslerForMotpart(personident).stream()
         .filter(f -> erSynlig(f, deaktivertEtter)).collect(Collectors.toSet());
   }
 
@@ -55,7 +57,9 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
     var journalført = forespørsel.getJournalført();
     var deaktivert = forespørsel.getDeaktivert();
 
-    return (journalført == null && (deaktivert == null || deaktivert.isAfter(deaktivertEtter))
+    var erSynlig = (journalført == null && (deaktivert == null || deaktivert.isAfter(deaktivertEtter))
         || !(journalført != null && deaktivert != null));
+
+    return erSynlig;
   }
 }

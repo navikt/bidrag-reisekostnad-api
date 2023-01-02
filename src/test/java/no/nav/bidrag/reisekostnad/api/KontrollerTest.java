@@ -29,6 +29,7 @@ import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
+import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.token.support.client.core.ClientProperties;
@@ -69,6 +70,7 @@ public class KontrollerTest {
   protected @Autowired ForelderDao forelderDao;
   protected @Autowired BarnDao barnDao;
   protected @Autowired Mapper mapper;
+  protected @Autowired Databasetjeneste databasetjeneste;
 
   protected static final String KONTROLLERKONTEKST = "/api/v1/reisekostnad";
   protected final static String ENDEPUNKT_BRUKERINFORMASJON = KONTROLLERKONTEKST + "/brukerinformasjon";
@@ -83,10 +85,17 @@ public class KontrollerTest {
 
   @BeforeEach
   public void oppsett() {
+    sletteTestdata();
     urlBrukerinformasjon = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_BRUKERINFORMASJON;
     urlNyForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_NY_FORESPØRSEL;
     urlSamtykkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_SAMTYKKE_FORESPØRSEL;
     urlTrekkeForespørsel = "http://localhost:" + webServerAppCtxt.getWebServer().getPort() + ENDEPUNKT_TREKKE_FORESPØRSEL + "?id=%s";
+  }
+
+  private void sletteTestdata() {
+    barnDao.deleteAll();
+    forelderDao.deleteAll();
+    forespørselDao.deleteAll();
   }
 
   protected static String opprettetJournalpostId = "1232132132";

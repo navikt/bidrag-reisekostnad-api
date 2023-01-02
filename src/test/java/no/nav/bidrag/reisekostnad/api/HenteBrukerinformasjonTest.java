@@ -33,16 +33,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 
-@DirtiesContext
 public class HenteBrukerinformasjonTest extends KontrollerTest {
-
-  private void sletteData() {
-    barnDao.deleteAll();
-    forespørselDao.deleteAll();
-    forelderDao.deleteAll();
-  }
 
   @Test
   void skalHenteBrukerinformasjonForHovedpartMedFamilierelasjoner() {
@@ -59,12 +51,10 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
-        () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
-        () -> assertThat(
+        () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1), () -> assertThat(
             brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
                 .size()).isEqualTo(1));
 
@@ -73,8 +63,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         .stream().findFirst().get();
     var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
 
-    assertAll(
-        () -> assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+    assertAll(() -> assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
         () -> assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
         () -> assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
         () -> assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
@@ -97,8 +86,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(true),
@@ -120,37 +108,37 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
 
-    var nyForespørsel = new NyForespørselDto(
-        Set.of(Krypteringsverktøy.kryptere(testpersonBarn16.getIdent()), Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
+    var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
 
     httpHeaderTestRestTemplateApi.exchange(urlNyForespørsel, HttpMethod.POST, initHttpEntity(nyForespørsel), Void.class);
 
-    var brukerinformasjonMedAktivForespørsel = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
-        BrukerinformasjonDto.class);
+    var alleLagredeForespørsler = forespørselDao.findAll();
+    assertAll(
+        () -> assertThat(alleLagredeForespørsler.size()).isEqualTo(1),
+        () -> assertThat(alleLagredeForespørsler.stream().filter(f -> f.getDeaktivert() != null).findFirst()).isEmpty()
+    );
 
-    var idLagretForespørsel = brukerinformasjonMedAktivForespørsel.getBody().getForespørslerSomHovedpart().stream().findFirst().get().getId();
+    var idTilEnAvDeLagredeForespørslene = alleLagredeForespørsler.stream().findFirst().get().getId();
+    databasetjeneste.deaktivereForespørsel(idTilEnAvDeLagredeForespørslene, null);
+    var deaktivertForespørsel = forespørselDao.findById(idTilEnAvDeLagredeForespørslene);
 
-    var url = String.format(urlTrekkeForespørsel, idLagretForespørsel);
-    httpHeaderTestRestTemplateApi.exchange(url, HttpMethod.PUT, initHttpEntity(null), Void.class);
+    assertAll(
+        () -> assertThat(deaktivertForespørsel).isPresent(),
+        () -> assertThat(deaktivertForespørsel.get().getDeaktivertAv()).isEqualTo(
+            Deaktivator.SYSTEM),
+        () -> assertThat(deaktivertForespørsel.get().getDeaktivert()).isNotNull(),
+        () -> assertThat(deaktivertForespørsel.get().getDeaktivert()).isAfter(
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay()));
 
     // hvis
     var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
         BrukerinformasjonDto.class);
 
     // så
-    // Forespørselen har nå blitt deaktivert
     assertAll(
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(
-            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null).findFirst()).isPresent()
-    );
-
-    var deaktivertForespørsel = forespørselDao.findById(idLagretForespørsel);
-
-    assertAll(
-        () -> assertThat(deaktivertForespørsel).isPresent(),
-        () -> assertThat(deaktivertForespørsel.get().getDeaktivert().toLocalDate()).isEqualTo(LocalDate.now())
-    );
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null).findFirst()).isPresent());
 
     deaktivertForespørsel.get()
         .setDeaktivert(LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay());
@@ -159,15 +147,11 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     forespørselDao.save(deaktivertForespørsel.get());
 
     var brukerinformasjonForespørselDeaktivertI30Dager = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET,
-        initHttpEntity(null),
-        BrukerinformasjonDto.class);
+        initHttpEntity(null), BrukerinformasjonDto.class);
 
-    assertAll(
-        () -> assertThat(brukerinformasjonForespørselDeaktivertI30Dager.getStatusCode()).isEqualTo(HttpStatus.OK),
-        () -> assertThat(
-            brukerinformasjonForespørselDeaktivertI30Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
-                .findFirst()).isPresent()
-    );
+    assertAll(() -> assertThat(brukerinformasjonForespørselDeaktivertI30Dager.getStatusCode()).isEqualTo(HttpStatus.OK), () -> assertThat(
+        brukerinformasjonForespørselDeaktivertI30Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
+            .findFirst()).isPresent());
 
     deaktivertForespørsel.get().setDeaktivert(LocalDate.now().minusDays(1).atStartOfDay());
 
@@ -175,18 +159,12 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
     forespørselDao.save(deaktivertForespørsel.get());
 
     var brukerinformasjonForespørselDeaktivertI31Dager = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET,
-        initHttpEntity(null),
-        BrukerinformasjonDto.class);
+        initHttpEntity(null), BrukerinformasjonDto.class);
 
     // Den deaktiverte førespørselen viser ikke lengre i brukeroversikten
-    assertAll(
-        () -> assertThat(brukerinformasjonForespørselDeaktivertI31Dager.getStatusCode()).isEqualTo(HttpStatus.OK),
-        () -> assertThat(
-            brukerinformasjonForespørselDeaktivertI31Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
-                .findFirst()).isPresent()
-    );
-
-    sletteData();
+    assertAll(() -> assertThat(brukerinformasjonForespørselDeaktivertI31Dager.getStatusCode()).isEqualTo(HttpStatus.OK), () -> assertThat(
+        brukerinformasjonForespørselDeaktivertI31Dager.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getDeaktivert() != null)
+            .findFirst()).isPresent());
   }
 
   @Test
@@ -221,15 +199,11 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
-        () -> assertThat(
-            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtOgDeaktivertForespørsel.getId()).findFirst()).isEmpty(),
-        () -> assertThat(
-            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtForespørsel.getId()).findFirst()).isPresent()
-    );
-
-    sletteData();
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK), () -> assertThat(
+        brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtOgDeaktivertForespørsel.getId())
+            .findFirst()).isEmpty(), () -> assertThat(
+        brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.getId() == journalførtForespørsel.getId())
+            .findFirst()).isPresent());
   }
 
   @Test
@@ -252,23 +226,18 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
-        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(2),
-        () -> assertThat(
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(2), () -> assertThat(
             brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.isKreverSamtykke()).findFirst()).isPresent(),
         () -> assertThat(
-            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> !f.isKreverSamtykke()).findFirst()).isPresent()
-    );
+            brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> !f.isKreverSamtykke()).findFirst()).isPresent());
 
     var forespørselBarnUnder15 = brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> f.isKreverSamtykke()).findFirst();
     var forespørselBarnOver15 = brukerinformasjon.getBody().getForespørslerSomHovedpart().stream().filter(f -> !f.isKreverSamtykke()).findFirst();
 
-    assertAll(
-        () -> assertThat(forespørselBarnUnder15.get().getSamtykkefrist()).isEqualTo(
+    assertAll(() -> assertThat(forespørselBarnUnder15.get().getSamtykkefrist()).isEqualTo(
             LocalDate.now().plusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING)),
-        () -> assertThat(forespørselBarnOver15.get().getSamtykkefrist()).isNull()
-    );
+        () -> assertThat(forespørselBarnOver15.get().getSamtykkefrist()).isNull());
   }
 
   @Test
@@ -320,8 +289,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.UKJENT),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
@@ -329,8 +297,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
-    );
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
   }
 
   @Test
@@ -347,8 +314,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
@@ -356,8 +322,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
-    );
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
   }
 
   @Test
@@ -374,10 +339,8 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så vil
-    assertAll(
-        () -> assertThat(brukerinformasjon.getHeaders().get("Warning").get(0)).isEqualTo(Feilkode.PDL_PERSON_DØD.name()),
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN)
-    );
+    assertAll(() -> assertThat(brukerinformasjon.getHeaders().get("Warning").get(0)).isEqualTo(Feilkode.PDL_PERSON_DØD.name()),
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
   }
 
   @Test
@@ -394,8 +357,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.KVINNE),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
@@ -403,8 +365,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
-    );
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
   }
 
   @Test
@@ -421,8 +382,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         BrukerinformasjonDto.class);
 
     // så
-    assertAll(
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
         () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.KVINNE),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
         () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(false),
@@ -431,19 +391,16 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
         () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
-        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK)
-    );
+        () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
 
     var familieenhet = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst();
 
     assertThat(familieenhet).isPresent();
 
     var motpart = familieenhet.get().getMotpart();
-    assertAll(
-        () -> assertThat(motpart.getFødselsdato()).isEqualTo(LocalDate.now().minusYears(38)),
+    assertAll(() -> assertThat(motpart.getFødselsdato()).isEqualTo(LocalDate.now().minusYears(38)),
         () -> assertThat(motpart.getFornavn()).isEqualTo("Streng"),
-        () -> assertThat(Krypteringsverktøy.dekryptere(motpart.getIdent())).isEqualTo("11111122222")
-    );
+        () -> assertThat(Krypteringsverktøy.dekryptere(motpart.getIdent())).isEqualTo("11111122222"));
 
     var barnUnder15 = familieenhet.get().getFellesBarnUnder15År();
 
@@ -451,11 +408,9 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
 
     var barnetSomLever = barnUnder15.stream().findFirst();
 
-    assertAll(
-        () -> assertThat(barnetSomLever).isPresent(),
+    assertAll(() -> assertThat(barnetSomLever).isPresent(),
         () -> assertThat(Krypteringsverktøy.dekryptere(barnetSomLever.get().getIdent())).isEqualTo("33333355555"),
         () -> assertThat(barnetSomLever.get().getFornavn()).isEqualTo("Småstein"),
-        () -> assertThat(barnetSomLever.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10))
-    );
+        () -> assertThat(barnetSomLever.get().getFødselsdato()).isEqualTo(LocalDate.now().minusYears(10)));
   }
 }
