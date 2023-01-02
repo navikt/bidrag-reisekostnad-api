@@ -27,7 +27,6 @@ import no.nav.bidrag.reisekostnad.model.ForespørselUtvidelserKt;
 import no.nav.bidrag.reisekostnad.model.KonstanterKt;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -199,11 +198,21 @@ public class Databasetjeneste {
     log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", foreldreSomSkalSlettes.size());
 
     foreldreSomSkalSlettes.forEach(f -> {
-      Hibernate.initialize(f.getForespørslerHovdedpart());
-      Hibernate.initialize(f.getForespørslerMotpart());
       forelderDao.delete(f);
+
+      var hovedpart = forespørselDao.henteForespørslerForHovedpart(f.getPersonident());
+      hovedpart.forEach(h -> {
+        h.setHovedpart(null);
+        h.setAnonymisert(LocalDateTime.now());
+      });
+
+      var motpart = forespørselDao.henteForespørslerForMotpart(f.getPersonident());
+      motpart.forEach(m -> {
+        m.setMotpart(null);
+        m.setAnonymisert(LocalDateTime.now());
+      });
     });
-    
+
     return foreldreSomSkalSlettes.size();
   }
 
