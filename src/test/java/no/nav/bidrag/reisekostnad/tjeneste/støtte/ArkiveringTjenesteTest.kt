@@ -59,7 +59,7 @@ class ArkiveringTjenesteTest {
     private val produsertDokument = "Produsert dokument".toByteArray()
 
     @BeforeEach
-    fun clearMocks(){
+    fun clearMocks() {
         clearAllMocks()
 
         mockkStatic(PdfGenerator::class)
