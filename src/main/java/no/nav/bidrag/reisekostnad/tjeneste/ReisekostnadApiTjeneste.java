@@ -94,6 +94,9 @@ public class ReisekostnadApiTjeneste {
     if (Deaktivator.MOTPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
       brukernotifikasjonkonsument.varsleOmNeiTilSamtykke(deaktivertForespørsel.getHovedpart().getPersonident(),
           deaktivertForespørsel.getMotpart().getPersonident());
+    } else if (Deaktivator.HOVEDPART.equals(deaktivertForespørsel.getDeaktivertAv())) {
+      brukernotifikasjonkonsument.varsleOmTrukketForespørsel(deaktivertForespørsel.getHovedpart().getPersonident(),
+          deaktivertForespørsel.getMotpart().getPersonident());
     }
 
     // Motparts samtykkeoppgave skal slettes uavhengig av om det er hovedpart eller motpart som trekker forespørselen

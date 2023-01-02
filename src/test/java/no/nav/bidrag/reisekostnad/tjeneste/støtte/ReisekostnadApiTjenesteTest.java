@@ -94,6 +94,7 @@ public class ReisekostnadApiTjenesteTest {
     var hovedpart = testpersonGråtass;
     var motpart = testpersonStreng;
     var deaktivertForespørsel = Forespørsel.builder().id(idForespørsel).deaktivert(LocalDateTime.now()).deaktivertAv(Deaktivator.HOVEDPART)
+        .hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
         .motpart(Forelder.builder().personident(motpart.getIdent()).build()).build();
     var aktivOppgave = Oppgavebestilling.builder().eventId("eventId").build();
 
@@ -185,8 +186,31 @@ public class ReisekostnadApiTjenesteTest {
     // så
     assertThat(respons.is2xxSuccessful());
     verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId", motpart.getIdent());
-    //verify(brukernotifikasjonkonsument, times(1)).varsleOmNeiTilSamtykke(hovedpart.getIdent(), motpart.getIdent());
+    verify(brukernotifikasjonkonsument, times(1)).varsleOmNeiTilSamtykke(hovedpart.getIdent(), motpart.getIdent());
+  }
 
+  @Test
+  void skalVarsleBeggeForeldreDersomHovedpartTrekkerForespørsel() {
+
+    // gitt
+    var idForespørsel = 1;
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var deaktivertForespørsel = Forespørsel.builder().id(idForespørsel).deaktivert(LocalDateTime.now()).deaktivertAv(Deaktivator.HOVEDPART)
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build()).hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+        .build();
+    var aktivOppgave = Oppgavebestilling.builder().eventId("eventId").build();
+
+    when(databasetjeneste.deaktivereForespørsel(idForespørsel, hovedpart.getIdent())).thenReturn(deaktivertForespørsel);
+    when(databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, motpart.getIdent())).thenReturn(Set.of(aktivOppgave));
+
+    // hvis
+    var respons = reisekostnadApiTjeneste.trekkeForespørsel(idForespørsel, hovedpart.getIdent());
+
+    // så
+    assertThat(respons.is2xxSuccessful());
+    verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId", motpart.getIdent());
+    verify(brukernotifikasjonkonsument, times(1)).varsleOmTrukketForespørsel(hovedpart.getIdent(), motpart.getIdent());
   }
 
   private HentFamilieRespons oppretteHentFamilieRespons(Testperson hovedpart, Map<Testperson, Set<Testperson>> motpartBarnrelasjoner) {
