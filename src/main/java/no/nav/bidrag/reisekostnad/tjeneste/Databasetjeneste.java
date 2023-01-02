@@ -182,22 +182,24 @@ public class Databasetjeneste {
   @Transactional
   public int sletteForeldreUtenTilknytningTilAktiveForespørsler() {
     log.info("Sletter foreldre uten tilknytning til aktive forespørsler");
-    var foreldreSomSkalSlettes = forelderDao.henteForeldreUtenTilknytningTilAktiveForespørsler(
+    var idTilForeldreSomSkalSlettes = forelderDao.henteIdTilForeldreUtenTilknytningTilAktiveForespørsler(
         LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING));
 
-    var opprinneligAntallForeldreSomSkalSlettes = foreldreSomSkalSlettes.size();
+    var opprinneligAntallForeldreSomSkalSlettes = idTilForeldreSomSkalSlettes.size();
+
+    var foreldreSomSkalSlettes = forelderDao.findAllById(idTilForeldreSomSkalSlettes);
 
     // Fjerner evntuelle foreldre som har ikke-ferdigstilte brukernotifikasjonsoppgaver
     foreldreSomSkalSlettes = foreldreSomSkalSlettes.stream().filter(f -> !harAktivOppgave(f)).collect(Collectors.toSet());
-    if (opprinneligAntallForeldreSomSkalSlettes > foreldreSomSkalSlettes.size()) {
+    if (opprinneligAntallForeldreSomSkalSlettes > idTilForeldreSomSkalSlettes.size()) {
       log.warn(
           "Det opprinnelige uttrekket over slettbare foreldre inneholdt {} foreldre med aktive brukernotifikasjonsoppgaver,  disse ble ikke slettet.",
-          opprinneligAntallForeldreSomSkalSlettes - foreldreSomSkalSlettes.size());
+          opprinneligAntallForeldreSomSkalSlettes - idTilForeldreSomSkalSlettes.size());
     }
 
-    log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", foreldreSomSkalSlettes.size());
+    log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", idTilForeldreSomSkalSlettes.size());
     forelderDao.deleteAll(foreldreSomSkalSlettes);
-    return foreldreSomSkalSlettes.size();
+    return idTilForeldreSomSkalSlettes.size();
   }
 
   public Oppgavebestilling lagreNyOppgavebestilling(int idForespørsel, String eventId) {

@@ -13,15 +13,18 @@ public interface ForelderDao extends CrudRepository<Forelder, Integer> {
 
   Set<Forelder> findAll();
 
+  Set<Forelder> findAllById(Iterable<Integer> ids);
+
   @Query("select f from Forelder  f where f.personident is not null and f.personident = :personident")
   Optional<Forelder> finnMedPersonident(String personident);
 
-  default Set<Forelder> henteForeldreUtenTilknytningTilAktiveForespørsler(LocalDate forespørslerDeaktivertFør) {
+  default Set<Integer> henteIdTilForeldreUtenTilknytningTilAktiveForespørsler(LocalDate forespørslerDeaktivertFør) {
     var alleForeldre = findAll();
 
     var sletteklareForeldre = alleForeldre.stream()
         .filter(f -> erAnonymiseringsklar(f.getForespørslerHovdedpart(), forespørslerDeaktivertFør))
         .filter(f -> erAnonymiseringsklar(f.getForespørslerMotpart(), forespørslerDeaktivertFør))
+        .map(f -> f.getId())
         .collect(Collectors.toSet());
 
     return sletteklareForeldre;
