@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
+
   Set<Forespørsel> findAll();
 
   @Query("select f from Forespørsel f where f.hovedpart.personident = :personidentHovedpart")
@@ -43,13 +42,13 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
       + "where f.deaktivert is null and f.kreverSamtykke is true and f.samtykket is null and b.fødselsdato <= :date")
   Set<Forespørsel> henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(LocalDate date);
 
-  default  Set<Forespørsel>  henteSynligeForespørslerForHovedpart(String personident, LocalDateTime deaktivertEtter) {
-   return  henteForespørslerForHovedpart(personident).stream()
-       .filter(f -> erSynlig(f, deaktivertEtter)).collect(Collectors.toSet());
+  default Set<Forespørsel> henteSynligeForespørslerForHovedpart(String personident, LocalDateTime deaktivertEtter) {
+    return henteForespørslerForHovedpart(personident).stream()
+        .filter(f -> erSynlig(f, deaktivertEtter)).collect(Collectors.toSet());
   }
 
-  default  Set<Forespørsel>  henteSynligeForespørslerForMotpart(String personident, LocalDateTime deaktivertEtter) {
-    return  henteForespørslerForMotpart(personident).stream()
+  default Set<Forespørsel> henteSynligeForespørslerForMotpart(String personident, LocalDateTime deaktivertEtter) {
+    return henteForespørslerForMotpart(personident).stream()
         .filter(f -> erSynlig(f, deaktivertEtter)).collect(Collectors.toSet());
   }
 

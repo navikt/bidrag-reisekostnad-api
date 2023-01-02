@@ -118,7 +118,7 @@ public class PdfGenerator {
 
   private static void leggeTilDataBarn(Element barnElement, Set<PersonDto> barna, Skriftspråk skriftspråk) {
 
-    var barnaSortert = barna.stream().sorted((a,b) -> a.getFødselsdato().isAfter(b.getFødselsdato()) ? -1 : 1);
+    var barnaSortert = barna.stream().sorted((a, b) -> a.getFødselsdato().isAfter(b.getFødselsdato()) ? -1 : 1);
     var detaljerFørsteBarn = barnElement.getElementById("detaljer_barn_1");
 
     var tekstformatBarnNavn = tekstvelger(Tekst.FORNAVN, skriftspråk) + ": %s";
@@ -135,12 +135,12 @@ public class PdfGenerator {
 
     var antallBarn = 1;
 
-    while(it.hasNext()) {
+    while (it.hasNext()) {
       var barn = it.next();
-      var mellomrom =  new Element("p");
+      var mellomrom = new Element("p");
       mellomrom.appendTo(barnElement);
       var nesteBarnIRekka = new Element("div");
-      nesteBarnIRekka.id("detaljer_barn_" +  ++antallBarn);
+      nesteBarnIRekka.id("detaljer_barn_" + ++antallBarn);
 
       var navnElement = new Element("div");
       var fødselsnummerElement = new Element("div");
@@ -154,12 +154,13 @@ public class PdfGenerator {
     }
   }
 
-  private static void leggTilSamtykketInfo(Element element, Skriftspråk skriftspraak, LocalDateTime samtykketDato){
+  private static void leggTilSamtykketInfo(Element element, Skriftspråk skriftspraak, LocalDateTime samtykketDato) {
     var samtykket = element.getElementsByClass(henteElementnavn(Elementnavn.SAMTYKKET, skriftspraak));
 
     var samtykketResultat = samtykketDato == null ? "Nei" : "Ja";
     samtykket.first().text(tekstvelger(Tekst.HAR_SAMTYKKET, skriftspraak) + ": " + samtykketResultat);
   }
+
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
     var navn = forelderelement.getElementsByClass(henteElementnavn(Elementnavn.NAVN, skriftspraak));
 
@@ -169,7 +170,8 @@ public class PdfGenerator {
     foedselsnummer.first().text(tekstvelger(Tekst.PERSONIDENT, skriftspraak) + ": " + dekryptere(forelder.getIdent()));
   }
 
-  private static String byggeHtmlstrengFraMal(String pdfmal, Skriftspråk skriftspråk, Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart, LocalDateTime samtykketDato) {
+  private static String byggeHtmlstrengFraMal(String pdfmal, Skriftspråk skriftspråk, Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart,
+      LocalDateTime samtykketDato) {
     try {
       var input = new ClassPathResource(pdfmal + skriftspråk.toString().toLowerCase() + ".html").getInputStream();
       var document = Jsoup.parse(input, "UTF-8", "");
@@ -256,6 +258,7 @@ public class PdfGenerator {
     SAMTYKKET,
     DATO_OPPRETTET
   }
+
   private static String dekryptere(String kryptertPersonident) {
     return Krypteringsverktøy.dekryptere(kryptertPersonident);
   }

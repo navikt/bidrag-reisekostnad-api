@@ -21,5 +21,4 @@ public interface OppgavebestillingDao extends CrudRepository<Oppgavebestilling, 
 
   @Query("select o from Oppgavebestilling o where o.ferdigstilt is null and o.forespørsel.deaktivert is not null")
   Set<Oppgavebestilling> henteAktiveOppgaverKnyttetTilDeaktiverteForespørsler();
-
 }

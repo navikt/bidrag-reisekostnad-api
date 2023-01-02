@@ -27,8 +27,8 @@ class AnonymisereTest : DatabehandlerTest() {
             LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1).atStartOfDay()
 
         var lagretAnonymiseringsklarForespørsel = forespørselDao.save(anonymiseringsklarForespørsel)
-        var hovedpart  = forelderDao.findById(lagretAnonymiseringsklarForespørsel.hovedpart.id)
-        var motpart  = forelderDao.findById(lagretAnonymiseringsklarForespørsel.motpart.id)
+        var hovedpart = forelderDao.findById(lagretAnonymiseringsklarForespørsel.hovedpart.id)
+        var motpart = forelderDao.findById(lagretAnonymiseringsklarForespørsel.motpart.id)
 
         assertSoftly {
             assertThat(hovedpart).isPresent
@@ -41,8 +41,8 @@ class AnonymisereTest : DatabehandlerTest() {
         // så
         var anonymisertForespørsel = forespørselDao.findById(lagretAnonymiseringsklarForespørsel.id);
 
-        var hovedpartEtterSletting  = forelderDao.findById(lagretAnonymiseringsklarForespørsel.hovedpart.id)
-        var motpartEtterSletting  = forelderDao.findById(lagretAnonymiseringsklarForespørsel.motpart.id)
+        var hovedpartEtterSletting = forelderDao.findById(lagretAnonymiseringsklarForespørsel.hovedpart.id)
+        var motpartEtterSletting = forelderDao.findById(lagretAnonymiseringsklarForespørsel.motpart.id)
 
         assertSoftly {
             assertThat(hovedpartEtterSletting).isEmpty
