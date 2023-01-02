@@ -27,6 +27,7 @@ import no.nav.bidrag.reisekostnad.model.ForespørselUtvidelserKt;
 import no.nav.bidrag.reisekostnad.model.KonstanterKt;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -182,24 +183,28 @@ public class Databasetjeneste {
   @Transactional
   public int sletteForeldreUtenTilknytningTilAktiveForespørsler() {
     log.info("Sletter foreldre uten tilknytning til aktive forespørsler");
-    var idTilForeldreSomSkalSlettes = forelderDao.henteIdTilForeldreUtenTilknytningTilAktiveForespørsler(
+    var foreldreSomSkalSlettes = forelderDao.henteForeldreUtenTilknytningTilAktiveForespørsler(
         LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING));
 
-    var opprinneligAntallForeldreSomSkalSlettes = idTilForeldreSomSkalSlettes.size();
-
-    var foreldreSomSkalSlettes = forelderDao.findAllById(idTilForeldreSomSkalSlettes);
+    var opprinneligAntallForeldreSomSkalSlettes = foreldreSomSkalSlettes.size();
 
     // Fjerner evntuelle foreldre som har ikke-ferdigstilte brukernotifikasjonsoppgaver
     foreldreSomSkalSlettes = foreldreSomSkalSlettes.stream().filter(f -> !harAktivOppgave(f)).collect(Collectors.toSet());
-    if (opprinneligAntallForeldreSomSkalSlettes > idTilForeldreSomSkalSlettes.size()) {
+    if (opprinneligAntallForeldreSomSkalSlettes > foreldreSomSkalSlettes.size()) {
       log.warn(
           "Det opprinnelige uttrekket over slettbare foreldre inneholdt {} foreldre med aktive brukernotifikasjonsoppgaver,  disse ble ikke slettet.",
-          opprinneligAntallForeldreSomSkalSlettes - idTilForeldreSomSkalSlettes.size());
+          opprinneligAntallForeldreSomSkalSlettes - foreldreSomSkalSlettes.size());
     }
 
-    log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", idTilForeldreSomSkalSlettes.size());
-    forelderDao.deleteAll(foreldreSomSkalSlettes);
-    return idTilForeldreSomSkalSlettes.size();
+    log.info("Fant {} foreldre uten tilknyting til aktive forespørsler. Anonymiserer disse.", foreldreSomSkalSlettes.size());
+
+    foreldreSomSkalSlettes.forEach(f -> {
+      Hibernate.initialize(f.getForespørslerHovdedpart());
+      Hibernate.initialize(f.getForespørslerMotpart());
+      forelderDao.delete(f);
+    });
+    
+    return foreldreSomSkalSlettes.size();
   }
 
   public Oppgavebestilling lagreNyOppgavebestilling(int idForespørsel, String eventId) {

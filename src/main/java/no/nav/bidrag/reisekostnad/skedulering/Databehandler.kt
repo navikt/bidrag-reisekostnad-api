@@ -89,8 +89,7 @@ class Databehandler(
         var antallForeldreSomBleSlettet = databasetjeneste.sletteForeldreUtenTilknytningTilAktiveForespørsler()
         log.info("Slettet totalt $antallForeldreSomBleSlettet foreldre.")
     }
-
-
+    
     private fun ferdigstilleUtgåtteSamtykkeoppgaver() {
         var oppgaverSomSkalFerdigstilles = databasetjeneste.henteOppgaverSomSkalFerdigstilles()
         log.info("Fant ${oppgaverSomSkalFerdigstilles.size} aktive oppgaver som skal ferdigstilles.")
