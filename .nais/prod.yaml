@@ -74,7 +74,7 @@ spec:
     - name: KJOEREPLAN_FYLT_15
       value: "0 30 6 * * ?"
     - name: KJOEREPLAN_ANONYMISERING
-      value: "0 30 5 * * * ?"
+      value: "0 30 5 * * ?"
   accessPolicy:
     inbound:
       rules:
