@@ -164,7 +164,7 @@ public class PdfGenerator {
 
     if (samtykketidspunkt != null) {
       samtykketelement.text(tekstvelger(Tekst.SAMTYKKET, skriftspraak)
-          + " "  + samtykketidspunkt.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.forLanguageTag("nb-NO")))
+          + " "  + samtykketidspunkt.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.forLanguageTag("nb-NO")))
           + " klokken " + samtykketidspunkt.format(DateTimeFormatter.ofPattern("HH:mm")));
       samtykketelement.appendTo(detaljerForelder);
     }
