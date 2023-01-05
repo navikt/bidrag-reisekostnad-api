@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.AbstractMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -162,8 +164,8 @@ public class PdfGenerator {
 
     if (samtykketidspunkt != null) {
       samtykketelement.text(tekstvelger(Tekst.SAMTYKKET, skriftspraak)
-          + " kl " + samtykketidspunkt.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-          + " den " + samtykketidspunkt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+          + " "  + samtykketidspunkt.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.forLanguageTag("nb-NO")))
+          + " klokken " + samtykketidspunkt.format(DateTimeFormatter.ofPattern("HH:mm")));
       samtykketelement.appendTo(detaljerForelder);
     }
   }
