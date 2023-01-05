@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.AbstractMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,7 @@ public class PdfGenerator {
       Tekst.FOEDESTED, "Fødested",
       Tekst.FORNAVN, "Navn",
       Tekst.OPPLYSNINGER_OM_BARNET, "Opplysninger om barnet",
-      Tekst.HAR_SAMTYKKET, "Har samtykket"
+      Tekst.SAMTYKKET, "Samtykket"
   );
 
   private static final Map<Tekst, String> tekstNynorsk = Map.of(
@@ -65,13 +67,13 @@ public class PdfGenerator {
       Tekst.FORNAVN, "Name"
   );
 
-  public static byte[] genererePdf(Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart, LocalDateTime samtykketDato) {
+  public static byte[] genererePdf(Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart, LocalDateTime samtykketidspunkt) {
 
     var skriftspråk = Skriftspråk.BOKMÅL;
 
     log.info("Oppretter dokument for reisekostnad på språk {}", skriftspråk);
 
-    var html = byggeHtmlstrengFraMal(STI_TIL_PDF_TEMPLATE, skriftspråk, barn, hovedperson, motpart, samtykketDato);
+    var html = byggeHtmlstrengFraMal(STI_TIL_PDF_TEMPLATE, skriftspråk, barn, hovedperson, motpart, samtykketidspunkt);
     try (final ByteArrayOutputStream pdfStream = new ByteArrayOutputStream()) {
 
       var htmlSomStrøm = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
@@ -154,11 +156,18 @@ public class PdfGenerator {
     }
   }
 
-  private static void leggTilSamtykketInfo(Element element, Skriftspråk skriftspraak, LocalDateTime samtykketDato) {
-    var samtykket = element.getElementsByClass(henteElementnavn(Elementnavn.SAMTYKKET, skriftspraak));
+  private static void leggTilSamtykketInfo(Element element, Skriftspråk skriftspraak, LocalDateTime samtykketidspunkt) {
+    var detaljerForelder = element.getElementById("detaljer-motpart");
 
-    var samtykketResultat = samtykketDato == null ? "Nei" : "Ja";
-    samtykket.first().text(tekstvelger(Tekst.HAR_SAMTYKKET, skriftspraak) + ": " + samtykketResultat);
+    var samtykketelement = new Element("li");
+    samtykketelement.addClass(henteElementnavn(Elementnavn.SAMTYKKET, skriftspraak));
+
+    if (samtykketidspunkt != null) {
+      samtykketelement.text(tekstvelger(Tekst.SAMTYKKET, skriftspraak)
+          + " "  + samtykketidspunkt.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.forLanguageTag("nb-NO")))
+          + " klokken " + samtykketidspunkt.format(DateTimeFormatter.ofPattern("HH:mm")));
+      samtykketelement.appendTo(detaljerForelder);
+    }
   }
 
   private static void leggeTilDataForelder(Element forelderelement, PersonDto forelder, Skriftspråk skriftspraak) {
@@ -171,7 +180,7 @@ public class PdfGenerator {
   }
 
   private static String byggeHtmlstrengFraMal(String pdfmal, Skriftspråk skriftspråk, Set<PersonDto> barn, PersonDto hovedperson, PersonDto motpart,
-      LocalDateTime samtykketDato) {
+      LocalDateTime samtykketidspunkt) {
     try {
       var input = new ClassPathResource(pdfmal + skriftspråk.toString().toLowerCase() + ".html").getInputStream();
       var document = Jsoup.parse(input, "UTF-8", "");
@@ -183,7 +192,7 @@ public class PdfGenerator {
       // Legge til informasjon om motpart
       var motpartElement = document.getElementById(henteElementnavn(Elementnavn.MOTPART, skriftspråk));
       leggeTilDataForelder(motpartElement, motpart, skriftspråk);
-      leggTilSamtykketInfo(motpartElement, skriftspråk, samtykketDato);
+      leggTilSamtykketInfo(motpartElement, skriftspråk, samtykketidspunkt);
 
       var datoElement = document.getElementById(henteElementnavn(Elementnavn.DATO_OPPRETTET, skriftspråk));
       datoElement.text(String.format("Dato: %s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
@@ -239,7 +248,7 @@ public class PdfGenerator {
     PERSONIDENT,
     FOEDESTED,
     FORNAVN,
-    HAR_SAMTYKKET,
+    SAMTYKKET,
     OPPLYSNINGER_OM_BARNET,
     TERMINDATO;
   }
@@ -249,6 +258,7 @@ public class PdfGenerator {
     BARN_1,
     BESKRIVELSE,
     DETALJER_BARN,
+    DETALJER_FORELDER,
     NAVN,
     MOTPART,
     FØDSELSDATO,

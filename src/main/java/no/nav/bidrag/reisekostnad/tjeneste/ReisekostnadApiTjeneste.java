@@ -73,8 +73,6 @@ public class ReisekostnadApiTjeneste {
     familierespons.get().getPersonensMotpartBarnRelasjon().stream().filter(Objects::nonNull)
         .forEach(m -> lagreForespørsel(personidentHovedpart, m.getMotpart().getIdent(), henteUtBarnaSomTilhørerMotpart(m, personidenterBarn)));
 
-    brukernotifikasjonkonsument.varsleOmNyForespørselSomVenterPåSamtykke(personidentHovedpart);
-
     return HttpResponse.from(HttpStatus.CREATED);
   }
 
@@ -142,25 +140,26 @@ public class ReisekostnadApiTjeneste {
     }
   }
 
-  private void lagreForespørsel(String hovedperson, String motpart, Set<String> barn) {
+  private void lagreForespørsel(String personidentHovedpart, String personidentMotpart, Set<String> barn) {
 
     var barnOver15År = filtrereUtBarnOver15År(barn);
     var barnUnder15År = barn.stream().filter(b -> !erPersonOver15År(b)).collect(Collectors.toSet());
 
     if (barnOver15År.size() > 0) {
-      lagreNyForespørsel(hovedperson, motpart, barnOver15År, false);
+      lagreNyForespørsel(personidentHovedpart, personidentMotpart, barnOver15År, false);
     }
 
     if (barnUnder15År.size() > 0) {
-      var idForespørsel = lagreNyForespørsel(hovedperson, motpart, barnUnder15År, true);
+      var idForespørsel = lagreNyForespørsel(personidentHovedpart, personidentMotpart, barnUnder15År, true);
       if (idForespørsel > 0) {
-        brukernotifikasjonkonsument.oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, motpart);
+        brukernotifikasjonkonsument.oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, personidentMotpart);
+        brukernotifikasjonkonsument.varsleOmNyForespørselSomVenterPåSamtykke(personidentHovedpart);
       }
     }
   }
 
-  private int lagreNyForespørsel(String hovedperson, String motpart, Set<String> barn, Boolean kreverSamtykke) {
-    var forespørsel = databasetjeneste.lagreNyForespørsel(hovedperson, motpart, barn, kreverSamtykke);
+  private int lagreNyForespørsel(String personidentHovedpart, String personidentMotpart, Set<String> barn, Boolean kreverSamtykke) {
+    var forespørsel = databasetjeneste.lagreNyForespørsel(personidentHovedpart, personidentMotpart, barn, kreverSamtykke);
     if (!kreverSamtykke) {
       arkiveringstjeneste.arkivereForespørsel(forespørsel.getId());
     }
