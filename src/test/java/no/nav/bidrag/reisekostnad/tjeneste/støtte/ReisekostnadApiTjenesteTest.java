@@ -213,6 +213,37 @@ public class ReisekostnadApiTjenesteTest {
     verify(brukernotifikasjonkonsument, times(1)).varsleOmTrukketForespørsel(hovedpart.getIdent(), motpart.getIdent());
   }
 
+  @Test
+  void skalIkkeSendeVarselOmInnsendtForespørselForBarnOver15År(){
+
+    // gitt
+    var idForespørsel = 1;
+    var hovedpart = testpersonGråtass;
+    var motpart = testpersonStreng;
+    var barn = testpersonBarn16;
+
+    var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(barn.getIdent()));
+    var familierespons = oppretteHentFamilieRespons(hovedpart, motpart, Set.of(barn));
+
+    var lagretForespørsel = Forespørsel.builder().id(1)
+        .hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+        .motpart(Forelder.builder().personident(motpart.getIdent()).build())
+        .barn(Set.of(Barn.builder().personident(barn.getIdent()).build()))
+        .build();
+
+    mockHentPersoninfo(Set.of(barn));
+    when(bidragPersonkonsument.hentFamilie(hovedpart.getIdent())).thenReturn(Optional.of(familierespons));
+    when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barn.getIdent()), false)).thenReturn(lagretForespørsel);
+
+    // hvis
+    var respons = reisekostnadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(hovedpart.getIdent(), valgteKrypterteBarn);
+
+    // så
+    assertAll(() -> assertThat(respons.is2xxSuccessful()),
+        () -> verify(brukernotifikasjonkonsument, times(0)).varsleOmNyForespørselSomVenterPåSamtykke(hovedpart.getIdent()),
+        () -> verify(brukernotifikasjonkonsument, times(0)).oppretteOppgaveTilMotpartOmSamtykke(idForespørsel, motpart.getIdent()));
+  }
+
   private HentFamilieRespons oppretteHentFamilieRespons(Testperson hovedpart, Map<Testperson, Set<Testperson>> motpartBarnrelasjoner) {
 
     return HentFamilieRespons.builder().person(tilFamiliemedlem(hovedpart)).personensMotpartBarnRelasjon(
