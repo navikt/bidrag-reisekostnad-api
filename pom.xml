@@ -63,7 +63,7 @@
     <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>1.6.13</springdoc-openapi-ui.version>
     <token-support.version>2.1.7</token-support.version>
-    <kotlin-logging-jvm.version>3.0.2</kotlin-logging-jvm.version>
+    <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
     <mockk.version>3.1.2</mockk.version>
     <kotest.version>5.5.4</kotest.version>
     <wiremock-jre8-standalone.version>2.35.0</wiremock-jre8-standalone.version>
