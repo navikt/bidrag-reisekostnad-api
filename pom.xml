@@ -60,7 +60,7 @@
     <shedlock.version>4.42.0</shedlock.version>
     <snappy-java.version>1.1.8.4</snappy-java.version>
     <spring-cloud-contract-wiremock.version>3.1.5</spring-cloud-contract-wiremock.version>
-    <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
+    <spring-cloud-gcp.version>3.4.2</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>1.6.13</springdoc-openapi-ui.version>
     <token-support.version>2.1.7</token-support.version>
     <kotlin-logging-jvm.version>3.0.2</kotlin-logging-jvm.version>
