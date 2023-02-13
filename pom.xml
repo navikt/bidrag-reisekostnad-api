@@ -505,6 +505,12 @@
       <artifactId>token-validation-spring-test</artifactId>
       <version>${token-support.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+            <groupId>io.github.microutils</groupId>
+            <artifactId>kotlin-logging-jvm</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
