@@ -62,7 +62,6 @@ public class ReisekostnadApiTjeneste {
   }
 
   public HttpResponse<Void> oppretteForespørselOmFordelingAvReisekostnader(String personidentHovedpart, Set<String> krypterteIdenterBarn) {
-    SIKKER_LOGG.info("Oppretter forespørsel om fordeling av reisekostnader for hovedpart {}", personidentHovedpart);
     var familierespons = bidragPersonkonsument.hentFamilie(personidentHovedpart);
     validerePåloggetPerson(familierespons);
     var personidenterBarn = krypterteIdenterBarn.stream().map(k -> dekryptere(k)).collect(Collectors.toSet());
