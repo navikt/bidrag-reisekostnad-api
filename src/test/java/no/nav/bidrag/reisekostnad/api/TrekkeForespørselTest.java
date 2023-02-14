@@ -9,11 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import javax.transaction.Transactional;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
+import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
@@ -164,19 +168,24 @@ public class TrekkeForespørselTest extends KontrollerTest {
   }
 
   @Test
-  @Transactional
   void skalKunneOppretteNyForespørselForBarnMedTrukketForespørsel() {
 
     // gitt
-    hovedpartSkalKunneTrekkeForespørsel();
+    var trukketForespørsel = Forespørsel.builder().id(1)
+        .hovedpart(Forelder.builder().personident(testpersonGråtass.getIdent()).build())
+        .motpart(Forelder.builder().personident(testpersonStreng.getIdent()).build())
+        .barn(Set.of(Barn.builder().personident(testpersonBarn10.getIdent()).build()))
+        .deaktivert(LocalDateTime.now())
+        .deaktivertAv(Deaktivator.MOTPART)
+        .build();
+
+    forespørselDao.save(trukketForespørsel);
 
     var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
-
-    var f = forespørselDao.findById(1);
 
     var nyForespørsel = new NyForespørselDto(Set.of(Krypteringsverktøy.kryptere(testpersonBarn10.getIdent())));
 
