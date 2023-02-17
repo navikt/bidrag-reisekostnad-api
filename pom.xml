@@ -278,6 +278,12 @@
       <groupId>no.nav.bidrag.dokument</groupId>
       <artifactId>bidrag-dokument-dto</artifactId>
       <version>${bidrag-dokument-dto.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-ui</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- spring -->
     <dependency>
