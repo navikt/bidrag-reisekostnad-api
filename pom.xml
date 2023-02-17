@@ -46,7 +46,7 @@
     <google.common-protos.version>2.9.6</google.common-protos.version>
     <graalvm.version>22.0.0.2</graalvm.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
-    <httpclient.version>4.5.13</httpclient.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <java.version>17</java.version>
     <jboss.version>2.2.1.Final</jboss.version>
     <jetbrains.annotations.version>21.0.1</jetbrains.annotations.version>
