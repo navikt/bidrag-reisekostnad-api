@@ -46,12 +46,12 @@
     <google.common-protos.version>2.9.6</google.common-protos.version>
     <graalvm.version>22.0.0.2</graalvm.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
-    <httpclient.version>4.5.13</httpclient.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <java.version>17</java.version>
     <jboss.version>2.2.1.Final</jboss.version>
     <jetbrains.annotations.version>21.0.1</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.2.2</kafka-avro-serializer.version>
-    <modelmapper.version>3.1.0</modelmapper.version>
+    <modelmapper.version>3.1.1</modelmapper.version>
     <nimbus-jose-jwt.version>9.25.6</nimbus-jose-jwt.version>
     <nimbus.oauth2-oidc-sdk.version>10.0</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
@@ -60,10 +60,10 @@
     <shedlock.version>4.44.0</shedlock.version>
     <snappy-java.version>1.1.8.4</snappy-java.version>
     <spring-cloud-contract-wiremock.version>3.1.5</spring-cloud-contract-wiremock.version>
-    <spring-cloud-gcp.version>3.4.2</spring-cloud-gcp.version>
+    <spring-cloud-gcp.version>3.4.3</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
     <token-support.version>2.1.9</token-support.version>
-    <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
+    <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>3.1.2</mockk.version>
     <kotest.version>5.5.4</kotest.version>
     <wiremock-jre8-standalone.version>2.35.0</wiremock-jre8-standalone.version>
