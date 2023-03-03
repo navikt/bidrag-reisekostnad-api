@@ -77,19 +77,6 @@ spec:
       value: "0 0/30 * * * ?"
     - name: KJOEREPLAN_ANONYMISERING
       value: "0 0/30 * * * ?"
-    # envVarPrefix var ikke satt i ved opprettelse av database - DB-miljøvariablelnavn ble derfor opprettet i full lengde. Kan fikses ved å slette og gjenopprette bidrag-reisekostnad-api i preprod slik at postgres-hemmeligheten populeres på ny.
-    - name: DB_HOST
-      value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_HOST}
-    - name: DB_PORT
-      value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_PORT}
-    - name: DB_DATABASE
-      value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_DATABASE}
-    - name: DB_USERNAME
-      value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_USERNAME}
-    - name: DB_PASSWORD
-      value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_PASSWORD}
-    - name: DB_URL
-      value: ${NAIS_DATABASE_BIDRAG_REISEKOSTNAD_API_REISEKOSTNAD_PREPROD_URL}
   accessPolicy:
     inbound:
       rules:
