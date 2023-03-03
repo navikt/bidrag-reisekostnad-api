@@ -66,7 +66,7 @@ spec:
     - name: BIDRAG_PERSON_URL
       value: https://bidrag-person.dev-fss-pub.nais.io
     - name: BIDRAG_REISEKOSTNAD_UI_URL
-      value: https://bidrag-reisekostnad.dev.nav.no
+      value: https://bidrag-reisekostnad.ekstern.dev.nav.no
     - name: POSTGRES_INSTANSEURL
       value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
     - name: KJOEREPLAN_ARKIVERING

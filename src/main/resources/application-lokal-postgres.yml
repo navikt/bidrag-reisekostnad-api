@@ -64,7 +64,7 @@ KAFKA_KEYSTORE_PATH: /var/test
 spring.kafka.bootstrap-servers: localhost:9092
 spring.kafka.consumer.group-id: reisekostnad
 spring.kafka.consumer.auto-offset-reset: earliest
-BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.dev.nav.no
+BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.ekstern.dev.nav.no
 
 ---
 spring:
