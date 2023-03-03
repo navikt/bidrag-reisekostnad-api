@@ -51,7 +51,7 @@ spec:
       memory: 1024Mi
       cpu: 200m
   ingresses:
-    - https://bidrag-reisekostnad-api.dev.intern.nav.no
+    - https://bidrag-reisekostnad-api.intern.dev.nav.no
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod, i-sky
