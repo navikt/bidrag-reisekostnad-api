@@ -51,22 +51,22 @@ spec:
       memory: 1024Mi
       cpu: 200m
   ingresses:
-    - https://bidrag-reisekostnad-api.dev.intern.nav.no
+    - https://bidrag-reisekostnad-api.intern.dev.nav.no
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod, i-sky
     - name: JAVA_TOOL_OPTIONS
       value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     - name: BIDRAG_DOKUMENT_SCOPE
-      value: dev-fss.bidrag.bidrag-dokument-feature
+      value: dev-fss.bidrag.bidrag-dokument
     - name: BIDRAG_DOKUMENT_URL
-      value: https://bidrag-dokument-feature.dev-fss-pub.nais.io
+      value: https://bidrag-dokument.dev-fss-pub.nais.io
     - name: BIDRAG_PERSON_SCOPE
-      value: dev-fss.bidrag.bidrag-person-feature
+      value: dev-fss.bidrag.bidrag-person
     - name: BIDRAG_PERSON_URL
-      value: https://bidrag-person-feature.dev-fss-pub.nais.io
+      value: https://bidrag-person.dev-fss-pub.nais.io
     - name: BIDRAG_REISEKOSTNAD_UI_URL
-      value: https://bidrag-reisekostnad.dev.nav.no
+      value: https://bidrag-reisekostnad.ekstern.dev.nav.no
     - name: POSTGRES_INSTANSEURL
       value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
     - name: KJOEREPLAN_ARKIVERING
