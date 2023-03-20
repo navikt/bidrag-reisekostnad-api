@@ -30,9 +30,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: navikt/bidrag-maven/setup@v7.0.5
-        with:
-          repositories: maven-central=https://repo.maven.apache.org/maven2,github-packages=https://maven.pkg.github.com/navikt/maven-release
       - name: Bygg med maven
         run: mvn install -B -e
       - uses: nais/docker-build-push@v0
