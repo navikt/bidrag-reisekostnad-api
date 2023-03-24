@@ -81,3 +81,6 @@ spec:
         - application: bidrag-reisekostnad-ui
           namespace: bidrag
           cluster: prod-gcp
+    outbound:
+      external:
+        - host: bidrag-person.prod-fss-pub.nais.io
