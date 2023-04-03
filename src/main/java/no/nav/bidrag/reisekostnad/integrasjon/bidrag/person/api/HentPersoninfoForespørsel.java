@@ -13,4 +13,5 @@ public class HentPersoninfoForespørsel {
   @NotNull
   String ident;
 
+  String verdi = ident;
 }
