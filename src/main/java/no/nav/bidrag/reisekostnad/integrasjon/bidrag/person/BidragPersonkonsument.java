@@ -44,7 +44,7 @@ public class BidragPersonkonsument {
   @UserCacheable(CACHE_FAMILIE)
   @Retryable(value = Exception.class, backoff = @Backoff(delay = 5000, multiplier = 2.0))
   public Optional<HentFamilieRespons> hentFamilie(String personident) {
-    var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
+    var forespørsel = new HentPersoninfoForespørsel(personident);
 
     try {
       var hentFamilieRespons = clientCredentialsRestTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_MOTPART_BARN_RELASJON, HttpMethod.POST,
@@ -67,7 +67,7 @@ public class BidragPersonkonsument {
   @UserCacheable(CACHE_PERSON)
   @Retryable(value = Exception.class, backoff = @Backoff(delay = 1000, multiplier = 2.0))
   public HentPersoninfoRespons hentPersoninfo(String personident) {
-    var forespørsel = HentPersoninfoForespørsel.builder().ident(personident).build();
+    var forespørsel = new HentPersoninfoForespørsel(personident);
     try {
       var hentPersoninfo = clientCredentialsRestTemplate.exchange(BIDRAG_PERSON_KONTEKSTROT + ENDEPUNKT_PERSONINFO, HttpMethod.POST,
           new HttpEntity<>(forespørsel),
