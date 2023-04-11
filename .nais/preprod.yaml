@@ -88,4 +88,4 @@ spec:
           cluster: dev-gcp
   outbound:
     external:
-      - host: bidrag-person.dev-fss-pub.nais.ios
+      - host: bidrag-person.dev-fss-pub.nais.io
