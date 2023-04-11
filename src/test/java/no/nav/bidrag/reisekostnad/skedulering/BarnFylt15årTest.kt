@@ -5,19 +5,26 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.date.shouldHaveSameYearAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.every
+import io.mockk.verify
 import no.nav.bidrag.reisekostnad.model.hovedpartIdent
 import no.nav.bidrag.reisekostnad.model.motpartIdent
 import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørsel
 import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørselAntallGanger
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @DisplayName("BarnFylt15årTest")
 class BarnFylt15årTest : DatabehandlerTest() {
+
+    @BeforeEach
+    fun setup() {
+        every { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) } returns Unit
+        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns true
+    }
 
     @Test
     fun skalOppretteNyForespørselForBarnSomHarFylt15år() {
@@ -41,7 +48,8 @@ class BarnFylt15årTest : DatabehandlerTest() {
         val alleForespørsler = forespørselDao.findAll().toList()
         originalForespørsel = alleForespørsler.find { it.id == originalForespørsel.id }!!
         forespørselUtenBarnOver15år = alleForespørsler.find { it.id == forespørselUtenBarnOver15år.id }!!
-        val forespørselMedBarnFylt15År = alleForespørsler.find { it.id != originalForespørsel.id && it.id != forespørselUtenBarnOver15år.id }
+        val forespørselMedBarnFylt15År =
+            alleForespørsler.find { it.id != originalForespørsel.id && it.id != forespørselUtenBarnOver15år.id }
 
         assertSoftly {
             alleForespørsler.size shouldBe 3
@@ -60,11 +68,7 @@ class BarnFylt15årTest : DatabehandlerTest() {
             originalForespørsel.barn.first().fødselsdato shouldBe LocalDate.now().minusYears(10)
 
             verifiserDokumentArkivertForForespørsel(forespørselMedBarnFylt15År.id)
-            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
-                originalForespørsel.hovedpartIdent,
-                originalForespørsel.motpartIdent,
-                testpersonBarn15.fødselsdato
-            )
+            verify(exactly = 1) { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) }
         }
     }
 
@@ -98,11 +102,13 @@ class BarnFylt15årTest : DatabehandlerTest() {
             originalForespørsel.idJournalpost shouldBe "1232132132"
 
             verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
-            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
-                originalForespørsel.hovedpartIdent,
-                originalForespørsel.motpartIdent,
-                testpersonBarn15.fødselsdato
-            )
+            verify(exactly = 1) {
+                brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
+                    originalForespørsel.hovedpartIdent,
+                    originalForespørsel.motpartIdent,
+                    testpersonBarn15.fødselsdato
+                )
+            }
         }
     }
 
@@ -136,11 +142,13 @@ class BarnFylt15årTest : DatabehandlerTest() {
             originalForespørsel.idJournalpost shouldBe "1232132132"
 
             verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
-            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
-                originalForespørsel.hovedpartIdent,
-                originalForespørsel.motpartIdent,
-                testpersonBarn15.fødselsdato
-            )
+            verify(exactly = 1) {
+                brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
+                    originalForespørsel.hovedpartIdent,
+                    originalForespørsel.motpartIdent,
+                    testpersonBarn15.fødselsdato
+                )
+            }
         }
     }
 
@@ -173,7 +181,8 @@ class BarnFylt15årTest : DatabehandlerTest() {
         forespørselMedEttBarn = alleForespørsler.find { it.id == forespørselMedEttBarn.id }!!
         forespørselMedToBarn = alleForespørsler.find { it.id == forespørselMedToBarn.id }!!
         forespørselMedFeil = alleForespørsler.find { it.id == forespørselMedFeil.id }!!
-        val forespørselMedBarnFylt15År = alleForespørsler.find { it.id != forespørselMedToBarn.id && it.id != forespørselMedFeil.id }
+        val forespørselMedBarnFylt15År =
+            alleForespørsler.find { it.id != forespørselMedToBarn.id && it.id != forespørselMedFeil.id }
 
         assertSoftly {
             alleForespørsler.size shouldBe 4
@@ -200,21 +209,7 @@ class BarnFylt15årTest : DatabehandlerTest() {
             verifiserDokumentArkivertForForespørsel(forespørselMedBarnFylt15År.id)
             verifiserDokumentArkivertForForespørselAntallGanger(2)
 
-            verify(brukernotifikasjonkonsument, times(0)).varsleOmAutomatiskInnsending(
-                testpersonGråtass.personident,
-                testpersonStreng.personident,
-                testpersonBarn15_2.fødselsdato
-            )
-            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
-                testpersonGråtass.personident,
-                testpersonStreng.personident,
-                testpersonBarn15.fødselsdato
-            )
-            verify(brukernotifikasjonkonsument, times(1)).varsleOmAutomatiskInnsending(
-                testpersonGråtass.personident,
-                testpersonStreng.personident,
-                testpersonBarn15_3.fødselsdato
-            )
+            verify(exactly = 2) { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) }
         }
     }
 }

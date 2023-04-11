@@ -7,6 +7,7 @@ public enum Feilkode {
   KAN_IKKE_ARKIVERE_FORESPØRSEL("Feil ved arkivering av forespørsel"),
   BRUKERNOTIFIKASJON_OPPRETTE_OPPGAVE("Opprettelse av brukernotifikasjonsoppgave feilet!"),
   DATABASEFEIL("Feil ved lesing fra eller skriving til database"),
+  DATAFEIL("Feil ved henting av lagrede data"),
   FANT_IKKE_FORESPØRSEL("Oppgitt forespørsel (id: {}) ble ikke funnet i databasen"),
   INTERNFEIL("Intern feil har oppstått."),
   VALIDERING_DEAKTIVERE_PERSON_IKKE_PART_I_FORESPØRSEL("Personen er ikke part i forespørselen som ble forsøkt deaktivert"),
