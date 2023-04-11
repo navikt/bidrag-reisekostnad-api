@@ -1,6 +1,8 @@
 package no.nav.bidrag.reisekostnad.skedulering
 
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.junit5.MockKExtension
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon
 import no.nav.bidrag.reisekostnad.Testperson
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao
@@ -15,6 +17,7 @@ import no.nav.bidrag.reisekostnad.konfigurasjon.Profil
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,10 +37,11 @@ import javax.persistence.EntityManager
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     classes = [BidragReisekostnadApiTestapplikasjon::class]
 )
+@ExtendWith(MockKExtension::class)
 @DisplayName("DatabehandlerTest")
 class DatabehandlerTest {
 
-    @MockBean
+    @MockkBean
     lateinit var brukernotifikasjonkonsument: Brukernotifikasjonkonsument
 
     @Autowired
