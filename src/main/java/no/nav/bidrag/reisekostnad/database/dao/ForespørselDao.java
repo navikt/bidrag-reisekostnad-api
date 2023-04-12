@@ -15,10 +15,10 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
 
   Set<Forespørsel> findAll();
 
-  @Query("select f from Forespørsel f where f.hovedpart.personident = :personidentHovedpart")
+  @Query("select f from Forespørsel f where f.hovedpart.personident = :personidentHovedpart and f.anonymisert is null")
   Set<Forespørsel> henteForespørslerForHovedpart(String personidentHovedpart);
 
-  @Query("select f from Forespørsel f where f.motpart.personident = :personidentMotpart")
+  @Query("select f from Forespørsel f where f.motpart.personident = :personidentMotpart and f.anonymisert is null")
   Set<Forespørsel> henteForespørslerForMotpart(String personidentMotpart);
 
   @Query("select f from Forespørsel f where f.id = :idForespørsel and f.deaktivert is null")

@@ -1,26 +1,5 @@
 package no.nav.bidrag.reisekostnad.api;
 
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn10;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonBarn16;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonDødMotpart;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonErDød;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonGråtass;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarBarnMedDiskresjon;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarDiskresjon;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarDødtBarn;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonHarMotpartMedDiskresjon;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonIkkeFunnet;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonServerfeil;
-import static no.nav.bidrag.reisekostnad.Testperson.testpersonStreng;
-import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Set;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.database.datamodell.Deaktivator;
@@ -33,6 +12,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import static no.nav.bidrag.reisekostnad.Testperson.*;
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class HenteBrukerinformasjonTest extends KontrollerTest {
 
@@ -75,7 +65,7 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   void skalHenteBrukerinformasjonForHovedpartMedDiskresjon() {
 
     // gitt
-    var påloggetPerson = testpersonHarDiskresjon;
+    var påloggetPerson = testpersonGråtass;
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
 
     var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
@@ -87,12 +77,51 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
 
     // så
     assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
-        () -> assertThat(brukerinformasjon.getBody().getKjønn()).isEqualTo(Kjønn.MANN),
         () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
-        () -> assertThat(brukerinformasjon.getBody().isHarDiskresjon()).isEqualTo(true),
-        () -> assertThat(brukerinformasjon.getBody().isKanSøkeOmFordelingAvReisekostnader()).isEqualTo(false),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
+        () -> assertThat(brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().size()).isEqualTo(1), () -> assertThat(
+            brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
+                .size()).isEqualTo(1));
+
+    var motpart = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getMotpart();
+    var barnUnder15År = brukerinformasjon.getBody().getMotparterMedFellesBarnUnderFemtenÅr().stream().findFirst().get().getFellesBarnUnder15År()
+        .stream().findFirst().get();
+    var barnMinst15År = brukerinformasjon.getBody().getBarnMinstFemtenÅr().stream().findFirst().get();
+
+    assertAll(() -> assertThat(motpart.getFornavn()).isEqualTo(testpersonStreng.getFornavn()),
+        () -> assertThat(motpart.getFødselsdato()).isEqualTo(testpersonStreng.getFødselsdato()),
+        () -> assertThat(barnUnder15År.getFødselsdato()).isEqualTo(testpersonBarn10.getFødselsdato()),
+        () -> assertThat(barnUnder15År.getFornavn()).isEqualTo(testpersonBarn10.getFornavn()),
+        () -> assertThat(barnMinst15År.getFødselsdato()).isEqualTo(testpersonBarn16.getFødselsdato()),
+        () -> assertThat(barnMinst15År.getFornavn()).isEqualTo(testpersonBarn16.getFornavn()));
+  }
+
+  @Test
+  void skalIkkeInkludereAnonymiserteForespørsler() {
+
+    // gitt
+    var påloggetPerson = testpersonGråtass;
+    var barn = testpersonBarn16;
+    httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(påloggetPerson.getIdent()));
+
+    var a = new OAuth2AccessTokenResponse(generereTesttoken(påloggetPerson.getIdent()), 1000, 1000, null);
+    when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
+
+    var forespørselMedAnonymisertBarn = lagreForespørselForEttBarn(påloggetPerson.getIdent(), testpersonStreng.getIdent(), barn.getIdent(), true);
+    forespørselMedAnonymisertBarn.getBarn().forEach(b -> b.setPersonident(null));
+    forespørselMedAnonymisertBarn.setAnonymisert(LocalDateTime.now());
+    forespørselDao.save(forespørselMedAnonymisertBarn);
+
+    // hvis
+    var brukerinformasjon = httpHeaderTestRestTemplateApi.exchange(urlBrukerinformasjon, HttpMethod.GET, initHttpEntity(null),
+        BrukerinformasjonDto.class);
+
+    // så
+    assertAll(() -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK),
+        () -> assertThat(brukerinformasjon.getBody().getFornavn()).isEqualTo(påloggetPerson.getFornavn()),
+        () -> assertThat(brukerinformasjon.getBody().isKanSøkeOmFordelingAvReisekostnader()).isEqualTo(true),
         () -> assertThat(brukerinformasjon.getBody().isHarSkjulteFamilieenheterMedDiskresjon()).isEqualTo(false),
-        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(0),
+        () -> assertThat(brukerinformasjon.getBody().getBarnMinstFemtenÅr().size()).isEqualTo(1),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomMotpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getBody().getForespørslerSomHovedpart().size()).isEqualTo(0),
         () -> assertThat(brukerinformasjon.getStatusCode()).isEqualTo(HttpStatus.OK));
