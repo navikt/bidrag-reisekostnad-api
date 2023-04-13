@@ -1,11 +1,12 @@
 package no.nav.bidrag.reisekostnad.database.dao;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Set;
 import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.Set;
 
 public interface BarnDao extends CrudRepository<Barn, Integer> {
 

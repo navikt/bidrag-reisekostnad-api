@@ -177,6 +177,7 @@ public class Databasetjeneste {
         barnSomSkalAnonymiseres.forEach(b -> {
             b.setPersonident(null);
             b.setAnonymisert(anonymiseringstidspunkt);
+            b.getForespørsel().setAnonymisert(anonymiseringstidspunkt);
         });
         return barnSomSkalAnonymiseres.size();
     }

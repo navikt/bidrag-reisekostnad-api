@@ -20,11 +20,14 @@ class AnonymisereTest : DatabehandlerTest() {
         var anonymiseringsklarForespørsel = opppretteForespørsel(true)
 
         anonymiseringsklarForespørsel.opprettet =
-            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
+            LocalDateTime.now()
+                .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
         anonymiseringsklarForespørsel.journalført =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2).atStartOfDay()
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2)
+                .atStartOfDay()
         anonymiseringsklarForespørsel.deaktivert =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1).atStartOfDay()
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
+                .atStartOfDay()
 
         var lagretAnonymiseringsklarForespørsel = forespørselDao.save(anonymiseringsklarForespørsel)
         var hovedpart = forelderDao.findById(lagretAnonymiseringsklarForespørsel.hovedpart.id)
@@ -50,7 +53,8 @@ class AnonymisereTest : DatabehandlerTest() {
             assertThat(anonymisertForespørsel).isPresent
             assertThat(anonymisertForespørsel.get().deaktivert).isNotNull
             assertThat(anonymisertForespørsel.get().deaktivert.toLocalDate()).isEqualTo(
-                LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
+                LocalDate.now()
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
             )
             assertThat(anonymisertForespørsel.get().journalført).isNotNull
             assertThat(anonymisertForespørsel.get().hovedpart).isNull()
@@ -63,16 +67,19 @@ class AnonymisereTest : DatabehandlerTest() {
     fun skalIkkeAnonymisereAktiveForespørsler() {
 
         // gitt
-        var anonymiseringsklarForespørsel = opppretteForespørsel(true)
+        var aktivForespørsel = opppretteForespørsel(true)
 
-        anonymiseringsklarForespørsel.opprettet =
-            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
-        anonymiseringsklarForespørsel.journalført =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2).atStartOfDay()
-        anonymiseringsklarForespørsel.deaktivert =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() - 5).atStartOfDay()
+        aktivForespørsel.opprettet =
+            LocalDateTime.now()
+                .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
+        aktivForespørsel.journalført =
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2)
+                .atStartOfDay()
+        aktivForespørsel.deaktivert =
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() - 5)
+                .atStartOfDay()
 
-        var lagretAnonymiseringsklarForespørsel = forespørselDao.save(anonymiseringsklarForespørsel)
+        var lagretAnonymiseringsklarForespørsel = forespørselDao.save(aktivForespørsel)
 
         // hvis
         databehandler.anonymisereBarnOgSletteForeldreSomIkkeErKnyttetTilAktiveForespørsler();
@@ -84,12 +91,75 @@ class AnonymisereTest : DatabehandlerTest() {
             assertThat(anonymisertForespørsel.isPresent)
             assertThat(anonymisertForespørsel.get().deaktivert).isNotNull
             assertThat(anonymisertForespørsel.get().deaktivert.toLocalDate()).isEqualTo(
-                LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() - 5)
+                LocalDate.now()
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() - 5)
             )
             assertThat(anonymisertForespørsel.get().journalført).isNotNull
             assertThat(anonymisertForespørsel.get().hovedpart).isNotNull
             assertThat(anonymisertForespørsel.get().motpart).isNotNull
             assertThat(anonymisertForespørsel.get().barn.stream().findFirst().get().personident).isNotNull()
+        }
+    }
+
+    @Test
+    fun skalAnonymisereBarnUavhengigAvForeldre() {
+
+        // gitt
+        var anonymiseringsklarForespørsel = opppretteForespørsel(true)
+        var deaktiveringstidspunkt =
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 5)
+                .atStartOfDay()
+
+        anonymiseringsklarForespørsel.opprettet =
+            LocalDateTime.now()
+                .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
+        anonymiseringsklarForespørsel.journalført =
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2)
+                .atStartOfDay()
+        anonymiseringsklarForespørsel.deaktivert = deaktiveringstidspunkt
+
+        var lagretAnonymiseringsklarForespørsel = forespørselDao.save(anonymiseringsklarForespørsel)
+        var lagretIkkeAnonymiseringsklarForespørsel = databasetjeneste.lagreNyForespørsel(
+            testpersonGråtass.personident,
+            testpersonStreng.personident,
+            mutableSetOf(testpersonBarn13.personident),
+            true
+        )
+
+        // hvis
+        databehandler.anonymisereBarnOgSletteForeldreSomIkkeErKnyttetTilAktiveForespørsler();
+
+        // så
+        var anonymisertForespørsel = forespørselDao.findById(lagretAnonymiseringsklarForespørsel.id);
+        var ikkeAnonymiseringsklarForespørsel = forespørselDao.findById(lagretIkkeAnonymiseringsklarForespørsel.id)
+
+        assertSoftly {
+            assertThat(anonymisertForespørsel.isPresent)
+            assertThat(anonymisertForespørsel.get().deaktivert).isNotNull
+            assertThat(anonymisertForespørsel.get().deaktivert).isEqualTo(deaktiveringstidspunkt)
+            assertThat(anonymisertForespørsel.get().anonymisert.toLocalDate()).isEqualTo(LocalDate.now())
+            assertThat(anonymisertForespørsel.get().journalført).isNotNull
+            assertThat(anonymisertForespørsel.get().hovedpart).isNotNull
+            assertThat(anonymisertForespørsel.get().hovedpart.personident).isNotNull()
+            assertThat(anonymisertForespørsel.get().motpart).isNotNull
+            assertThat(anonymisertForespørsel.get().motpart.personident).isNotNull()
+            assertThat(anonymisertForespørsel.get().barn.forEach { b ->
+                b.personident == null && LocalDate.now().isEqual(b.anonymisert.toLocalDate())
+            })
+        }
+
+        assertSoftly {
+            assertThat(ikkeAnonymiseringsklarForespørsel.isPresent)
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().deaktivert).isNull()
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().anonymisert).isNull()
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().journalført).isNull()
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().hovedpart).isNotNull
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().hovedpart.personident).isNotNull()
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().motpart).isNotNull
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().motpart.personident).isNotNull()
+            assertThat(ikkeAnonymiseringsklarForespørsel.get().barn.forEach { b ->
+                b.personident != null && b.anonymisert == null
+            })
         }
     }
 
@@ -100,9 +170,11 @@ class AnonymisereTest : DatabehandlerTest() {
         var ikkeAnonymiseringsklarForespørsel = opppretteForespørsel(true)
 
         ikkeAnonymiseringsklarForespørsel.opprettet =
-            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
+            LocalDateTime.now()
+                .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
         ikkeAnonymiseringsklarForespørsel.journalført =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2).atStartOfDay()
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2)
+                .atStartOfDay()
 
         var lagretAnonymiseringsklarForespørsel = forespørselDao.save(ikkeAnonymiseringsklarForespørsel)
 
@@ -129,17 +201,21 @@ class AnonymisereTest : DatabehandlerTest() {
         var anonymiseringsklarForespørsel = opppretteForespørsel(true)
 
         anonymiseringsklarForespørsel.opprettet =
-            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
+            LocalDateTime.now()
+                .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2 + 13)
         anonymiseringsklarForespørsel.journalført =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2).atStartOfDay()
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() * 2)
+                .atStartOfDay()
         anonymiseringsklarForespørsel.deaktivert =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1).atStartOfDay()
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
+                .atStartOfDay()
 
         var lagretAnonymiseringsklarForespørsel = forespørselDao.save(anonymiseringsklarForespørsel)
 
         var eventId = UUID.randomUUID().toString();
-        var samtykkeoppgave = Oppgavebestilling.builder().eventId(eventId).forespørsel(lagretAnonymiseringsklarForespørsel)
-            .forelder(lagretAnonymiseringsklarForespørsel.motpart).build();
+        var samtykkeoppgave =
+            Oppgavebestilling.builder().eventId(eventId).forespørsel(lagretAnonymiseringsklarForespørsel)
+                .forelder(lagretAnonymiseringsklarForespørsel.motpart).build();
         oppgavebestillingDao.save(samtykkeoppgave);
 
         // hvis
@@ -152,7 +228,8 @@ class AnonymisereTest : DatabehandlerTest() {
             assertThat(anonymisertForespørsel.isPresent)
             assertThat(anonymisertForespørsel.get().deaktivert).isNotNull
             assertThat(anonymisertForespørsel.get().deaktivert.toLocalDate()).isEqualTo(
-                LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
+                LocalDate.now()
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
             )
             assertThat(anonymisertForespørsel.get().journalført).isNotNull
             assertThat(anonymisertForespørsel.get().hovedpart).isNull()
