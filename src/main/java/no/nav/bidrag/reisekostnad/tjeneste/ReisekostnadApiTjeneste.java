@@ -1,7 +1,5 @@
 package no.nav.bidrag.reisekostnad.tjeneste;
 
-import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
-
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
