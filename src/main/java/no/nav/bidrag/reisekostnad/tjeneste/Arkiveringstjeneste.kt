@@ -1,5 +1,6 @@
 package no.nav.bidrag.reisekostnad.tjeneste
 
+import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode
@@ -10,10 +11,7 @@ import no.nav.bidrag.reisekostnad.model.erArkivert
 import no.nav.bidrag.reisekostnad.model.kanArkiveres
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Mapper
 import org.springframework.stereotype.Service
-import java.io.File
-import java.nio.file.FileSystems
 import java.time.LocalDateTime
-import javax.transaction.Transactional
 
 
 private val log = KotlinLogging.logger {}

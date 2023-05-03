@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.5</version>
+    <version>3.0.6</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -13,64 +13,70 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>bidrag-reiesekostnader-api</name>
   <description>bidrag-reiesekostnader-api</description>
+
   <properties>
-    <kotlin.version>1.7.20</kotlin.version>
+    <kotlin.version>1.8.21</kotlin.version>
     <!-- bygg -->
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
-    <build-helper-maven.version>3.1.0</build-helper-maven.version>
+    <build-helper-maven.version>3.3.0</build-helper-maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- PDF -->
     <apache-pdfbox.version>2.0.28</apache-pdfbox.version>
     <openhtml.version>1.0.10</openhtml.version>
-    <jsoup.version>1.15.4</jsoup.version>
+    <jsoup.version>1.16.1</jsoup.version>
 
     <!-- annet -->
     <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
-    <bidrag-commons-test.version>0.2.2</bidrag-commons-test.version>
-    <bidrag-commons.version>0.7.29</bidrag-commons.version>
-    <bidrag-dokument-dto.version>1.5.18</bidrag-dokument-dto.version>
-    <brukernotifikasjon-schemas.version>v2.5.2</brukernotifikasjon-schemas.version>
-    <checker-qual.version>3.19.0</checker-qual.version>
-    <classgraph.version>4.8.149</classgraph.version>
-    <commons-cli.version>1.4</commons-cli.version>
-    <flyway-maven-plugin.version>9.8.2</flyway-maven-plugin.version>
-    <google-auth-library-oauth2-http.version>1.15.0</google-auth-library-oauth2-http.version>
-    <google.error_prone_annotations.version>2.10.0</google.error_prone_annotations.version>
-    <google.gax.version>2.19.2</google.gax.version>
-    <google.http-client.version>1.42.2</google.http-client.version>
-    <google.protobuf-java.version>3.21.7</google.protobuf-java.version>
+    <bidrag-transport.version>20230508100903_0aa6729</bidrag-transport.version>
+    <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
+    <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
+    <bidrag-dokument-dto.version>1.6.33</bidrag-dokument-dto.version>
+    <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
+    <checker-qual.version>3.34.0</checker-qual.version>
+    <classgraph.version>4.8.158</classgraph.version>
+    <commons-cli.version>1.5.0</commons-cli.version>
+    <flyway-maven-plugin.version>9.16.3</flyway-maven-plugin.version>
+    <google-auth-library-oauth2-http.version>1.16.1</google-auth-library-oauth2-http.version>
+    <google.error_prone_annotations.version>2.19.1</google.error_prone_annotations.version>
+    <google.gax.version>2.27.0</google.gax.version>
+    <google.http-client.version>1.43.2</google.http-client.version>
+    <google.protobuf-java.version>4.0.0-rc-2</google.protobuf-java.version>
     <google.guava.version>31.1-jre</google.guava.version>
-    <google.common-protos.version>2.9.6</google.common-protos.version>
-    <graalvm.version>22.0.0.2</graalvm.version>
+    <google.common-protos.version>2.18.0</google.common-protos.version>
+    <graalvm.version>22.3.2</graalvm.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
-    <httpclient.version>4.5.14</httpclient.version>
     <java.version>17</java.version>
     <jboss.version>2.2.1.Final</jboss.version>
-    <jetbrains.annotations.version>21.0.1</jetbrains.annotations.version>
-    <kafka-avro-serializer.version>7.2.2</kafka-avro-serializer.version>
+    <jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>
+    <kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
     <modelmapper.version>3.1.1</modelmapper.version>
-    <nimbus-jose-jwt.version>9.25.6</nimbus-jose-jwt.version>
-    <nimbus.oauth2-oidc-sdk.version>10.0</nimbus.oauth2-oidc-sdk.version>
+    <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
+    <nimbus.oauth2-oidc-sdk.version>10.9.1</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
-    <ow2.version>9.3</ow2.version>
-    <scala.version>2.13.6</scala.version>
-    <shedlock.version>4.44.0</shedlock.version>
-    <snappy-java.version>1.1.8.4</snappy-java.version>
-    <spring-cloud-contract-wiremock.version>3.1.5</spring-cloud-contract-wiremock.version>
-    <spring-cloud-gcp.version>3.4.8</spring-cloud-gcp.version>
-    <springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
-    <token-support.version>2.1.9</token-support.version>
+    <ow2.version>9.5</ow2.version>
+    <scala.version>2.13.11-M1</scala.version>
+    <shedlock.version>5.3.0</shedlock.version>
+    <snappy-java.version>1.1.9.1</snappy-java.version>
+    <spring-cloud-contract-wiremock.version>4.0.2</spring-cloud-contract-wiremock.version>
+    <spring-cloud-gcp.version>4.3.1</spring-cloud-gcp.version>
+    <springdoc-openapi-ui.version>2.1.0</springdoc-openapi-ui.version>
+    <token-support.version>3.0.12</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
-    <mockk.version>3.1.2</mockk.version>
-    <kotest.version>5.5.4</kotest.version>
+    <mockk.version>4.0.2</mockk.version>
+    <kotest.version>5.6.2</kotest.version>
     <wiremock-jre8-standalone.version>2.35.0</wiremock-jre8-standalone.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.0</version>
+      </dependency>
       <dependency>
         <groupId>com.google.errorprone</groupId>
         <artifactId>error_prone_annotations</artifactId>
@@ -275,6 +281,11 @@
       <artifactId>bidrag-commons</artifactId>
     </dependency>
     <dependency>
+      <groupId>no.nav.bidrag</groupId>
+      <artifactId>bidrag-transport</artifactId>
+      <version>${bidrag-transport.version}</version>
+    </dependency>
+    <dependency>
       <groupId>no.nav.bidrag.dokument</groupId>
       <artifactId>bidrag-dokument-dto</artifactId>
       <version>${bidrag-dokument-dto.version}</version>
@@ -400,9 +411,8 @@
 
     <!-- diverse -->
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${httpclient.version}</version>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
     </dependency>
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
@@ -433,9 +443,10 @@
       <artifactId>shedlock-provider-jdbc-template</artifactId>
       <version>${shedlock.version}</version>
     </dependency>
+    <!-- swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc-openapi-ui.version}</version>
     </dependency>
     <dependency>
@@ -448,10 +459,6 @@
           <artifactId>swagger-annotations</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.github.ben-manes.caffeine</groupId>
-      <artifactId>caffeine</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate.validator</groupId>
@@ -706,18 +713,16 @@
   </build>
   <repositories>
     <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
+    </repository>
+    <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
-    </repository>
-    <!-- Skal brukes hvis bygget kjøres fra en Github Action -->
-    <repository>
-      <id>github-package-registry-navikt</id>
-      <url>https://maven.pkg.github.com/navikt/maven-release</url>
-    </repository>
-    <!-- Skal brukes hvis bygget kjører utenfor NAV (f.eks. en ekstern maskin, eller Circle CI) -->
-    <repository>
-      <id>external-mirror-github-navikt</id>
-      <url>https://github-package-registry-mirror-sr4qwz23da-ew.a.run.app/cached/maven-release</url>
     </repository>
     <repository>
       <id>confluent</id>

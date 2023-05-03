@@ -27,7 +27,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
 @ActiveProfiles(value = [Profil.TEST, Profil.HENDELSE])
 @EnableMockOAuth2Server

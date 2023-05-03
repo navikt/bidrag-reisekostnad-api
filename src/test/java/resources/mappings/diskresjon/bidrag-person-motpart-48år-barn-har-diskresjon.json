@@ -5,8 +5,7 @@
     "bodyPatterns": [
       {
         "equalToJson": {
-          "ident": "32456849111",
-          "verdi": "32456849111"
+          "ident": "32456849111"
         }
       }
     ]

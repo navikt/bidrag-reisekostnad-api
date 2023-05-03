@@ -2,22 +2,20 @@ package no.nav.bidrag.reisekostnad.konfigurasjon
 
 import no.nav.bidrag.commons.security.service.OidcTokenManager
 import no.nav.bidrag.commons.security.utils.TokenUtils
-import no.nav.bidrag.commons.security.utils.TokenUtils.fetchSubject
-import org.springframework.stereotype.Service
 
 class Tokeninfo {
     companion object {
         private val oidcTokenManager: OidcTokenManager = OidcTokenManager()
         fun erSystembruker(): Boolean {
             return try {
-                TokenUtils.isSystemUser(oidcTokenManager.fetchTokenAsString())
+                TokenUtils.erApplikasjonsbruker()
             } catch (e: Exception) {
                 false
             }
         }
         fun hentPaaloggetPerson(): String? {
             return try {
-                fetchSubject(oidcTokenManager.fetchTokenAsString())
+                TokenUtils.hentBruker()
             } catch (e: Exception) {
                 null
             }

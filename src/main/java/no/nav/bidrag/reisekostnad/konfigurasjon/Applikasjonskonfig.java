@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -48,7 +47,7 @@ public class Applikasjonskonfig {
 
   public static final String ISSUER_TOKENX = "tokenx";
   public static final Logger SIKKER_LOGG = LoggerFactory.getLogger("secureLogger");
-  public static final int FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING = 30;
+  public static final long FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING = 30L;
 
   @Bean
   public OpenAPI openAPI() {

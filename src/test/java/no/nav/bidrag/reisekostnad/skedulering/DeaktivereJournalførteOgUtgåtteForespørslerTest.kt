@@ -29,24 +29,24 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
     fun skalDeaktivereJournalførtForespørsel() {
 
         // gitt
-        var journalførtForespørsel = opppretteForespørsel(true)
+        val journalførtForespørsel = opppretteForespørsel(true)
 
         journalførtForespørsel.opprettet = LocalDateTime.now()
-            .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 13)
+            .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING + 13)
         journalførtForespørsel.journalført =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong())
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING)
                 .atStartOfDay()
 
-        var lagretForespørsel = forespørselDao.save(journalførtForespørsel)
+        val lagretForespørsel = forespørselDao.save(journalførtForespørsel)
 
         every { brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(any(), any(), any()) } returns Unit
         every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns true
 
         // hvis
-        databehandler.deaktivereJournalførteOgUtgåtteForespørsler();
+        databehandler.deaktivereJournalførteOgUtgåtteForespørsler()
 
         // så
-        var deaktivertForespørsel = forespørselDao.findById(lagretForespørsel.id);
+        val deaktivertForespørsel = forespørselDao.findById(lagretForespørsel.id)
 
         assertSoftly {
             assertThat(deaktivertForespørsel.isPresent)
@@ -60,23 +60,23 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
     fun skalDeaktivereForespørselMedUtløptSamtykkefrist() {
 
         // gitt
-        var forespørselMedUtløptSamtykkefrist = opppretteForespørsel(true)
+        val forespørselMedUtløptSamtykkefrist = opppretteForespørsel(true)
         forespørselMedUtløptSamtykkefrist.opprettet =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING + 1)
                 .atStartOfDay()
 
-        var lagretForespørsel = forespørselDao.save(forespørselMedUtløptSamtykkefrist)
+        val lagretForespørsel = forespørselDao.save(forespørselMedUtløptSamtykkefrist)
 
-        var eventId = UUID.randomUUID().toString();
-        var samtykkeoppgave = Oppgavebestilling.builder().eventId(eventId).forespørsel(lagretForespørsel)
-            .forelder(lagretForespørsel.motpart).build();
-        oppgavebestillingDao.save(samtykkeoppgave);
+        val eventId = UUID.randomUUID().toString()
+        val samtykkeoppgave = Oppgavebestilling.builder().eventId(eventId).forespørsel(lagretForespørsel)
+            .forelder(lagretForespørsel.motpart).build()
+        oppgavebestillingDao.save(samtykkeoppgave)
 
         // hvis
-        databehandler.deaktivereJournalførteOgUtgåtteForespørsler();
+        databehandler.deaktivereJournalførteOgUtgåtteForespørsler()
 
         // så
-        var deaktivertForespørsel = forespørselDao.findById(lagretForespørsel.id);
+        val deaktivertForespørsel = forespørselDao.findById(lagretForespørsel.id)
 
         assertSoftly {
             assertThat(deaktivertForespørsel.isPresent)
@@ -99,30 +99,30 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
     fun skalSletteSamtykkeoppgaveSelvOmVarslingAvForeldreFeiler() {
 
         // gitt
-        var forespørselMedFeilOgUtløptSamtykkefrist = opppretteForespørsel(true)
+        val forespørselMedFeilOgUtløptSamtykkefrist = opppretteForespørsel(true)
         forespørselMedFeilOgUtløptSamtykkefrist.barn = mutableSetOf(testpersonBarn11, testpersonBarn15_2)
         forespørselMedFeilOgUtløptSamtykkefrist.hovedpart.personident = "123"
         forespørselMedFeilOgUtløptSamtykkefrist.opprettet =
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong() + 1)
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING + 1)
                 .atStartOfDay()
 
-        var lagretForespørselMedFeilOgUtløptSamtykkefrist = forespørselDao.save(forespørselMedFeilOgUtløptSamtykkefrist)
+        val lagretForespørselMedFeilOgUtløptSamtykkefrist = forespørselDao.save(forespørselMedFeilOgUtløptSamtykkefrist)
 
-        var eventId = UUID.randomUUID().toString();
-        var samtykkeoppgave =
+        val eventId = UUID.randomUUID().toString()
+        val samtykkeoppgave =
             Oppgavebestilling.builder().eventId(eventId).forespørsel(lagretForespørselMedFeilOgUtløptSamtykkefrist)
-                .forelder(lagretForespørselMedFeilOgUtløptSamtykkefrist.motpart).build();
+                .forelder(lagretForespørselMedFeilOgUtløptSamtykkefrist.motpart).build()
         oppgavebestillingDao.save(samtykkeoppgave)
 
         every { brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(any(), any(), any()) } returns Unit
         every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns false
 
         // hvis
-        databehandler.deaktivereJournalførteOgUtgåtteForespørsler();
+        databehandler.deaktivereJournalførteOgUtgåtteForespørsler()
 
         // så
-        var deaktivertForespørselMedFeilOgUtløptSamtykkefrist =
-            forespørselDao.findById(lagretForespørselMedFeilOgUtløptSamtykkefrist.id);
+        val deaktivertForespørselMedFeilOgUtløptSamtykkefrist =
+            forespørselDao.findById(lagretForespørselMedFeilOgUtløptSamtykkefrist.id)
 
         assertSoftly {
             assertThat(deaktivertForespørselMedFeilOgUtløptSamtykkefrist.isPresent)
