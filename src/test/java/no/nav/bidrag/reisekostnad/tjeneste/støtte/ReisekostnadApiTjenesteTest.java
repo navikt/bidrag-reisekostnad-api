@@ -87,6 +87,43 @@ public class ReisekostnadApiTjenesteTest {
   }
 
   @Test
+  void skalIkkeOppretteForespørselForKullUtenMotpart() {
+
+      // gitt
+      var hovedpart = testpersonGråtass;
+      var motpart = testpersonStreng;
+      var barnKullA = testpersonBarn10;
+      var brorUtenMor = testpersonBarn16;
+
+      var valgteKrypterteBarn = Set.of(Krypteringsverktøy.kryptere(barnKullA.getIdent()));
+      var familierespons = oppretteHentFamilieRespons(hovedpart, Map.of(motpart, Set.of(barnKullA)));
+
+      // legger til relasjon med barn uten motpart
+      var barnUtenMotpart = MotpartBarnRelasjon.builder().motpart(null)
+            .fellesBarn(Set.of(brorUtenMor).stream().map(this::tilFamiliemedlem).collect(Collectors.toList())).build();
+      familierespons.getPersonensMotpartBarnRelasjon().add(barnUtenMotpart);
+
+      var lagretForespørsel = Forespørsel.builder().id(1)
+            .hovedpart(Forelder.builder().personident(hovedpart.getIdent()).build())
+            .motpart(Forelder.builder().personident(motpart.getIdent()).build())
+            .barn(Set.of(Barn.builder().personident(barnKullA.getIdent()).build()))
+            .build();
+
+      mockHentPersoninfo(Set.of(barnKullA));
+      when(bidragPersonkonsument.hentFamilie(hovedpart.getIdent())).thenReturn(Optional.of(familierespons));
+      when(databasetjeneste.lagreNyForespørsel(hovedpart.getIdent(), motpart.getIdent(), Set.of(barnKullA.getIdent()), true)).thenReturn(lagretForespørsel);
+      doNothing().when(brukernotifikasjonkonsument).oppretteOppgaveTilMotpartOmSamtykke(anyInt(), anyString());
+
+      // hvis
+      var respons = reisekostnadApiTjeneste.oppretteForespørselOmFordelingAvReisekostnader(hovedpart.getIdent(), valgteKrypterteBarn);
+
+      // så
+      verify(brukernotifikasjonkonsument, times(1)).oppretteOppgaveTilMotpartOmSamtykke(1, motpart.getIdent());
+      verify(brukernotifikasjonkonsument, times(1)).varsleOmNyForespørselSomVenterPåSamtykke(hovedpart.getIdent());
+      assertThat(respons.is2xxSuccessful());
+  }
+
+  @Test
   void skalBestilleSlettingAvSamtykkeoppgaveDersomHovedpartTrekkerForespørsel() {
 
     // gitt
