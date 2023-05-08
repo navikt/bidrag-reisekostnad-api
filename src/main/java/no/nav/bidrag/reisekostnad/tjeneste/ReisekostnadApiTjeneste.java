@@ -68,6 +68,7 @@ public class ReisekostnadApiTjeneste {
     validereRelasjonTilBarn(personidenterBarn, familierespons);
 
     familierespons.get().getPersonensMotpartBarnRelasjon().stream().filter(Objects::nonNull)
+        .filter(mbr -> mbr.getMotpart() != null && !StringUtils.isEmpty(mbr.getMotpart().getIdent()))
         .forEach(m -> lagreForespørsel(personidentHovedpart, m.getMotpart().getIdent(), henteUtBarnaSomTilhørerMotpart(m, personidenterBarn)));
 
     return HttpResponse.from(HttpStatus.CREATED);
