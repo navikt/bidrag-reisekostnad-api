@@ -25,7 +25,7 @@
     <!-- PDF -->
     <apache-pdfbox.version>2.0.28</apache-pdfbox.version>
     <openhtml.version>1.0.10</openhtml.version>
-    <jsoup.version>1.15.4</jsoup.version>
+    <jsoup.version>1.16.1</jsoup.version>
 
     <!-- annet -->
     <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
