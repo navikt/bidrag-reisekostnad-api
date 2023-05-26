@@ -8,7 +8,7 @@ import no.nav.bidrag.reisekostnad.verifiserDokumentIkkeArkivertForForespørsel
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @DisplayName("ArkiverSkeduleringTest")
 class ArkiverTest: DatabehandlerTest() {

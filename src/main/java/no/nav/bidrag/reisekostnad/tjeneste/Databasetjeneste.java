@@ -21,8 +21,8 @@ import org.jsoup.helper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

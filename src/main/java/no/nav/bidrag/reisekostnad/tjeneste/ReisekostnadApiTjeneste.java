@@ -56,7 +56,7 @@ public class ReisekostnadApiTjeneste {
     } catch (Valideringsfeil valideringsfeil) {
       log.warn("Pålogget person har diskresjon. Kan ikke bruke løsningen");
     }
-    return HttpResponse.from(HttpStatus.OK, mapper.tilDto(familierespons.get()));
+    return HttpResponse.Companion.from(HttpStatus.OK, mapper.tilDto(familierespons.get()));
   }
 
   public HttpResponse<Void> oppretteForespørselOmFordelingAvReisekostnader(String personidentHovedpart, Set<String> krypterteIdenterBarn) {
@@ -71,7 +71,7 @@ public class ReisekostnadApiTjeneste {
         .filter(mbr -> mbr.getMotpart() != null && !StringUtils.isEmpty(mbr.getMotpart().getIdent()))
         .forEach(m -> lagreForespørsel(personidentHovedpart, m.getMotpart().getIdent(), henteUtBarnaSomTilhørerMotpart(m, personidenterBarn)));
 
-    return HttpResponse.from(HttpStatus.CREATED);
+    return HttpResponse.Companion.from(HttpStatus.CREATED);
   }
 
   public HttpResponse<Void> oppdatereForespørselMedSamtykke(int idForespørsel, String personidentMotpart) {
@@ -79,7 +79,7 @@ public class ReisekostnadApiTjeneste {
     databasetjeneste.giSamtykke(idForespørsel, personidentMotpart);
     sletteSamtykkeoppgave(idForespørsel, personidentMotpart);
     arkiveringstjeneste.arkivereForespørsel(idForespørsel);
-    return HttpResponse.from(HttpStatus.OK, null);
+    return HttpResponse.Companion.from(HttpStatus.OK, null);
   }
 
   public HttpResponse<Void> trekkeForespørsel(int idForespørsel, String personident) {
@@ -98,7 +98,7 @@ public class ReisekostnadApiTjeneste {
     // Motparts samtykkeoppgave skal slettes uavhengig av om det er hovedpart eller motpart som trekker forespørselen
     sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident());
 
-    return HttpResponse.from(HttpStatus.OK, null);
+    return HttpResponse.Companion.from(HttpStatus.OK, null);
   }
 
   private void sletteSamtykkeoppgave(int idForespørsel, String personidentMotpart) {

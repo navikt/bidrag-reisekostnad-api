@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;

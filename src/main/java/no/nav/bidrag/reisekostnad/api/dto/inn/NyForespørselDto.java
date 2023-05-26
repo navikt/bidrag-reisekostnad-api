@@ -3,7 +3,7 @@ package no.nav.bidrag.reisekostnad.api.dto.inn;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 import org.springframework.validation.annotation.Validated;
 

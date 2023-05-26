@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
 import no.nav.bidrag.reisekostnad.database.datamodell.Barn;

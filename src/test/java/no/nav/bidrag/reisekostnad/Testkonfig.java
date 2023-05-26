@@ -1,9 +1,13 @@
 package no.nav.bidrag.reisekostnad;
 
 import com.google.common.net.HttpHeaders;
+import com.nimbusds.jose.JOSEObjectType;
+import java.util.List;
+import java.util.Map;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;

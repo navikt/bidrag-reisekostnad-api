@@ -45,7 +45,7 @@ class Databehandler(
                     if (originalForespørsel.alleBarnHarFylt15år) databasetjeneste.oppdaterForespørselTilÅIkkeKreveSamtykke(originalForespørsel.id)
                     else databasetjeneste.overførBarnSomHarFylt15årTilNyForespørsel(originalForespørsel.id)
                 arkiveringstjeneste.arkivereForespørsel(nyForespørsel.id)
-                log.info("Antall barn i forespørselen som nettopp har fylt 15 år: {}", nyForespørsel.barn.size);
+                log.info("Antall barn i forespørselen som nettopp har fylt 15 år: {}", nyForespørsel.barn.size)
                 brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
                     nyForespørsel.hovedpartIdent, nyForespørsel.motpartIdent, nyForespørsel.barn.stream().findFirst().get().fødselsdato
                 )
@@ -83,20 +83,20 @@ class Databehandler(
             FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
         )
 
-        var antallBarnSomBleAnonymisert = databasetjeneste.anonymisereBarnUtenTilknytningTilAktiveForespørsler();
+        val antallBarnSomBleAnonymisert = databasetjeneste.anonymisereBarnUtenTilknytningTilAktiveForespørsler()
         log.info("Anonymiserte totalt $antallBarnSomBleAnonymisert barn.")
 
-        var antallForeldreSomBleSlettet = databasetjeneste.sletteForeldreUtenTilknytningTilAktiveForespørsler()
+        val antallForeldreSomBleSlettet = databasetjeneste.sletteForeldreUtenTilknytningTilAktiveForespørsler()
         log.info("Slettet totalt $antallForeldreSomBleSlettet foreldre.")
     }
     
     private fun ferdigstilleUtgåtteSamtykkeoppgaver() {
-        var oppgaverSomSkalFerdigstilles = databasetjeneste.henteOppgaverSomSkalFerdigstilles()
+        val oppgaverSomSkalFerdigstilles = databasetjeneste.henteOppgaverSomSkalFerdigstilles()
         log.info("Fant ${oppgaverSomSkalFerdigstilles.size} aktive oppgaver som skal ferdigstilles.")
-        var antallFerdigstilteOppgaver = 0;
+        var antallFerdigstilteOppgaver = 0
 
         oppgaverSomSkalFerdigstilles.forEach {
-            var oppgaveBleFerdigstilt = brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(it.eventId, it.forelder.personident)
+            val oppgaveBleFerdigstilt = brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(it.eventId, it.forelder.personident)
             if (oppgaveBleFerdigstilt) antallFerdigstilteOppgaver++
         }
 
@@ -104,9 +104,9 @@ class Databehandler(
     }
 
     private fun deaktivereJournalførteForespørsler() {
-        var journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(
-            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()), true
-        );
+        val journalførteAktiveForespørsler = databasetjeneste.henteIdTilAktiveForespørsler(
+            LocalDateTime.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING), true
+        )
 
         log.info("Fant ${journalførteAktiveForespørsler.size} journalførte forespørsler som skal deaktiveres.")
 
@@ -116,27 +116,27 @@ class Databehandler(
     }
 
     private fun deaktivereForespørslerMedUtgåttSamtykkefrist() {
-        var iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
-            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay(), false
+        val iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden = databasetjeneste.henteIdTilAktiveForespørsler(
+            LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay(), false
         )
         log.info("Antall forespørsler med utgått samtykkefrist som vil bli forsøkt deaktivert: ${iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size}.")
-        var varselSendt = 0;
+        var varselSendt = 0
         iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.forEach { id ->
-            var forespørsel = databasetjeneste.henteAktivForespørsel(id);
+            val forespørsel = databasetjeneste.henteAktivForespørsel(id)
 
-            var samtykketidspunkt = forespørsel.samtykket;
+            val samtykketidspunkt = forespørsel.samtykket
             if (forespørsel.journalført == null || samtykketidspunkt == null || LocalDate.now()
-                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING.toLong()).atStartOfDay().isAfter(samtykketidspunkt)
+                    .minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING).atStartOfDay().isAfter(samtykketidspunkt)
             ) {
-                databasetjeneste.deaktivereForespørsel(id, null);
+                databasetjeneste.deaktivereForespørsel(id, null)
                 try {
                     brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(
                         forespørsel.hovedpartIdent, forespørsel.motpartIdent, forespørsel.opprettet.toLocalDate()
                     )
-                    varselSendt++;
+                    varselSendt++
                 } catch (e: Exception) {
-                    e.printStackTrace();
-                    log.error("En feil oppstod ved varsling om manglende samtykke av forespørsel {}", forespørsel.id);
+                    e.printStackTrace()
+                    log.error("En feil oppstod ved varsling om manglende samtykke av forespørsel {}", forespørsel.id)
                 }
             }
             ferdiglogg(varselSendt, iderTilAktiveForespørslerOpprettetForMinstXAntallDagerSiden.size)
@@ -144,9 +144,9 @@ class Databehandler(
     }
 
     private fun ferdiglogg(varselSendt: Int, antallVurderteForespørsler: Int) {
-        var alleForeldreBleVarslet = varselSendt == antallVurderteForespørsler
-        var loggStrengDeaktivert = "Alle de ${antallVurderteForespørsler} forespørslene med utgått samtykkefrist ble deaktivert."
-        var loggstreng = if (alleForeldreBleVarslet) "$loggStrengDeaktivert Samtlige foreldre ble varslet."
+        val alleForeldreBleVarslet = varselSendt == antallVurderteForespørsler
+        val loggStrengDeaktivert = "Alle de ${antallVurderteForespørsler} forespørslene med utgått samtykkefrist ble deaktivert."
+        val loggstreng = if (alleForeldreBleVarslet) "$loggStrengDeaktivert Samtlige foreldre ble varslet."
         else "$loggStrengDeaktivert Foreldrene ble varslet for $varselSendt av $antallVurderteForespørsler.size forespørsler"
 
         if (antallVurderteForespørsler > 0) log.info(loggstreng)

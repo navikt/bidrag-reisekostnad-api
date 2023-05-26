@@ -6,14 +6,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
-
-  Set<Forespørsel> findAll();
+public interface ForespørselDao extends JpaRepository<Forespørsel, Integer> {
 
   @Query("select f from Forespørsel f where f.hovedpart.personident = :personidentHovedpart and f.anonymisert is null")
   Set<Forespørsel> henteForespørslerForHovedpart(String personidentHovedpart);
@@ -35,11 +33,11 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
   Set<Integer> henteAktiveOgSamtykkedeForespørslerSomErKlareForInnsending();
 
   @Query("select f.id from Forespørsel  f "
-      + "where f.deaktivert is null and f.samtykket is null and f.journalført is null and f.kreverSamtykke is false")
+      + "where f.deaktivert is null and f.samtykket is null and f.journalført is null and f.kreverSamtykke = false")
   Set<Integer> henteAktiveForespørslerSomIkkeKreverSamtykkOgErKlareForInnsending();
 
   @Query("select f from Forespørsel f inner join f.barn b "
-      + "where f.deaktivert is null and f.kreverSamtykke is true and f.samtykket is null and b.fødselsdato <= :date")
+      + "where f.deaktivert is null and f.kreverSamtykke = true and f.samtykket is null and b.fødselsdato <= :date")
   Set<Forespørsel> henteForespørslerSomKreverSamtykkeOgInneholderBarnFødtSammeDagEllerEtterDato(LocalDate date);
 
   default Set<Forespørsel> henteSynligeForespørslerForHovedpart(String personident, LocalDateTime deaktivertEtter) {
@@ -57,9 +55,7 @@ public interface ForespørselDao extends CrudRepository<Forespørsel, Integer> {
     var journalført = forespørsel.getJournalført();
     var deaktivert = forespørsel.getDeaktivert();
 
-    var erSynlig = (journalført == null && (deaktivert == null || deaktivert.isAfter(deaktivertEtter))
+    return (journalført == null && (deaktivert == null || deaktivert.isAfter(deaktivertEtter))
         || !(journalført != null && deaktivert != null));
-
-    return erSynlig;
   }
 }
