@@ -10,7 +10,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.reisekostnad.api.dto.ut.PersonDto
 import no.nav.bidrag.reisekostnad.database.datamodell.Barn
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder
@@ -45,8 +45,8 @@ class ArkiveringTjenesteTest {
     // TESTDATA
     private val hovedpartFodselsdato = LocalDate.parse("2022-01-02")
     private val motpartFodselsdato = LocalDate.parse("2022-01-02")
-    private val identHovedpart = "123213213";
-    private val identMotpart = "3541555";
+    private val identHovedpart = "123213213"
+    private val identMotpart = "3541555"
 
     private val identBarn1 = "565551251"
     private val identBarn2 = "41244124"

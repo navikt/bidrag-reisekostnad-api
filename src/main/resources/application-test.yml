@@ -1,7 +1,7 @@
 AZURE_APP_TENANT_ID: tokenx
 TOKEN_X_CLIENT_ID: tokenx
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:${mock-oauth2-server.port}/aad/token
-TOKEN_X_WELL_KNOWN_URL: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
+TOKEN_X_WELL_KNOWN_URL: http://localhost:${mock-oauth2-server.port}/aad/.well-known/openid-configuration
 
 no.nav.security.jwt:
   client.registration:
