@@ -30,7 +30,7 @@
 
     <!-- annet -->
     <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
-    <bidrag-transport.version>1.0-SNAPSHOT</bidrag-transport.version>
+    <bidrag-transport.version>20230629172756_50f76f5</bidrag-transport.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
     <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
