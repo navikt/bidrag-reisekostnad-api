@@ -62,7 +62,7 @@
     <snappy-java.version>1.1.9.1</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.0.2</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>4.3.1</spring-cloud-gcp.version>
-    <springdoc-openapi-ui.version>2.1.0</springdoc-openapi-ui.version>
+    <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
     <token-support.version>3.0.12</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
