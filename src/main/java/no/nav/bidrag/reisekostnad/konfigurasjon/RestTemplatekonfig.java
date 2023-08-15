@@ -58,19 +58,6 @@ public class RestTemplatekonfig {
 
   @Bean
   @Scope("prototype")
-  @Qualifier("bidrag-person")
-  public HttpHeaderRestTemplate bidragPersonRestTemplate(
-      @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
-      HttpHeaderRestTemplate httpHeaderRestTemplate,
-      ClientHttpRequestInterceptor tokenxInterceptor) {
-
-    httpHeaderRestTemplate.getInterceptors().add(tokenxInterceptor);
-    httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
-    return httpHeaderRestTemplate;
-  }
-
-  @Bean
-  @Scope("prototype")
   @Qualifier("bidrag-person-azure-client-credentials")
   public HttpHeaderRestTemplate bidragPersonAzureCCRestTemplate(
       @Value("${integrasjon.bidrag.person.url}") String urlBidragPerson,
