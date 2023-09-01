@@ -41,6 +41,7 @@
     <commons-io.version>2.13.0</commons-io.version>
     <flyway-maven-plugin.version>9.16.3</flyway-maven-plugin.version>
     <google-auth-library-oauth2-http.version>1.16.1</google-auth-library-oauth2-http.version>
+    <google-auto-value-annotations.version>1.10.2</google-auto-value-annotations.version>
     <google.error_prone_annotations.version>2.19.1</google.error_prone_annotations.version>
     <google.gax.version>2.27.0</google.gax.version>
     <google.http-client.version>1.43.2</google.http-client.version>
@@ -63,7 +64,7 @@
     <shedlock.version>5.6.0</shedlock.version>
     <snappy-java.version>1.1.10.1</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.0.2</spring-cloud-contract-wiremock.version>
-    <spring-cloud-gcp.version>4.6.0</spring-cloud-gcp.version>
+    <spring-cloud-gcp.version>4.7.1</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
     <token-support.version>3.1.1</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
@@ -78,6 +79,11 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auto.value</groupId>
+        <artifactId>auto-value-annotations</artifactId>
+        <version>${google-auto-value-annotations.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.errorprone</groupId>
@@ -262,7 +268,7 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
-        <version>3.0.5</version>
+        <version>3.8.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
