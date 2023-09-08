@@ -70,7 +70,7 @@
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
     <kotest.version>5.6.2</kotest.version>
-    <wiremock-jre8-standalone.version>2.35.0</wiremock-jre8-standalone.version>
+    <wiremock-jre8-standalone.version>2.35.1</wiremock-jre8-standalone.version>
   </properties>
 
   <dependencyManagement>
