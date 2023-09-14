@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: "read"
       id-token: "write"
+      packages: "read"
     name: Bygg app/image, push til github, deploy til prod-gcp
     runs-on: ubuntu-latest
     steps:

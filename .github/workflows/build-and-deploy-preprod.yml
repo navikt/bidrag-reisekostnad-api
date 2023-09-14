@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: "read"
       id-token: "write"
+      packages: "read"
     if: github.event.pull_request.draft == false
     name: Build and push
     runs-on: ubuntu-latest
