@@ -30,9 +30,10 @@
 
     <!-- annet -->
     <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
-    <bidrag-transport.version>20230508100903_0aa6729</bidrag-transport.version>
+    <bidrag-transport.version>20230913123350_85731cf</bidrag-transport.version>
+    <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
-    <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
+    <bidrag-commons.version>20230816111838_f404b39</bidrag-commons.version>
     <bidrag-dokument-dto.version>1.6.33</bidrag-dokument-dto.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.34.0</checker-qual.version>
@@ -285,6 +286,16 @@
         <artifactId>maven-plugin-api</artifactId>
         <version>3.0.5</version>
       </dependency>
+      <dependency>
+        <groupId>no.nav.bidrag</groupId>
+        <artifactId>bidrag-domain</artifactId>
+        <version>${bidrag-domain.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>no.nav.bidrag</groupId>
+        <artifactId>bidrag-transport</artifactId>
+        <version>${bidrag-transport.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -295,8 +306,11 @@
     </dependency>
     <dependency>
       <groupId>no.nav.bidrag</groupId>
+      <artifactId>bidrag-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-transport</artifactId>
-      <version>${bidrag-transport.version}</version>
     </dependency>
     <dependency>
       <groupId>no.nav.bidrag.dokument</groupId>
@@ -728,22 +742,24 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
-    </repository>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-    <repository>
-      <id>confluent</id>
-      <url>https://packages.confluent.io/maven/</url>
-    </repository>
-  </repositories>
+  <profiles>
+    <profile>
+      <id>local</id>
+      <activation>
+        <os>
+          <name>Mac OS X</name>
+        </os>
+      </activation>
+      <repositories>
+        <repository>
+          <id>nexus-internal-release</id>
+          <url>https://repo.adeo.no/repository/maven-release</url>
+        </repository>
+        <repository>
+          <id>nexus-internal-mirror</id>
+          <url>https://repo.adeo.no/repository/maven-public</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 </project>

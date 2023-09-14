@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Bygg med maven
-        run: mvn install -B -e
+        run: mvn install -B -e --settings .m2/maven-settings.xml
       - uses: nais/docker-build-push@v0
         id: docker-push
         with:
