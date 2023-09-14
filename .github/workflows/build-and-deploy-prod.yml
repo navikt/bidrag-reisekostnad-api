@@ -5,7 +5,7 @@ on:
       - main
 env:
   GITHUB_USERNAME: x-access-token
-  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   deploy-to-prod:
     permissions:
