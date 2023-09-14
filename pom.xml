@@ -33,7 +33,7 @@
     <bidrag-transport.version>20230913123350_85731cf</bidrag-transport.version>
     <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
-    <bidrag-commons.version>20230816111838_f404b39</bidrag-commons.version>
+    <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
     <bidrag-dokument-dto.version>1.6.33</bidrag-dokument-dto.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.34.0</checker-qual.version>
