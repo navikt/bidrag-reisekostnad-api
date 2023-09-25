@@ -63,7 +63,7 @@
     <ow2.version>9.5</ow2.version>
     <scala.version>2.13.11-M1</scala.version>
     <shedlock.version>5.6.0</shedlock.version>
-    <snappy-java.version>1.1.10.1</snappy-java.version>
+    <snappy-java.version>1.1.10.4</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.0.2</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>4.7.2</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
