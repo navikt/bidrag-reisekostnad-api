@@ -40,7 +40,7 @@
     <classgraph.version>4.8.158</classgraph.version>
     <commons-cli.version>1.5.0</commons-cli.version>
     <commons-io.version>2.13.0</commons-io.version>
-    <flyway-maven-plugin.version>9.16.3</flyway-maven-plugin.version>
+    <flyway-maven-plugin.version>9.22.2</flyway-maven-plugin.version>
     <google-auth-library-oauth2-http.version>1.16.1</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.2</google-auto-value-annotations.version>
     <google.error_prone_annotations.version>2.19.1</google.error_prone_annotations.version>
