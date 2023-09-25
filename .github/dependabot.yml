@@ -13,7 +13,7 @@ updates:
       interval: daily
     open-pull-requests-limit: 10
     registries:
-      - bidrag-person-hendelse
+      - bidrag-reisekostnad-api
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
