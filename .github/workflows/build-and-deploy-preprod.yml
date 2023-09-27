@@ -12,12 +12,11 @@ jobs:
     permissions:
       contents: "read"
       id-token: "write"
-      packages: "read"
     if: github.event.pull_request.draft == false
     name: Build and push
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-java@v3
@@ -31,9 +30,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: navikt/bidrag-maven/setup@v7.0.5
-        with:
-          repositories: maven-central=https://repo.maven.apache.org/maven2,github-packages=https://maven.pkg.github.com/navikt/maven-release
       - name: Bygg med maven
         run: mvn install -B -e --settings .m2/maven-settings.xml
       - uses: nais/docker-build-push@v0
@@ -50,7 +46,7 @@ jobs:
     needs: build-dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: deploy
       - name: Deploy til dev-gcp
