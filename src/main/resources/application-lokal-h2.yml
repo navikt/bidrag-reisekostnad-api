@@ -62,7 +62,7 @@ spring:
   ### H2 ###
   flyway.enabled: false
   datasource.url: jdbc:h2:mem:default
-  spring.datasource.initialization-mode: always
+  spring.init-mode: always
   data.jpa.repositories.bootstrap-mode: default
   h2.console.enabled: true
   jpa.hibernate.ddl-auto: create-drop
