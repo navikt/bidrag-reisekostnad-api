@@ -38,7 +38,7 @@ spec:
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: /internal/prometheus
+    path: /internal/actuator/prometheus
   replicas:
     min: 2
     max: 2

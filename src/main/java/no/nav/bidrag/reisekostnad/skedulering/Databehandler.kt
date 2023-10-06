@@ -1,5 +1,7 @@
 package no.nav.bidrag.reisekostnad.skedulering
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument
@@ -20,7 +22,8 @@ private val log = KotlinLogging.logger {}
 class Databehandler(
     private val arkiveringstjeneste: Arkiveringstjeneste,
     private val brukernotifikasjonkonsument: Brukernotifikasjonkonsument,
-    private val databasetjeneste: Databasetjeneste
+    private val databasetjeneste: Databasetjeneste,
+    private val meterRegistry: MeterRegistry
 ) {
     @Scheduled(cron = "\${kjøreplan.databehandling.arkivere}")
     @SchedulerLock(name = "forespørsel_til_arkiv", lockAtLeastFor = "PT5M", lockAtMostFor = "PT14M")
