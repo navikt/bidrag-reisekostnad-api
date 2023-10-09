@@ -14,6 +14,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -41,6 +43,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +52,7 @@ public class ReisekostnadApiTjenesteTest {
 
   private @Mock BidragPersonkonsument bidragPersonkonsument;
   private @Mock Brukernotifikasjonkonsument brukernotifikasjonkonsument;
+  private @Spy MeterRegistry meterRegistry = new SimpleMeterRegistry();
   private @Mock Arkiveringstjeneste arkiveringstjeneste;
   private @Mock Databasetjeneste databasetjeneste;
   private @Mock Mapper mapper;

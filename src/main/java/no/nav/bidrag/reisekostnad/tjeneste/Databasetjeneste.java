@@ -1,5 +1,7 @@
 package no.nav.bidrag.reisekostnad.tjeneste;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.database.dao.BarnDao;
 import no.nav.bidrag.reisekostnad.database.dao.ForelderDao;
@@ -41,15 +43,17 @@ public class Databasetjeneste {
     private ForelderDao forelderDao;
     private ForespørselDao forespørselDao;
     private OppgavebestillingDao oppgavebestillingDao;
+    private MeterRegistry meterRegistry;
     private Mapper mapper;
 
     @Autowired
     public Databasetjeneste(BarnDao barnDao, ForelderDao forelderDao, ForespørselDao forespørselDao, OppgavebestillingDao oppgavebestillingDao,
-                            Mapper mapper) {
+        MeterRegistry meterRegistry, Mapper mapper) {
         this.barnDao = barnDao;
         this.forelderDao = forelderDao;
         this.forespørselDao = forespørselDao;
         this.oppgavebestillingDao = oppgavebestillingDao;
+        this.meterRegistry = meterRegistry;
         this.mapper = mapper;
     }
 
@@ -58,6 +62,7 @@ public class Databasetjeneste {
         var originalForespørsel = henteAktivForespørsel(forespørselId);
         if (ForespørselUtvidelserKt.getAlleBarnHarFylt15år(originalForespørsel)) {
             originalForespørsel.setKreverSamtykke(false);
+            countForespørselIkkeKreverSamtykke();
             log.info("Forespørsel med id {} ble endret til å ikke kreve samtykke", forespørselId);
         }
 
@@ -108,6 +113,7 @@ public class Databasetjeneste {
                 .motpart(eksisterendeMotpart.orElseGet(() -> Forelder.builder().personident(motpart).build())).barn(mapper.tilEntitet(identerBarn))
                 .kreverSamtykke(kreverSamtykke).samtykkefrist(samtykkefrist).build();
 
+        countReisekostnadOpprettet(kreverSamtykke, identerBarn.size());
         return forespørselDao.save(nyForespørsel);
     }
 
@@ -119,6 +125,7 @@ public class Databasetjeneste {
             var nå = LocalDateTime.now();
             SIKKER_LOGG.info("Motpart (ident: {}) samtykker til fordeling av reisekostnader relatert til forespørsel id {}", personident, idForespørsel);
             forespørsel.setSamtykket(nå);
+            countForespørselGittSamtykke();
         } else {
             log.warn("Fant ikke forespørsel med id {}. Får ikke gitt samtykke.", idForespørsel);
             throw new Valideringsfeil(Feilkode.VALIDERING_SAMTYKKE_MOTPART);
@@ -141,6 +148,7 @@ public class Databasetjeneste {
             SIKKER_LOGG.info("Forelder med ident: {} deaktiverer forespørsel med id {}", personident, idForespørsel);
             forespørsel.setDeaktivert(nå);
             forespørsel.setDeaktivertAv(deaktivertAv);
+            countForespørselDeaktivert(deaktiveresAvSystem);
             return forespørsel;
         } else {
             throw new Valideringsfeil(Feilkode.VALIDERING_DEAKTIVERE_PERSON_IKKE_PART_I_FORESPØRSEL);
@@ -308,5 +316,32 @@ public class Databasetjeneste {
             SIKKER_LOGG.error("Validering av forespørsel med id {} feilet. Feilmelding: {}", forespørsel.getId(), ve.getMessage());
             throw new InternFeil(Feilkode.DATAFEIL, ve);
         }
+    }
+
+    private void countForespørselDeaktivert(Boolean deaktivertAvSystem) {
+        Counter.builder("reisekostnad_foresporsel_deaktivert")
+            .description("Teller antall forespørsler av reisekostnad deaktivert")
+            .tag("deaktivert_av_system", deaktivertAvSystem ? "true" : "false")
+            .register(meterRegistry).increment();
+    }
+
+    private void countForespørselIkkeKreverSamtykke() {
+        Counter.builder("reisekostnad_foresporsel_ikke_krever_samtykke")
+            .description("Teller antall forespørsler av reisekostnad som ikke krever samtykke lenger pga at barn har fylt 15 år")
+            .register(meterRegistry).increment();
+    }
+
+    private void countForespørselGittSamtykke() {
+        Counter.builder("reisekostnad_foresporsel_gitt_samtykke")
+            .description("Teller antall forespørsler av reisekostnad som hvor det er gitt samtykke")
+            .register(meterRegistry).increment();
+    }
+
+    private void countReisekostnadOpprettet(Boolean kreverSamtykke, Integer antallBarn){
+        Counter.builder("reisekostnad_opprettet")
+            .description("Teller antall reisekostnad som er opprettet")
+            .tag("krever_samtykke", kreverSamtykke ? "true" : "false")
+            .tag("antall_barn", antallBarn.toString())
+            .register(meterRegistry).increment();
     }
 }

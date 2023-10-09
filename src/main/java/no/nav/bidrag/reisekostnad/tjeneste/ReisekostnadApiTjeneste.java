@@ -1,5 +1,7 @@
 package no.nav.bidrag.reisekostnad.tjeneste;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class ReisekostnadApiTjeneste {
   private final BidragPersonkonsument bidragPersonkonsument;
   private final Brukernotifikasjonkonsument brukernotifikasjonkonsument;
   private final Databasetjeneste databasetjeneste;
+  private final MeterRegistry meterRegistry;
   private final Mapper mapper;
 
   @Autowired
@@ -41,11 +44,12 @@ public class ReisekostnadApiTjeneste {
       BidragPersonkonsument bidragPersonkonsument,
       Brukernotifikasjonkonsument brukernotifikasjonkonsument,
       Databasetjeneste databasetjeneste,
-      Mapper mapper) {
+      MeterRegistry meterRegistry, Mapper mapper) {
     this.arkiveringstjeneste = arkiveringstjeneste;
     this.bidragPersonkonsument = bidragPersonkonsument;
     this.brukernotifikasjonkonsument = brukernotifikasjonkonsument;
     this.databasetjeneste = databasetjeneste;
+    this.meterRegistry = meterRegistry;
     this.mapper = mapper;
   }
 
@@ -98,6 +102,7 @@ public class ReisekostnadApiTjeneste {
     // Motparts samtykkeoppgave skal slettes uavhengig av om det er hovedpart eller motpart som trekker forespørselen
     sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident());
 
+    countReisekostnadTrukket();
     return HttpResponse.Companion.from(HttpStatus.OK, null);
   }
 
@@ -207,5 +212,11 @@ public class ReisekostnadApiTjeneste {
 
   private String dekryptere(String kryptertPersonident) {
     return Krypteringsverktøy.dekryptere(kryptertPersonident);
+  }
+
+  private void countReisekostnadTrukket(){
+    Counter.builder("reisekostnad_trukket")
+        .description("Teller antall reisekostnader som er trukket")
+        .register(meterRegistry).increment();
   }
 }
