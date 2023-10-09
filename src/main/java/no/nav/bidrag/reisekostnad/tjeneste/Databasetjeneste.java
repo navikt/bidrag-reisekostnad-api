@@ -332,7 +332,7 @@ public class Databasetjeneste {
     }
 
     private void countForespørselGittSamtykke() {
-        Counter.builder("reisekostnad_foresporsel_gittr_samtykke")
+        Counter.builder("reisekostnad_foresporsel_gitt_samtykke")
             .description("Teller antall forespørsler av reisekostnad som hvor det er gitt samtykke")
             .register(meterRegistry).increment();
     }
