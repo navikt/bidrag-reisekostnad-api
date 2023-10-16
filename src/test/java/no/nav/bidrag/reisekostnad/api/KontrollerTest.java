@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Value;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
-import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest;
+import no.nav.bidrag.transport.dokument.OpprettJournalpostRequest;
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon;
 import no.nav.bidrag.reisekostnad.StubsKt;
 import no.nav.bidrag.reisekostnad.Testkonfig;

@@ -10,7 +10,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.reisekostnad.api.dto.ut.PersonDto
 import no.nav.bidrag.reisekostnad.database.datamodell.Barn
 import no.nav.bidrag.reisekostnad.database.datamodell.Forelder

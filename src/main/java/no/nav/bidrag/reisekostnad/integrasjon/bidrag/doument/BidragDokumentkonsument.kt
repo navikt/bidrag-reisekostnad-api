@@ -1,10 +1,10 @@
 package no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument
 
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.JournalpostType
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
+import no.nav.bidrag.transport.dokument.JournalpostType
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettJournalpostRequest
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.reisekostnad.feilhåndtering.Arkiveringsfeil
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode
 import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG
@@ -16,7 +16,6 @@ import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 
 @Component
