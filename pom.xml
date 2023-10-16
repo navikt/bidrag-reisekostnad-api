@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.6</version>
+    <version>3.1.4</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -15,7 +15,7 @@
   <description>bidrag-reiesekostnader-api</description>
 
   <properties>
-    <kotlin.version>1.8.21</kotlin.version>
+    <kotlin.version>1.9.10</kotlin.version>
     <!-- bygg -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
@@ -29,12 +29,10 @@
     <jsoup.version>1.16.1</jsoup.version>
 
     <!-- annet -->
-    <bidrag-tilgangskontroll.version>1.10.4</bidrag-tilgangskontroll.version>
-    <bidrag-transport.version>20230913123350_85731cf</bidrag-transport.version>
+    <bidrag-transport.version>20231010134706_52d8d27</bidrag-transport.version>
     <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
     <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
-    <bidrag-dokument-dto.version>1.6.33</bidrag-dokument-dto.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.34.0</checker-qual.version>
     <classgraph.version>4.8.162</classgraph.version>
@@ -312,21 +310,6 @@
       <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-transport</artifactId>
     </dependency>
-    <dependency>
-      <groupId>no.nav.bidrag.dokument</groupId>
-      <artifactId>bidrag-dokument-dto</artifactId>
-      <version>${bidrag-dokument-dto.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springdoc</groupId>
-          <artifactId>springdoc-openapi-ui</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springdoc</groupId>
-          <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <!-- spring -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -408,17 +391,6 @@
         <exclusion>
           <groupId>io.github.microutils</groupId>
           <artifactId>kotlin-logging-jvm</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>no.nav.bidrag</groupId>
-      <artifactId>bidrag-tilgangskontroll</artifactId>
-      <version>${bidrag-tilgangskontroll.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>no.nav.security</groupId>
-          <artifactId>token-validation-spring</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.time.LocalDate;
 import java.util.Set;
-import no.nav.bidrag.dokument.dto.JournalpostType;
+import no.nav.bidrag.transport.dokument.JournalpostType;
 import no.nav.bidrag.reisekostnad.StubsKt;
 import no.nav.bidrag.reisekostnad.api.dto.inn.NyForespørselDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.BrukerinformasjonDto;
