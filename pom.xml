@@ -19,7 +19,7 @@
     <!-- bygg -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
-    <build-helper-maven.version>3.3.0</build-helper-maven.version>
+    <build-helper-maven.version>3.4.0</build-helper-maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
