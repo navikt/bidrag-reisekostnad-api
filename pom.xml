@@ -35,24 +35,24 @@
     <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.34.0</checker-qual.version>
-    <classgraph.version>4.8.162</classgraph.version>
-    <commons-cli.version>1.5.0</commons-cli.version>
+    <classgraph.version>4.8.164</classgraph.version>
+    <commons-cli.version>1.6.0</commons-cli.version>
     <commons-io.version>2.14.0</commons-io.version>
     <flyway-maven-plugin.version>9.22.2</flyway-maven-plugin.version>
     <google-auth-library-oauth2-http.version>1.20.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.2</google-auto-value-annotations.version>
     <google-api-client.version>2.1.2</google-api-client.version>
-    <google.error_prone_annotations.version>2.22.0</google.error_prone_annotations.version>
+    <google.error_prone_annotations.version>2.23.0</google.error_prone_annotations.version>
     <google.gax.version>2.27.0</google.gax.version>
     <google.http-client.version>1.43.3</google.http-client.version>
     <google.protobuf-java.version>4.0.0-rc-2</google.protobuf-java.version>
     <google.guava.version>32.1.3-jre</google.guava.version>
     <google.j2objc-annotations.version>2.8</google.j2objc-annotations.version>
     <google.common-protos.version>2.26.0</google.common-protos.version>
-    <graalvm.version>23.1.0</graalvm.version>
+    <graalvm.version>23.1.1</graalvm.version>
     <apache-httpclient.version>4.5.14</apache-httpclient.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
     <jboss.version>2.2.1.Final</jboss.version>
     <jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
@@ -65,7 +65,7 @@
     <shedlock.version>5.9.1</shedlock.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <snappy-java.version>1.1.10.5</snappy-java.version>
-    <spring-cloud-contract-wiremock.version>4.0.2</spring-cloud-contract-wiremock.version>
+    <spring-cloud-contract-wiremock.version>4.0.4</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>4.8.2</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
     <token-support.version>3.1.7</token-support.version>
