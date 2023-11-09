@@ -24,7 +24,7 @@ spec:
           kind: Project
         role: roles/cloudsql.client
     sqlInstances:
-      - type: POSTGRES_14
+      - type: POSTGRES_15
         databases:
           - name: reisekostnad-preprod
             envVarPrefix: DB
