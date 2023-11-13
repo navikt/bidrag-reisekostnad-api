@@ -60,7 +60,7 @@
     <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
     <nimbus.oauth2-oidc-sdk.version>11.2</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
-    <ow2.version>9.5</ow2.version>
+    <ow2.version>9.6</ow2.version>
     <scala.version>2.13.12</scala.version>
     <shedlock.version>5.9.1</shedlock.version>
     <snakeyaml.version>2.2</snakeyaml.version>
