@@ -40,7 +40,7 @@
     <commons-io.version>2.14.0</commons-io.version>
     <flyway-maven-plugin.version>9.22.2</flyway-maven-plugin.version>
     <google-auth-library-oauth2-http.version>1.20.0</google-auth-library-oauth2-http.version>
-    <google-auto-value-annotations.version>1.10.2</google-auto-value-annotations.version>
+    <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.1.2</google-api-client.version>
     <google.error_prone_annotations.version>2.23.0</google.error_prone_annotations.version>
     <google.gax.version>2.27.0</google.gax.version>
@@ -58,11 +58,11 @@
     <kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
     <modelmapper.version>3.2.0</modelmapper.version>
     <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
-    <nimbus.oauth2-oidc-sdk.version>11.2</nimbus.oauth2-oidc-sdk.version>
+    <nimbus.oauth2-oidc-sdk.version>11.6</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
-    <ow2.version>9.5</ow2.version>
+    <ow2.version>9.6</ow2.version>
     <scala.version>2.13.12</scala.version>
-    <shedlock.version>5.9.1</shedlock.version>
+    <shedlock.version>5.10.0</shedlock.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <snappy-java.version>1.1.10.5</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.0.4</spring-cloud-contract-wiremock.version>
@@ -280,7 +280,7 @@
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>maven-shared-utils</artifactId>
-        <version>3.4.2</version>
+        <version>3.4.4</version>
       </dependency>
       <dependency>
         <groupId>org.sonatype.sisu</groupId>
