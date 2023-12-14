@@ -66,12 +66,12 @@
     <snakeyaml.version>2.2</snakeyaml.version>
     <snappy-java.version>1.1.10.5</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.0.4</spring-cloud-contract-wiremock.version>
-    <spring-cloud-gcp.version>4.8.2</spring-cloud-gcp.version>
+    <spring-cloud-gcp.version>4.8.4</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
-    <token-support.version>3.1.7</token-support.version>
+    <token-support.version>3.1.9</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
-    <kotest.version>5.6.2</kotest.version>
+    <kotest.version>5.8.0</kotest.version>
     <wiremock-jre8-standalone.version>2.35.1</wiremock-jre8-standalone.version>
   </properties>
 
@@ -285,7 +285,7 @@
       <dependency>
         <groupId>org.sonatype.sisu</groupId>
         <artifactId>sisu-inject-plexus</artifactId>
-        <version>2.2.3</version>
+        <version>2.6.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
