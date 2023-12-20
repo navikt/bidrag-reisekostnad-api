@@ -31,7 +31,6 @@
     <!-- annet -->
     <bidrag-transport.version>20231010134706_52d8d27</bidrag-transport.version>
     <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
-    <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
     <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.34.0</checker-qual.version>
@@ -527,11 +526,6 @@
 
 
     <!-- test -->
-    <dependency>
-      <groupId>.no.nav.bidrag</groupId>
-      <artifactId>bidrag-commons-test</artifactId>
-      <version>${bidrag-commons-test.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
