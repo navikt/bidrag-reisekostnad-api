@@ -38,7 +38,7 @@
     <classgraph.version>4.8.164</classgraph.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-io.version>2.15.1</commons-io.version>
-    <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
+    <flyway.version>10.3.0</flyway.version>
     <google-auth-library-oauth2-http.version>1.20.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.1.2</google-api-client.version>
@@ -405,6 +405,12 @@
 
     <!-- datakilde -->
     <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <version>${flyway.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
       <exclusions>
@@ -417,6 +423,7 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
+      <version>${flyway.version}</version>
       <scope>compile</scope>
     </dependency>
 
@@ -679,7 +686,7 @@
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <version>${flyway-maven-plugin.version}</version>
+        <version>${flyway.version}</version>
       </plugin>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
