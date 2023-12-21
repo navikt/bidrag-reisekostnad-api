@@ -38,7 +38,7 @@
     <classgraph.version>4.8.164</classgraph.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-io.version>2.15.1</commons-io.version>
-    <flyway-maven-plugin.version>9.22.2</flyway-maven-plugin.version>
+    <flyway-maven-plugin.version>10.3.0</flyway-maven-plugin.version>
     <google-auth-library-oauth2-http.version>1.20.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.1.2</google-api-client.version>
@@ -68,7 +68,7 @@
     <spring-cloud-contract-wiremock.version>4.0.4</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>4.8.4</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
-    <token-support.version>3.1.9</token-support.version>
+    <token-support.version>3.2.0</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
     <kotest.version>5.8.0</kotest.version>
@@ -405,6 +405,12 @@
 
     <!-- datakilde -->
     <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <version>${flyway-maven-plugin.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
       <exclusions>
@@ -636,7 +642,7 @@
           </execution>
         </executions>
         <configuration>
-          <jvmTarget>17</jvmTarget>
+          <jvmTarget>20</jvmTarget>
           <compilerPlugins>
             <plugin>spring</plugin>
             <plugin>jpa</plugin>
