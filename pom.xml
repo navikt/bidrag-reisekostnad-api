@@ -38,7 +38,7 @@
     <classgraph.version>4.8.164</classgraph.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-io.version>2.15.1</commons-io.version>
-    <flyway.version>10.4.0</flyway.version>
+    <flyway.version>10.4.1</flyway.version>
     <google-auth-library-oauth2-http.version>1.20.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.1.2</google-api-client.version>
