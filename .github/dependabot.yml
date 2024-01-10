@@ -2,9 +2,9 @@ version: 2
 registries:
   maven-github:
     type: maven-repository
-    url: https://maven.pkg.github.com/navikt/bidrag-domene
+    url: https://github-package-registry-mirror.gc.nav.no/cached/maven-release
     username: x-access-token
-    password: ${{secrets.GITHUB_TOKEN}}
+    password: no-secret-required
 updates:
   - package-ecosystem: "maven"
     directory: "/"
