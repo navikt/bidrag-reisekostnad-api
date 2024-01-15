@@ -29,7 +29,7 @@
     <jsoup.version>1.16.1</jsoup.version>
 
     <!-- annet -->
-    <bidrag-transport.version>20231010134706_52d8d27</bidrag-transport.version>
+    <bidrag-transport.version>20240111084215_a364fb8</bidrag-transport.version>
     <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
     <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
