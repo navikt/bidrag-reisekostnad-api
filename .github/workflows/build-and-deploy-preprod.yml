@@ -41,6 +41,9 @@ jobs:
     outputs:
       image: ${{ steps.docker-push.outputs.image }}
   deploy-dev:
+    permissions:
+      contents: "read"
+      id-token: "write"
     if: github.event.pull_request.draft == false
     name: Deploy to dev-gcp
     needs: build-dev
@@ -51,9 +54,8 @@ jobs:
           path: deploy
       - name: Deploy til dev-gcp
         if: github.ref != 'refs/heads/main'
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: deploy/.nais/preprod.yaml
           IMAGE: ${{ needs.build-dev.outputs.image }}

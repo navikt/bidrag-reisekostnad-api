@@ -36,9 +36,8 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
       - name: Deploy til prod-gcp
         if: github.ref == 'refs/heads/main'
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .nais/prod.yaml
           IMAGE: ${{ steps.docker-push.outputs.image }}
