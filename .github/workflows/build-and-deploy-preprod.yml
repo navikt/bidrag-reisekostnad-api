@@ -53,7 +53,6 @@ jobs:
         if: github.ref != 'refs/heads/main'
         uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: deploy/.nais/preprod.yaml
           IMAGE: ${{ needs.build-dev.outputs.image }}
