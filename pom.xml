@@ -31,7 +31,7 @@
     <!-- annet -->
     <avro.version>1.11.3</avro.version>
     <bidrag-transport.version>20231010134706_52d8d27</bidrag-transport.version>
-    <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
+    <bidrag-domain.version>1.20230217084842_f5279fd</bidrag-domain.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
     <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
