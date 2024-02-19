@@ -65,10 +65,10 @@
     <osgi.core-version>6.0.0</osgi.core-version>
     <ow2.version>9.6</ow2.version>
     <scala.version>2.13.12</scala.version>
-    <shedlock.version>5.10.2</shedlock.version>
+    <shedlock.version>5.11.0</shedlock.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <snappy-java.version>1.1.10.5</snappy-java.version>
-    <spring-cloud-contract-wiremock.version>4.0.4</spring-cloud-contract-wiremock.version>
+    <spring-cloud-contract-wiremock.version>4.1.1</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>5.0.2</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.3.0</springdoc-openapi-ui.version>
     <token-support.version>3.2.0</token-support.version>
