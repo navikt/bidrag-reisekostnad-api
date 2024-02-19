@@ -10,6 +10,7 @@ spec:
   leaderElection: true
   azure:
     application:
+      allowAllUsers: true
       enabled: true
   secureLogs:
     enabled: true
