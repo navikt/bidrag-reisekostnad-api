@@ -127,6 +127,11 @@
         <version>${google.gax.version}</version>
       </dependency>
       <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-context</artifactId>
         <version>${grpc-context.version}</version>
@@ -405,7 +410,6 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
     </dependency>
     <dependency>
       <groupId>no.nav.security</groupId>
