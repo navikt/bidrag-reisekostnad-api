@@ -36,12 +36,12 @@
     <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.42.0</checker-qual.version>
-    <classgraph.version>4.8.168</classgraph.version>
+    <classgraph.version>4.8.170</classgraph.version>
     <commons-compress.version>1.26.1</commons-compress.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-io.version>2.16.0</commons-io.version>
     <flyway.version>10.10.0</flyway.version>
-    <google-auth-library-oauth2-http.version>1.20.0</google-auth-library-oauth2-http.version>
+    <google-auth-library-oauth2-http.version>1.23.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.3.0</google-api-client.version>
     <google.error_prone_annotations.version>2.23.0</google.error_prone_annotations.version>
@@ -71,7 +71,7 @@
     <snappy-java.version>1.1.10.5</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.1</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>5.1.0</spring-cloud-gcp.version>
-    <springdoc-openapi-ui.version>2.3.0</springdoc-openapi-ui.version>
+    <springdoc-openapi-ui.version>2.5.0</springdoc-openapi-ui.version>
     <token-support.version>3.2.0</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
