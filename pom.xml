@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.4</version>
+    <version>3.2.5</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -40,11 +40,11 @@
     <commons-compress.version>1.26.1</commons-compress.version>
     <commons-cli.version>1.6.0</commons-cli.version>
     <commons-io.version>2.16.0</commons-io.version>
-    <flyway.version>10.11.0</flyway.version>
+    <flyway.version>10.11.1</flyway.version>
     <google-auth-library-oauth2-http.version>1.23.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.3.0</google-api-client.version>
-    <google.error_prone_annotations.version>2.23.0</google.error_prone_annotations.version>
+    <google.error_prone_annotations.version>2.26.1</google.error_prone_annotations.version>
     <google.gax.version>2.46.1</google.gax.version>
     <google.http-client.version>1.44.1</google.http-client.version>
     <google-oauth-client.version>1.35.0</google-oauth-client.version>
