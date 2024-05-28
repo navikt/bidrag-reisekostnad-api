@@ -15,7 +15,7 @@
   <description>bidrag-reiesekostnader-api</description>
 
   <properties>
-    <kotlin.version>1.9.24</kotlin.version>
+    <kotlin.version>2.0.0</kotlin.version>
     <!-- bygg -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
@@ -67,7 +67,7 @@
     <osgi.core-version>6.0.0</osgi.core-version>
     <ow2.version>9.7</ow2.version>
     <plexus.version>4.0.1</plexus.version>
-    <scala.version>2.13.13</scala.version>
+    <scala.version>2.13.14</scala.version>
     <shedlock.version>5.13.0</shedlock.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <snappy-java.version>1.1.10.5</snappy-java.version>
@@ -311,7 +311,7 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
-        <version>3.9.6</version>
+        <version>3.9.7</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
