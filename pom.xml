@@ -77,7 +77,7 @@
     <token-support.version>3.2.0</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
-    <kotest.version>5.8.1</kotest.version>
+    <kotest.version>5.9.1</kotest.version>
     <wiremock-jre8-standalone.version>2.35.2</wiremock-jre8-standalone.version>
   </properties>
 
