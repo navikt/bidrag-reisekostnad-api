@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.0</version>
+    <version>3.3.1</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -38,7 +38,7 @@
     <checker-qual.version>3.44.0</checker-qual.version>
     <classgraph.version>4.8.173</classgraph.version>
     <commons-compress.version>1.26.1</commons-compress.version>
-    <commons-cli.version>1.7.0</commons-cli.version>
+    <commons-cli.version>1.8.0</commons-cli.version>
     <commons-io.version>2.16.1</commons-io.version>
     <flyway.version>10.15.0</flyway.version>
     <google-auth-library-oauth2-http.version>1.23.0</google-auth-library-oauth2-http.version>
@@ -62,7 +62,7 @@
     <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.5.1</kafka-avro-serializer.version>
     <modelmapper.version>3.2.0</modelmapper.version>
-    <nimbus-jose-jwt.version>9.39.1</nimbus-jose-jwt.version>
+    <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
     <nimbus.oauth2-oidc-sdk.version>11.12</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
     <ow2.version>9.7</ow2.version>
@@ -326,7 +326,7 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-api</artifactId>
-        <version>3.9.7</version>
+        <version>3.9.8</version>
       </dependency>
       <dependency>
         <groupId>no.nav.bidrag</groupId>
