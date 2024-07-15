@@ -41,7 +41,7 @@
     <commons-cli.version>1.8.0</commons-cli.version>
     <commons-io.version>2.16.1</commons-io.version>
     <flyway.version>10.15.0</flyway.version>
-    <google-auth-library-oauth2-http.version>1.23.0</google-auth-library-oauth2-http.version>
+    <google-auth-library-oauth2-http.version>1.24.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.10.4</google-auto-value-annotations.version>
     <google-api-client.version>2.6.0</google-api-client.version>
     <google.error_prone_annotations.version>2.28.0</google.error_prone_annotations.version>
