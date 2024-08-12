@@ -54,7 +54,7 @@
     <google.common-protos.version>2.41.0</google.common-protos.version>
     <google.re2j.version>1.7</google.re2j.version>
     <graalvm.version>24.0.1</graalvm.version>
-    <grpc-context.version>1.65.1</grpc-context.version>
+    <grpc-context.version>1.66.0</grpc-context.version>
     <apache-httpclient.version>4.5.14</apache-httpclient.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
     <java.version>21</java.version>
