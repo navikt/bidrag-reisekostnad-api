@@ -61,7 +61,7 @@
     <jboss.version>3.0.1.Final</jboss.version>
     <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.5.1</kafka-avro-serializer.version>
-    <modelmapper.version>3.2.0</modelmapper.version>
+    <modelmapper.version>3.2.1</modelmapper.version>
     <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
     <nimbus.oauth2-oidc-sdk.version>11.13</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
