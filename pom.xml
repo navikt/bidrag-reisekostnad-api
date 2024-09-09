@@ -15,7 +15,7 @@
   <description>bidrag-reiesekostnader-api</description>
 
   <properties>
-    <kotlin.version>2.0.10</kotlin.version>
+    <kotlin.version>2.0.20</kotlin.version>
     <!-- bygg -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
@@ -51,7 +51,7 @@
     <google.protobuf-java.version>4.27.2</google.protobuf-java.version>
     <google.guava.version>33.2.1-jre</google.guava.version>
     <google.j2objc-annotations.version>3.0.0</google.j2objc-annotations.version>
-    <google.common-protos.version>2.41.0</google.common-protos.version>
+    <google.common-protos.version>2.43.0</google.common-protos.version>
     <google.re2j.version>1.7</google.re2j.version>
     <graalvm.version>24.0.1</graalvm.version>
     <grpc-context.version>1.66.0</grpc-context.version>
@@ -61,9 +61,9 @@
     <jboss.version>3.0.1.Final</jboss.version>
     <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.5.1</kafka-avro-serializer.version>
-    <modelmapper.version>3.2.0</modelmapper.version>
+    <modelmapper.version>3.2.1</modelmapper.version>
     <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
-    <nimbus.oauth2-oidc-sdk.version>11.13</nimbus.oauth2-oidc-sdk.version>
+    <nimbus.oauth2-oidc-sdk.version>11.19</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
     <ow2.version>9.7</ow2.version>
     <plexus.version>4.0.1</plexus.version>
@@ -73,7 +73,7 @@
     <snappy-java.version>1.1.10.5</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>5.5.1</spring-cloud-gcp.version>
-    <springdoc-openapi-ui.version>2.5.0</springdoc-openapi-ui.version>
+    <springdoc-openapi-ui.version>2.6.0</springdoc-openapi-ui.version>
     <token-support.version>3.2.0</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
