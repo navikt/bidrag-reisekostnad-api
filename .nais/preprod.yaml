@@ -25,6 +25,7 @@ spec:
         role: roles/cloudsql.client
     sqlInstances:
       - type: POSTGRES_15
+        tier: db-f1-micro
         databases:
           - name: reisekostnad-preprod
             envVarPrefix: DB
