@@ -44,7 +44,7 @@
     <google-auth-library-oauth2-http.version>1.27.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.11.0</google-auto-value-annotations.version>
     <google-api-client.version>2.6.0</google-api-client.version>
-    <google.error_prone_annotations.version>2.29.2</google.error_prone_annotations.version>
+    <google.error_prone_annotations.version>2.33.0</google.error_prone_annotations.version>
     <google.gax.version>2.53.0</google.gax.version>
     <google.http-client.version>1.45.0</google.http-client.version>
     <google-oauth-client.version>1.36.0</google-oauth-client.version>
