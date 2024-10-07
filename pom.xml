@@ -40,7 +40,7 @@
     <commons-compress.version>1.27.0</commons-compress.version>
     <commons-cli.version>1.9.0</commons-cli.version>
     <commons-io.version>2.16.1</commons-io.version>
-    <flyway.version>10.18.2</flyway.version>
+    <flyway.version>10.19.0</flyway.version>
     <google-auth-library-oauth2-http.version>1.27.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.11.0</google-auto-value-annotations.version>
     <google-api-client.version>2.6.0</google-api-client.version>
