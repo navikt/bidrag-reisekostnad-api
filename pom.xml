@@ -70,7 +70,7 @@
     <scala.version>2.13.14</scala.version>
     <shedlock.version>5.13.0</shedlock.version>
     <snakeyaml.version>2.3</snakeyaml.version>
-    <snappy-java.version>1.1.10.5</snappy-java.version>
+    <snappy-java.version>1.1.10.7</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>5.6.0</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.6.0</springdoc-openapi-ui.version>
