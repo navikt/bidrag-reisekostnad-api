@@ -46,10 +46,10 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
-      memory: 2048Mi
-      cpu: "2"
-    requests:
       memory: 1024Mi
+      cpu: "1"
+    requests:
+      memory: 512Mi
       cpu: 200m
   ingresses:
     - https://bidrag-reisekostnad-api.intern.dev.nav.no
