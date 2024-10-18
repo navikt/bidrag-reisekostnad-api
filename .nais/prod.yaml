@@ -46,10 +46,10 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
-      memory: 4Gi
+      memory: 2Gi
       cpu: "1"
     requests:
-      memory: 2Gi
+      memory: 1Gi
       cpu: 200m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://bidrag-reisekostnad-api.intern.nav.no
