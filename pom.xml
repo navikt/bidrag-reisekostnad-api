@@ -15,7 +15,7 @@
   <description>bidrag-reiesekostnader-api</description>
 
   <properties>
-    <kotlin.version>2.0.20</kotlin.version>
+    <kotlin.version>2.0.21</kotlin.version>
     <!-- bygg -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
@@ -41,7 +41,7 @@
     <commons-cli.version>1.9.0</commons-cli.version>
     <commons-io.version>2.16.1</commons-io.version>
     <flyway.version>10.19.0</flyway.version>
-    <google-auth-library-oauth2-http.version>1.27.0</google-auth-library-oauth2-http.version>
+    <google-auth-library-oauth2-http.version>1.28.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.11.0</google-auto-value-annotations.version>
     <google-api-client.version>2.6.0</google-api-client.version>
     <google.error_prone_annotations.version>2.33.0</google.error_prone_annotations.version>
@@ -53,7 +53,7 @@
     <google.j2objc-annotations.version>3.0.0</google.j2objc-annotations.version>
     <google.common-protos.version>2.43.0</google.common-protos.version>
     <google.re2j.version>1.7</google.re2j.version>
-    <graalvm.version>24.1.0</graalvm.version>
+    <graalvm.version>24.1.1</graalvm.version>
     <grpc-context.version>1.66.0</grpc-context.version>
     <apache-httpclient.version>4.5.14</apache-httpclient.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
@@ -68,7 +68,7 @@
     <ow2.version>9.7.1</ow2.version>
     <plexus.version>4.0.1</plexus.version>
     <scala.version>2.13.14</scala.version>
-    <shedlock.version>5.13.0</shedlock.version>
+    <shedlock.version>5.16.0</shedlock.version>
     <snakeyaml.version>2.3</snakeyaml.version>
     <snappy-java.version>1.1.10.7</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
