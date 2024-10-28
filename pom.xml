@@ -30,10 +30,7 @@
 
     <!-- annet -->
     <avro.version>1.11.3</avro.version>
-    <bidrag-transport.version>20231010134706_52d8d27</bidrag-transport.version>
-    <bidrag-domain.version>20230904100234_788c8b7</bidrag-domain.version>
-    <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
-    <bidrag-commons.version>20230914103123_4eb1be0</bidrag-commons.version>
+    <bidrag-felles.version>2024.10.17.124311</bidrag-felles.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.46.0</checker-qual.version>
     <classgraph.version>4.8.176</classgraph.version>
@@ -285,8 +282,8 @@
       </dependency>
       <dependency>
         <groupId>no.nav.bidrag</groupId>
-        <artifactId>bidrag-commons</artifactId>
-        <version>${bidrag-commons.version}</version>
+        <artifactId>bidrag-commons-felles</artifactId>
+        <version>${bidrag-felles.version}</version>
         <exclusions>
           <exclusion>
             <groupId>no.nav.security</groupId>
@@ -330,13 +327,13 @@
       </dependency>
       <dependency>
         <groupId>no.nav.bidrag</groupId>
-        <artifactId>bidrag-domain</artifactId>
-        <version>${bidrag-domain.version}</version>
+        <artifactId>bidrag-domene-felles</artifactId>
+        <version>${bidrag-felles.version}</version>
       </dependency>
       <dependency>
         <groupId>no.nav.bidrag</groupId>
-        <artifactId>bidrag-transport</artifactId>
-        <version>${bidrag-transport.version}</version>
+        <artifactId>bidrag-transport-felles</artifactId>
+        <version>${bidrag-felles.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -344,15 +341,27 @@
   <dependencies>
     <dependency>
       <groupId>no.nav.bidrag</groupId>
-      <artifactId>bidrag-commons</artifactId>
+      <artifactId>bidrag-commons-felles</artifactId>
     </dependency>
     <dependency>
       <groupId>no.nav.bidrag</groupId>
-      <artifactId>bidrag-domain</artifactId>
+      <artifactId>bidrag-domene-felles</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>io.swagger.core.v3</groupId>
+          <artifactId>swagger-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>no.nav.bidrag</groupId>
-      <artifactId>bidrag-transport</artifactId>
+      <artifactId>bidrag-transport-felles</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>io.swagger.core.v3</groupId>
+          <artifactId>swagger-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- spring -->
     <dependency>
@@ -571,8 +580,8 @@
     <!-- test -->
     <dependency>
       <groupId>.no.nav.bidrag</groupId>
-      <artifactId>bidrag-commons-test</artifactId>
-      <version>${bidrag-commons-test.version}</version>
+      <artifactId>bidrag-commons-test-felles</artifactId>
+      <version>${bidrag-felles.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
