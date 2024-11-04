@@ -45,7 +45,7 @@
     <google.gax.version>2.53.0</google.gax.version>
     <google.http-client.version>1.45.0</google.http-client.version>
     <google-oauth-client.version>1.36.0</google-oauth-client.version>
-    <google.protobuf-java.version>4.28.2</google.protobuf-java.version>
+    <google.protobuf-java.version>4.28.3</google.protobuf-java.version>
     <google.guava.version>33.3.1-jre</google.guava.version>
     <google.j2objc-annotations.version>3.0.0</google.j2objc-annotations.version>
     <google.common-protos.version>2.43.0</google.common-protos.version>
