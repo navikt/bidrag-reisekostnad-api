@@ -34,7 +34,7 @@
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.48.2</checker-qual.version>
     <classgraph.version>4.8.176</classgraph.version>
-    <commons-compress.version>1.27.0</commons-compress.version>
+    <commons-compress.version>1.27.1</commons-compress.version>
     <commons-cli.version>1.9.0</commons-cli.version>
     <commons-io.version>2.16.1</commons-io.version>
     <flyway.version>10.19.0</flyway.version>
@@ -56,11 +56,11 @@
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
     <java.version>21</java.version>
     <jboss.version>3.0.1.Final</jboss.version>
-    <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
+    <jetbrains.annotations.version>26.0.1</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.5.1</kafka-avro-serializer.version>
     <modelmapper.version>3.2.1</modelmapper.version>
     <nimbus-jose-jwt.version>9.41.1</nimbus-jose-jwt.version>
-    <nimbus.oauth2-oidc-sdk.version>11.19</nimbus.oauth2-oidc-sdk.version>
+    <nimbus.oauth2-oidc-sdk.version>11.20.1</nimbus.oauth2-oidc-sdk.version>
     <osgi.core-version>6.0.0</osgi.core-version>
     <ow2.version>9.7.1</ow2.version>
     <plexus.version>4.0.1</plexus.version>
@@ -69,7 +69,7 @@
     <snakeyaml.version>2.3</snakeyaml.version>
     <snappy-java.version>1.1.10.7</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
-    <spring-cloud-gcp.version>5.6.0</spring-cloud-gcp.version>
+    <spring-cloud-gcp.version>5.8.0</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.6.0</springdoc-openapi-ui.version>
     <token-support.version>3.2.0</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
