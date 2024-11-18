@@ -6,6 +6,10 @@ metadata:
   labels:
     team: bidrag
 spec:
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   image: {{ image }}
   leaderElection: true
   azure:
