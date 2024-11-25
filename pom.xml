@@ -65,7 +65,7 @@
     <ow2.version>9.7.1</ow2.version>
     <plexus.version>4.0.2</plexus.version>
     <scala.version>2.13.15</scala.version>
-    <shedlock.version>5.16.0</shedlock.version>
+    <shedlock.version>6.0.1</shedlock.version>
     <snakeyaml.version>2.3</snakeyaml.version>
     <snappy-java.version>1.1.10.7</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
