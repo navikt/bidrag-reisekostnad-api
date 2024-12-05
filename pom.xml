@@ -15,7 +15,7 @@
   <description>bidrag-reiesekostnader-api</description>
 
   <properties>
-    <kotlin.version>2.0.21</kotlin.version>
+    <kotlin.version>2.1.0</kotlin.version>
     <!-- bygg -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
@@ -33,16 +33,16 @@
     <bidrag-felles.version>2024.0116.140525</bidrag-felles.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.48.2</checker-qual.version>
-    <classgraph.version>4.8.176</classgraph.version>
+    <classgraph.version>4.8.179</classgraph.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <commons-cli.version>1.9.0</commons-cli.version>
     <commons-io.version>2.17.0</commons-io.version>
     <flyway.version>10.21.0</flyway.version>
-    <google-auth-library-oauth2-http.version>1.28.0</google-auth-library-oauth2-http.version>
+    <google-auth-library-oauth2-http.version>1.30.0</google-auth-library-oauth2-http.version>
     <google-auto-value-annotations.version>1.11.0</google-auto-value-annotations.version>
     <google-api-client.version>2.7.0</google-api-client.version>
-    <google.error_prone_annotations.version>2.35.1</google.error_prone_annotations.version>
-    <google.gax.version>2.53.0</google.gax.version>
+    <google.error_prone_annotations.version>2.36.0</google.error_prone_annotations.version>
+    <google.gax.version>2.58.0</google.gax.version>
     <google.http-client.version>1.45.1</google.http-client.version>
     <google-oauth-client.version>1.36.0</google-oauth-client.version>
     <google.protobuf-java.version>4.28.3</google.protobuf-java.version>
@@ -55,7 +55,7 @@
     <apache-httpclient.version>4.5.14</apache-httpclient.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
     <java.version>21</java.version>
-    <jboss.version>3.0.2.Final</jboss.version>
+    <jboss.version>3.0.3.Final</jboss.version>
     <jetbrains.annotations.version>26.0.1</jetbrains.annotations.version>
     <kafka-avro-serializer.version>7.5.1</kafka-avro-serializer.version>
     <modelmapper.version>3.2.1</modelmapper.version>
@@ -65,7 +65,7 @@
     <ow2.version>9.7.1</ow2.version>
     <plexus.version>4.0.2</plexus.version>
     <scala.version>2.13.15</scala.version>
-    <shedlock.version>5.16.0</shedlock.version>
+    <shedlock.version>6.0.1</shedlock.version>
     <snakeyaml.version>2.3</snakeyaml.version>
     <snappy-java.version>1.1.10.7</snappy-java.version>
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
