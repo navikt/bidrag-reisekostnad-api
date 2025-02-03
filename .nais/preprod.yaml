@@ -67,9 +67,9 @@ spec:
     - name: BIDRAG_DOKUMENT_URL
       value: https://bidrag-dokument.dev-fss-pub.nais.io
     - name: BIDRAG_PERSON_SCOPE
-      value: dev-fss.bidrag.bidrag-person
+      value: dev-fss.bidrag.bidrag-person-q2
     - name: BIDRAG_PERSON_URL
-      value: https://bidrag-person.dev-fss-pub.nais.io
+      value: https://bidrag-person-q2.dev-fss-pub.nais.io
     - name: BIDRAG_REISEKOSTNAD_UI_URL
       value: https://bidrag-reisekostnad.ekstern.dev.nav.no
     - name: POSTGRES_INSTANSEURL
