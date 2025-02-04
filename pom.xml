@@ -579,7 +579,7 @@
 
     <!-- test -->
     <dependency>
-      <groupId>.no.nav.bidrag</groupId>
+      <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-commons-test-felles</artifactId>
       <version>${bidrag-felles.version}</version>
     </dependency>
