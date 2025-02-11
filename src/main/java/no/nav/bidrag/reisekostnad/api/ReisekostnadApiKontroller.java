@@ -89,7 +89,7 @@ public class ReisekostnadApiKontroller {
       @Parameter(name = "id", description = "ID til forespørsel som skal oppdateres") @RequestParam(name = "id", defaultValue = "-1") int idForespørsel) {
     log.info("Gi samtykke til fordeling av reisekostnader (forespørsel med id {})", idForespørsel);
     var personidentPåloggetBruker = Tokeninfo.Companion.hentPaaloggetPerson();
-    SIKKER_LOGG.info("Person med ident {} samtykker til at NAV skal fordele reisekostnader.", personidentPåloggetBruker);
+    SIKKER_LOGG.info("Person med ident {} samtykker til at Nav skal fordele reisekostnader.", personidentPåloggetBruker);
     var respons = reisekostnadApiTjeneste.oppdatereForespørselMedSamtykke(idForespørsel, personidentPåloggetBruker);
     return new ResponseEntity<>(respons.getResponseEntity().getBody(), respons.getResponseEntity().getStatusCode());
   }
