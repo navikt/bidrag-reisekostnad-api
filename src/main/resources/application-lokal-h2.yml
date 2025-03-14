@@ -31,7 +31,6 @@ no.nav.security.jwt:
     tokenx:
       discoveryurl: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}/.well-known/openid-configuration
       accepted_audience: aud-localhost
-      cookie_name: localhost-idtoken
 
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"

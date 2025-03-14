@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
 public class RestTemplatekonfig {
@@ -52,7 +53,7 @@ public class RestTemplatekonfig {
       ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor
   ) {
     httpHeaderRestTemplate.getInterceptors().add(bidragDokumentClientCredentialsTokenInterceptor);
-    httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
+    httpHeaderRestTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(urlBidragPerson));
     return httpHeaderRestTemplate;
   }
 
@@ -65,7 +66,7 @@ public class RestTemplatekonfig {
       ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor
   ) {
     httpHeaderRestTemplate.getInterceptors().add(bidragPersonClientCredentialsTokenInterceptor);
-    httpHeaderRestTemplate.setUriTemplateHandler(new RootUriTemplateHandler(urlBidragPerson));
+    httpHeaderRestTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(urlBidragPerson));
     return httpHeaderRestTemplate;
   }
 }

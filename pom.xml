@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.5</version>
+    <version>3.4.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -30,7 +30,7 @@
 
     <!-- annet -->
     <avro.version>1.11.3</avro.version>
-    <bidrag-felles.version>2024.0116.140525</bidrag-felles.version>
+    <bidrag-felles.version>2025.03.14.124512</bidrag-felles.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <checker-qual.version>3.48.2</checker-qual.version>
     <classgraph.version>4.8.179</classgraph.version>
@@ -71,7 +71,7 @@
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>5.8.0</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.6.0</springdoc-openapi-ui.version>
-    <token-support.version>3.2.0</token-support.version>
+    <token-support.version>5.0.19</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
     <kotest.version>5.9.1</kotest.version>
@@ -625,11 +625,13 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
+      <version>4.12.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
+      <version>4.12.0</version>
       <scope>test</scope>
     </dependency>
 

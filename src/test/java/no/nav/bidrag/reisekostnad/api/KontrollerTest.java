@@ -152,7 +152,7 @@ public class KontrollerTest {
   protected void initTokenForPåloggetPerson(String personident) {
     httpHeaderTestRestTemplateApi.add(HttpHeaders.AUTHORIZATION, () -> generereTesttoken(personident));
 
-    var a = new OAuth2AccessTokenResponse(generereTesttoken(personident), 1000, 1000, null);
+    var a = new OAuth2AccessTokenResponse(generereTesttoken(personident), 1000, 1000, new HashMap<>());
     when(oAuth2AccessTokenService.getAccessToken(any(ClientProperties.class))).thenReturn(a);
   }
 
