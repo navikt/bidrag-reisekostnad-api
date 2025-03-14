@@ -24,7 +24,6 @@ no.nav.security.jwt:
     tokenx:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: aud-localhost
-      cookie_name: localhost-idtoken
 
 spring:
   cloud.gcp:
