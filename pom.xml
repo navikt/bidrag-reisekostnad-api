@@ -71,7 +71,7 @@
     <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
     <spring-cloud-gcp.version>5.8.0</spring-cloud-gcp.version>
     <springdoc-openapi-ui.version>2.6.0</springdoc-openapi-ui.version>
-    <token-support.version>3.2.0</token-support.version>
+    <token-support.version>5.0.19</token-support.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <mockk.version>4.0.2</mockk.version>
     <kotest.version>5.9.1</kotest.version>
