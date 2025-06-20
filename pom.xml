@@ -29,7 +29,7 @@
     <!-- annet -->
     <avro.version>1.12.0</avro.version>
     <bidrag-felles.version>2025.06.19.155924</bidrag-felles.version>
-    <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
+    <brukernotifikasjon-schemas.version>2.6.0</brukernotifikasjon-schemas.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <flyway.version>11.9.1</flyway.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
@@ -70,10 +70,6 @@
       <id>confluent</id>
       <name>Confluent kafka</name>
       <url>https://packages.confluent.io/maven/</url>
-    </repository>
-    <repository>
-      <id>central</id>
-      <url>https://repo1.maven.org/maven2</url>
     </repository>
   </repositories>
 
@@ -167,7 +163,7 @@
 
     <!-- navikt -->
     <dependency>
-      <groupId>com.github.navikt</groupId>
+      <groupId>no.nav.tms</groupId>
       <artifactId>brukernotifikasjon-schemas</artifactId>
       <version>${brukernotifikasjon-schemas.version}</version>
       <exclusions>
