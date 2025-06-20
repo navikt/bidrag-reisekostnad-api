@@ -22,7 +22,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- PDF -->
-    <apache-pdfbox.version>3.0.5</apache-pdfbox.version>
+    <apache-pdfbox.version>2.0.29</apache-pdfbox.version>
     <openhtml.version>1.0.10</openhtml.version>
     <jsoup.version>1.20.1</jsoup.version>
 
