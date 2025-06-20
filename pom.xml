@@ -28,7 +28,7 @@
 
     <!-- annet -->
     <avro.version>1.12.0</avro.version>
-    <bidrag-felles.version>2025.06.11.101752</bidrag-felles.version>
+    <bidrag-felles.version>2025.06.19.155924</bidrag-felles.version>
     <brukernotifikasjon-schemas.version>2.5.2</brukernotifikasjon-schemas.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <flyway.version>11.9.1</flyway.version>
@@ -60,6 +60,18 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/navikt/bidrag-felles</url>
+    </repository>
+    <repository>
+      <id>confluent</id>
+      <name>Confluent kafka</name>
+      <url>https://packages.confluent.io/maven/</url>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
