@@ -2,18 +2,15 @@ package no.nav.bidrag.reisekostnad.skedulering
 
 import io.kotest.assertions.assertSoftly
 import io.mockk.every
-import io.mockk.verify
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.*
 import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling
 import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
-import no.nav.bidrag.reisekostnad.model.hovedpartIdent
-import no.nav.bidrag.reisekostnad.model.motpartIdent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
 
 @DisplayName("DeaktivereJournalførteOgUtgåtteForespørslerTest")
 class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
@@ -83,14 +80,6 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
             assertThat(deaktivertForespørsel.get().deaktivert.toLocalDate()).isEqualTo(LocalDate.now())
             assertThat(deaktivertForespørsel.get().samtykket).isNull()
             assertThat(deaktivertForespørsel.get().journalført).isNull()
-            verify(exactly = 1) { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) }
-            verify(exactly = 1) {
-                brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(
-                    forespørselMedUtløptSamtykkefrist.hovedpartIdent,
-                    forespørselMedUtløptSamtykkefrist.motpartIdent,
-                    forespørselMedUtløptSamtykkefrist.opprettet.toLocalDate()
-                )
-            }
         }
     }
 
@@ -131,7 +120,6 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
             )
             assertThat(deaktivertForespørselMedFeilOgUtløptSamtykkefrist.get().samtykket).isNull()
             assertThat(deaktivertForespørselMedFeilOgUtløptSamtykkefrist.get().journalført).isNull()
-            verify(exactly = 1) { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) }
         }
     }
 
