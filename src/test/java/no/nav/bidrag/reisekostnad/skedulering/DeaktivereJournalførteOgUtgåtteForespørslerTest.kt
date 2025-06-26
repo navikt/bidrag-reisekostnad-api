@@ -20,7 +20,6 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
 
     @BeforeEach
     fun setup() {
-
         every { brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(any(), any(), any()) } returns Unit
         every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns true
     }

@@ -109,21 +109,6 @@
       <artifactId>bidrag-transport-felles</artifactId>
       <version>${bidrag-felles.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>3.9.8</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-shared-utils</artifactId>
-      <version>3.4.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>3.9.9</version>
-    </dependency>
     <!-- spring -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -398,7 +383,7 @@
           </execution>
         </executions>
         <configuration>
-          <jvmTarget>20</jvmTarget>
+          <jvmTarget>${java.version}</jvmTarget>
           <compilerPlugins>
             <plugin>spring</plugin>
             <plugin>jpa</plugin>
