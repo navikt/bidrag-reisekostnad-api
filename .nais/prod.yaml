@@ -1,103 +1,36 @@
-apiVersion: "nais.io/v1alpha1"
-kind: "Application"
-metadata:
-  name: bidrag-reisekostnad-api
-  namespace: bidrag
-  labels:
-    team: bidrag
-spec:
-  observability:
-    autoInstrumentation:
-      enabled: true
-      runtime: java
-  logging:
-    destinations:
-      - id: loki
-      - id: elastic
-      - id: secure_logs
-  image: {{ image }}
-  leaderElection: true
-  azure:
-    application:
-      enabled: true
-  secureLogs:
-    enabled: true
-  tokenx:
-    enabled: true
-  kafka:
-    pool: nav-prod
-  gcp:
-    permissions:
-      - resource:
-          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
-          kind: Project
-        role: roles/cloudsql.client
-    sqlInstances:
-      - type: POSTGRES_15
-        tier: db-g1-small
-        databases:
-          - name: reisekostnad-prod
-            envVarPrefix: DB
-        flags:
-          - name: "cloudsql.enable_pgaudit"
-            value: "{{ database.auditlog }}"
-          - name: "pgaudit.log"
-            value: "write"
-          - name: "pgaudit.log_parameter"
-            value: "on"
-  liveness:
-    path: /internal/actuator/health
-    initialDelay: 60
-    failureThreshold: 10
-  readiness:
-    path: /internal/actuator/health
-    initialDelay: 60
-    failureThreshold: 10
-  prometheus:
-    enabled: true
-    path: /internal/actuator/prometheus
-  replicas:
-    min: 2
-    max: 2
-    cpuThresholdPercentage: 50
-  resources:
-    limits:
-      memory: 2Gi
-      cpu: "1"
-    requests:
-      memory: 1Gi
-      cpu: 200m
-  ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - https://bidrag-reisekostnad-api.intern.nav.no
-  env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: prod, i-sky
-    - name: BIDRAG_DOKUMENT_SCOPE
-      value: prod-fss.bidrag.bidrag-dokument
-    - name: BIDRAG_DOKUMENT_URL
-      value: https://bidrag-dokument.prod-fss-pub.nais.io
-    - name: BIDRAG_PERSON_SCOPE
-      value: prod-fss.bidrag.bidrag-person
-    - name: BIDRAG_PERSON_URL
-      value: https://bidrag-person.prod-fss-pub.nais.io
-    - name: BIDRAG_REISEKOSTNAD_UI_URL
-      value: https://bidrag-reisekostnad.nav.no
-    - name: POSTGRES_INSTANSEURL
-      value: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
-    - name: KJOEREPLAN_ARKIVERING
-      value: "0 0 6 * * ?"
-    - name: KJOEREPLAN_DEAKTIVERING
-      value: "0 * 7 * * ?"
-    - name: KJOEREPLAN_FYLT_15
-      value: "0 30 6 * * ?"
-    - name: KJOEREPLAN_ANONYMISERING
-      value: "0 30 5 * * ?"
-  accessPolicy:
+name: bidrag-reisekostnad-api
+ingresses: 
+  - https://bidrag-reisekostnad-api.intern.nav.no
+database:
+  navn: reisekostnad-prod
+  tier: db-g1-small
+  auditlog: "on"
+kafka:
+  pool: nav-prod
+replicas:
+  min: 2
+  max: 2
+limits:
+  memory: 2Gi
+  cpu: "1"
+requests:
+  memory: 1Gi
+  cpu: 200m
+env:
+  SPRING_PROFILES_ACTIVE: prod, i-sky
+  BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
+  BIDRAG_DOKUMENT_URL: https://bidrag-dokument.prod-fss-pub.nais.io
+  BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
+  BIDRAG_PERSON_URL: https://bidrag-person.prod-fss-pub.nais.io
+  BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.nav.no
+  POSTGRES_INSTANSEURL: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
+  KJOEREPLAN_ARKIVERING: "0 0 6 * * ?"
+  KJOEREPLAN_DEAKTIVERING: "0 * 7 * * ?"
+  KJOEREPLAN_FYLT_15: "0 30 6 * * ?"
+  KJOEREPLAN_ANONYMISERING: "0 30 5 * * ?"
+azure:
     inbound:
-      rules:
+        rules:
         - application: bidrag-reisekostnad-ui
           namespace: bidrag
           cluster: prod-gcp
-    outbound:
-      external:
-        - host: bidrag-person.prod-fss-pub.nais.io

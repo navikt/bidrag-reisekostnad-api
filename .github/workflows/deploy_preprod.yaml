@@ -18,4 +18,4 @@ jobs:
     uses: navikt/bidrag-workflow/.github/workflows/deploy.yaml@main
     secrets: inherit
     with:
-      nais_hovedfil_navn: preprod.yaml
+      nais_variabler_filnavn: preprod.yaml
