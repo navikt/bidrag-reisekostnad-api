@@ -65,7 +65,7 @@ spec:
     cpuThresholdPercentage: 50
   gcp:
     sqlInstances:
-      - name: {{ database.navn }}
+      - name: bidrag-reisekostnad-api
         type: POSTGRES_15
         tier: {{ database.tier }}
         databases:
