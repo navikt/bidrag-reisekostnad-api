@@ -10,6 +10,11 @@ spec:
     autoInstrumentation:
       enabled: true
       runtime: java
+  logging:
+    destinations:
+      - id: loki
+      - id: elastic
+      - id: secure_logs
   image: {{ image }}
   leaderElection: true
   azure:
@@ -33,6 +38,13 @@ spec:
         databases:
           - name: reisekostnad-prod
             envVarPrefix: DB
+        flags:
+          - name: "cloudsql.enable_pgaudit"
+            value: "{{ database.auditlog }}"
+          - name: "pgaudit.log"
+            value: "write"
+          - name: "pgaudit.log_parameter"
+            value: "on"
   liveness:
     path: /internal/actuator/health
     initialDelay: 60
