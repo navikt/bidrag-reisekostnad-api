@@ -12,7 +12,7 @@ replicas:
   max: 2
 limits:
   memory: 1024Mi
-  cpu: "1"
+  cpu: 400m
 requests:
   memory: 512Mi
   cpu: 200m

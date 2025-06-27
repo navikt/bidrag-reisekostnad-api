@@ -11,10 +11,10 @@ replicas:
   min: 2
   max: 2
 limits:
-  memory: 2Gi
-  cpu: "1"
+  memory: 2048Mi
+  cpu: 400m
 requests:
-  memory: 1Gi
+  memory: 1024Mi
   cpu: 200m
 env:
   SPRING_PROFILES_ACTIVE: prod, i-sky
