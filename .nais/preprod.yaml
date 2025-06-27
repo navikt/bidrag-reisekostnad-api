@@ -15,7 +15,7 @@ spec:
       - id: loki
       - id: elastic
       - id: secure_logs
-  image: {{  mage }}
+  image: {{ image }}
   leaderElection: true
   azure:
     application:
