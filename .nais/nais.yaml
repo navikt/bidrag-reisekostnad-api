@@ -64,18 +64,14 @@ spec:
     min: {{replicas.min}}
     cpuThresholdPercentage: 50
   gcp:
-    permissions:
-      - resource:
-        apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
-        kind: Project
-        role: roles/cloudsql.client
     sqlInstances:
-      type: POSTGRES_15
-      tier: {{ database.tier }}
-      databases:
-        - name: {{ database.navn }}
-          envVarPrefix: DB
-      flags:
+      - name: {{ database.navn }}
+        type: POSTGRES_15
+        tier: {{ database.tier }}
+        databases:
+          - name: {{ database.navn }}
+            envVarPrefix: DB
+        flags:
         - name: "cloudsql.enable_pgaudit"
           value: "{{ database.auditlog }}"
         - name: "pgaudit.log"
