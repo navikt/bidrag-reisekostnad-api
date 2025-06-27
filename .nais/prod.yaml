@@ -29,9 +29,7 @@ env:
   KJOEREPLAN_DEAKTIVERING: "0 * 7 * * ?"
   KJOEREPLAN_FYLT_15: "0 30 6 * * ?"
   KJOEREPLAN_ANONYMISERING: "0 30 5 * * ?"
-azure:
-    inbound:
-        rules:
-        - application: bidrag-reisekostnad-ui
-          namespace: bidrag
-          cluster: prod-gcp
+azure_access_inbound:
+  - application: bidrag-reisekostnad-ui
+    namespace: bidrag
+    cluster: prod-gcp
