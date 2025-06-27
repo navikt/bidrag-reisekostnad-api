@@ -22,6 +22,7 @@ env:
   BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io
   BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-q2
+  BIDRAG_PERSON_HOST: bidrag-person-q2.dev-fss-pub.nais.io
   BIDRAG_PERSON_URL: https://bidrag-person-q2.dev-fss-pub.nais.io
   BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.ekstern.dev.nav.no
   POSTGRES_INSTANSEURL: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api

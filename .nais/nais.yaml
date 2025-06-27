@@ -23,7 +23,7 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: {{ env.BIDRAG_PERSON_URL }}
+        - host: {{ env.BIDRAG_PERSON_HOST }}
       rules:
        - application: logging
          namespace: nais-system
