@@ -24,7 +24,6 @@ env:
   BIDRAG_PERSON_HOST: bidrag-person.prod-fss-pub.nais.io
   BIDRAG_PERSON_URL: https://bidrag-person.prod-fss-pub.nais.io
   BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.nav.no
-  POSTGRES_INSTANSEURL: bidrag-prod-8f72:europe-north1:bidrag-reisekostnad-api
   KJOEREPLAN_ARKIVERING: "0 0 6 * * ?"
   KJOEREPLAN_DEAKTIVERING: "0 * 7 * * ?"
   KJOEREPLAN_FYLT_15: "0 30 6 * * ?"

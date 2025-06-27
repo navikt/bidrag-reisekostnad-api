@@ -2,9 +2,6 @@ logging.config: classpath:logback-spring.xml
 spring.main.banner-mode: off
 spring:
   config.activate.on-profile: i-sky
-  cloud.gcp.sql:
-    database-name: ${DB_DATABASE}
-    instance-connection-name: ${POSTGRES_INSTANSEURL}
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
