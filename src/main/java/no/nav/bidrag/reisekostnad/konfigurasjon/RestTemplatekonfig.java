@@ -18,21 +18,15 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 public class RestTemplatekonfig {
 
   @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY})
-  public ClientHttpRequestInterceptor tokenxInterceptor(SecurityTokenService securityTokenService) {
-    return securityTokenService.authTokenInterceptor();
-  }
-
-  @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY, Profil.HENDELSE})
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY, Profil.HENDELSE, Profil.TEST})
   public ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
-    return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-dokument");
+    return securityTokenService.clientCredentialsTokenInterceptor("bidrag-dokument");
   }
 
   @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY, Profil.HENDELSE})
+  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY, Profil.HENDELSE, Profil.TEST})
   public ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
-    return securityTokenService.serviceUserAuthTokenInterceptor("bidrag-person");
+    return securityTokenService.clientCredentialsTokenInterceptor("bidrag-person");
   }
 
   @Bean

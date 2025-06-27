@@ -1,6 +1,6 @@
 package no.nav.bidrag.reisekostnad.skedulering
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikasjonkonsument
 import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING

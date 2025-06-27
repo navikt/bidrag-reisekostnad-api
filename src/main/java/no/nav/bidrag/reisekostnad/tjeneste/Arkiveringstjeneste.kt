@@ -1,7 +1,7 @@
 package no.nav.bidrag.reisekostnad.tjeneste
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode
 import no.nav.bidrag.reisekostnad.feilhåndtering.Valideringsfeil

@@ -1,0 +1,14 @@
+name: Deploy to prod
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build-deploy:
+    name: "Build and deploy to prod"
+    permissions:
+      contents: "write"
+      id-token: "write"
+    uses: navikt/bidrag-workflow/.github/workflows/deploy_prod.yaml@main
+    secrets: inherit

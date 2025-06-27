@@ -1,0 +1,21 @@
+name: Deploy preprod
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * 1'
+  push:
+    branches:
+      - '**'
+      - '!main'
+      - '!dependabot/**'
+
+jobs:
+  build-deploy:
+    name: "Build and deploy to preprod"
+    permissions:
+      contents: "read"
+      id-token: "write"
+    uses: navikt/bidrag-workflow/.github/workflows/deploy.yaml@main
+    secrets: inherit
+    with:
+      nais_variabler_filnavn: preprod.yaml

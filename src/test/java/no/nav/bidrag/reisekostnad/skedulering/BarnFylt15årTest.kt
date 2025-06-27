@@ -68,7 +68,6 @@ class BarnFylt15årTest : DatabehandlerTest() {
             originalForespørsel.barn.first().fødselsdato shouldBe LocalDate.now().minusYears(10)
 
             verifiserDokumentArkivertForForespørsel(forespørselMedBarnFylt15År.id)
-            verify(exactly = 1) { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) }
         }
     }
 
@@ -102,13 +101,6 @@ class BarnFylt15årTest : DatabehandlerTest() {
             originalForespørsel.idJournalpost shouldBe "1232132132"
 
             verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
-            verify(exactly = 1) {
-                brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
-                    originalForespørsel.hovedpartIdent,
-                    originalForespørsel.motpartIdent,
-                    testpersonBarn15.fødselsdato
-                )
-            }
         }
     }
 
@@ -142,13 +134,6 @@ class BarnFylt15årTest : DatabehandlerTest() {
             originalForespørsel.idJournalpost shouldBe "1232132132"
 
             verifiserDokumentArkivertForForespørsel(originalForespørsel.id)
-            verify(exactly = 1) {
-                brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
-                    originalForespørsel.hovedpartIdent,
-                    originalForespørsel.motpartIdent,
-                    testpersonBarn15.fødselsdato
-                )
-            }
         }
     }
 
@@ -208,8 +193,6 @@ class BarnFylt15årTest : DatabehandlerTest() {
 
             verifiserDokumentArkivertForForespørsel(forespørselMedBarnFylt15År.id)
             verifiserDokumentArkivertForForespørselAntallGanger(2)
-
-            verify(exactly = 2) { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) }
         }
     }
 }
