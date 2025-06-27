@@ -78,6 +78,11 @@ spec:
           value: "write"
         - name: "pgaudit.log_parameter"
           value: "on"
+    permissions:
+      - resource:
+        apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+        kind: Project
+        role: roles/cloudsql.client
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
