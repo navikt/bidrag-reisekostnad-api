@@ -42,7 +42,7 @@ spec:
   kafka:
     pool: {{ kafka.pool }}
   liveness:
-    path: /internal/actuator/health
+    path: /actuator/health
     initialDelay: 60
     failureThreshold: 10
   readiness:

@@ -46,7 +46,7 @@ no.nav.security.jwt:
 management:
   endpoints.web:
     exposure.include: info, health, metrics, prometheus
-    base-path: /internal/actuator
+    base-path: /actuator
   endpoint.health.show-details: always
 
 ---
