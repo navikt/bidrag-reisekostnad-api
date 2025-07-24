@@ -5,7 +5,6 @@ import no.nav.bidrag.commons.web.CorrelationIdFilter;
 import no.nav.bidrag.commons.web.HttpHeaderRestTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RootUriTemplateHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,13 +17,13 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 public class RestTemplatekonfig {
 
   @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY, Profil.HENDELSE, Profil.TEST})
+  @Profile(value = {Profil.NAIS, Profil.LOKAL_SKY, Profil.HENDELSE, Profil.TEST})
   public ClientHttpRequestInterceptor bidragDokumentClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.clientCredentialsTokenInterceptor("bidrag-dokument");
   }
 
   @Bean
-  @Profile(value = {Profil.I_SKY, Profil.LOKAL_SKY, Profil.HENDELSE, Profil.TEST})
+  @Profile(value = {Profil.NAIS, Profil.LOKAL_SKY, Profil.HENDELSE, Profil.TEST})
   public ClientHttpRequestInterceptor bidragPersonClientCredentialsTokenInterceptor(SecurityTokenService securityTokenService) {
     return securityTokenService.clientCredentialsTokenInterceptor("bidrag-person");
   }

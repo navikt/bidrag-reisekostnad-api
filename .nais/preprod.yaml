@@ -17,7 +17,7 @@ requests:
   memory: 512Mi
   cpu: 200m
 env:
-  SPRING_PROFILES_ACTIVE: preprod, i-sky
+  SPRING_PROFILES_ACTIVE: preprod, nais
   JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
   BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io

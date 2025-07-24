@@ -1,7 +1,7 @@
 logging.config: classpath:logback-spring.xml
 spring.main.banner-mode: off
 spring:
-  config.activate.on-profile: i-sky
+  config.activate.on-profile: nais
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}

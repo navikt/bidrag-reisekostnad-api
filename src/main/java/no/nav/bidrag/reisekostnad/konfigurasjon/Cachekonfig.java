@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableCaching
-@Profile(Profil.I_SKY)
+@Profile(Profil.NAIS)
 @ConfigurationProperties
 public class Cachekonfig {
 

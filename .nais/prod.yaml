@@ -17,7 +17,7 @@ requests:
   memory: 1024Mi
   cpu: 200m
 env:
-  SPRING_PROFILES_ACTIVE: prod, i-sky
+  SPRING_PROFILES_ACTIVE: prod, nais
   BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.prod-fss-pub.nais.io
   BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
