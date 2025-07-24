@@ -46,12 +46,12 @@ spec:
     initialDelay: 60
     failureThreshold: 10
   readiness:
-    path: /internal/actuator/health
+    path: /actuator/health
     initialDelay: 60
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: /internal/actuator/prometheus
+    path: /actuator/prometheus
   resources:
     limits:
       cpu: {{limits.cpu}}
