@@ -1,0 +1,93 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: {{ name }}
+  namespace: bidrag
+  labels:
+    team: bidrag
+spec:
+  leaderElection: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+        - id: secure_logs
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: {{ env.BIDRAG_PERSON_HOST }}
+      rules:
+       - application: logging
+         namespace: nais-system
+    inbound:
+      rules:
+      {{#each azure_access_inbound}}
+         - application: {{this.application}}
+           namespace: {{this.namespace}}
+           cluster: {{this.cluster}}
+      {{/each}}
+  secureLogs:
+    enabled: true
+  image: {{ image }}
+  tokenx:
+    enabled: true
+  kafka:
+    pool: {{ kafka.pool }}
+  liveness:
+    path: /actuator/health
+    initialDelay: 60
+    failureThreshold: 10
+  readiness:
+    path: /actuator/health
+    initialDelay: 60
+    failureThreshold: 10
+  prometheus:
+    enabled: true
+    path: /actuator/prometheus
+  resources:
+    limits:
+      cpu: {{limits.cpu}}
+      memory: {{limits.memory}}
+    requests:
+      cpu: {{requests.cpu}}
+      memory: {{requests.memory}}
+  replicas:
+    max: {{replicas.max}}
+    min: {{replicas.min}}
+    cpuThresholdPercentage: 50
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_15
+        tier: {{ database.tier }}
+        databases:
+          - name: {{ database.navn }}
+            envVarPrefix: DB
+        flags:
+        - name: "cloudsql.enable_pgaudit"
+          value: "{{ database.auditlog }}"
+        - name: "pgaudit.log"
+          value: "write"
+        - name: "pgaudit.log_parameter"
+          value: "on"
+    permissions:
+      - resource:
+          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+          kind: Project
+        role: roles/cloudsql.client
+  ingresses:
+  {{#each ingresses as |url|}}
+    - {{url}}
+  {{/each}}
+  env:
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}

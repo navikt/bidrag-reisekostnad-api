@@ -1,96 +1,38 @@
-apiVersion: "nais.io/v1alpha1"
-kind: "Application"
-metadata:
-  name: bidrag-reisekostnad-api
-  namespace: bidrag
-  labels:
-    team: bidrag
-spec:
-  observability:
-    autoInstrumentation:
-      enabled: true
-      runtime: java
-  image: {{ image }}
-  leaderElection: true
-  azure:
-    application:
-      enabled: true
-  secureLogs:
-    enabled: true
-  tokenx:
-    enabled: true
-  kafka:
-    pool: nav-dev
-  gcp:
-    permissions:
-      - resource:
-          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
-          kind: Project
-        role: roles/cloudsql.client
-    sqlInstances:
-      - type: POSTGRES_15
-        tier: db-f1-micro
-        databases:
-          - name: reisekostnad-preprod
-            envVarPrefix: DB
-  liveness:
-    path: /internal/actuator/health
-    initialDelay: 60
-    failureThreshold: 10
-  readiness:
-    path: /internal/actuator/health
-    initialDelay: 60
-    failureThreshold: 10
-  prometheus:
-    enabled: true
-    path: /internal/actuator/prometheus
-  replicas:
-    min: 2
-    max: 2
-    cpuThresholdPercentage: 50
-  resources:
-    limits:
-      memory: 1024Mi
-      cpu: "1"
-    requests:
-      memory: 512Mi
-      cpu: 200m
-  ingresses:
-    - https://bidrag-reisekostnad-api.intern.dev.nav.no
-  env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: preprod, i-sky
-    - name: JAVA_TOOL_OPTIONS
-      value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-    - name: BIDRAG_DOKUMENT_SCOPE
-      value: dev-fss.bidrag.bidrag-dokument
-    - name: BIDRAG_DOKUMENT_URL
-      value: https://bidrag-dokument.dev-fss-pub.nais.io
-    - name: BIDRAG_PERSON_SCOPE
-      value: dev-fss.bidrag.bidrag-person-q2
-    - name: BIDRAG_PERSON_URL
-      value: https://bidrag-person-q2.dev-fss-pub.nais.io
-    - name: BIDRAG_REISEKOSTNAD_UI_URL
-      value: https://bidrag-reisekostnad.ekstern.dev.nav.no
-    - name: POSTGRES_INSTANSEURL
-      value: bidrag-dev-45a9:europe-north1:bidrag-reisekostnad-api
-    - name: KJOEREPLAN_ARKIVERING
-      value: "0 0/30 * * * ?"
-    - name: KJOEREPLAN_FYLT_15
-      value: "0 0/30 * * * ?"
-    - name: KJOEREPLAN_DEAKTIVERING
-      value: "0 0/30 * * * ?"
-    - name: KJOEREPLAN_ANONYMISERING
-      value: "0 0/30 * * * ?"
-  accessPolicy:
-    inbound:
-      rules:
-        - application: debug-dings
-          namespace: plattformsikkerhet
-          cluster: dev-gcp
-        - application: bidrag-reisekostnad-ui
-          namespace: bidrag
-          cluster: dev-gcp
-    outbound:
-      external:
-        - host: bidrag-person.dev-fss-pub.nais.io
+name: bidrag-reisekostnad-api
+ingresses:
+  - https://bidrag-reisekostnad-api.intern.dev.nav.no
+database:
+  navn: reisekostnad-preprod
+  tier: db-f1-micro
+  auditlog: "on"
+kafka:
+  pool: nav-dev
+replicas:
+  min: 2
+  max: 2
+limits:
+  memory: 2048Mi
+  cpu: 800m
+requests:
+  memory: 1024Mi
+  cpu: 200m
+env:
+  SPRING_PROFILES_ACTIVE: preprod, nais
+  JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+  BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument
+  BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io
+  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-q2
+  BIDRAG_PERSON_HOST: bidrag-person-q2.dev-fss-pub.nais.io
+  BIDRAG_PERSON_URL: https://bidrag-person-q2.dev-fss-pub.nais.io
+  BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.ekstern.dev.nav.no
+  KJOEREPLAN_ARKIVERING: "0 0/30 * * * ?"
+  KJOEREPLAN_FYLT_15: "0 0/30 * * * ?"
+  KJOEREPLAN_DEAKTIVERING: "0 0/30 * * * ?"
+  KJOEREPLAN_ANONYMISERING: "0 0/30 * * * ?"
+azure_access_inbound:
+  - application: bidrag-reisekostnad-ui
+    namespace: bidrag
+    cluster: dev-gcp
+  - application: debug-dings
+    namespace: plattformsikkerhet
+    cluster: dev-gcp

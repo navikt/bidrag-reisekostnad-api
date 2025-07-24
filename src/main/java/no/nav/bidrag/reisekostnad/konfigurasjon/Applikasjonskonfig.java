@@ -68,7 +68,7 @@ public class Applikasjonskonfig {
   }
 
   @Configuration
-  @Profile(Profil.I_SKY)
+  @Profile(Profil.NAIS)
   public static class FlywayConfiguration {
 
     @Autowired
@@ -80,7 +80,7 @@ public class Applikasjonskonfig {
   }
 
   @Configuration
-  @Profile({Profil.I_SKY, Profil.LOKAL_POSTGRES})
+  @Profile({Profil.NAIS, Profil.LOKAL_POSTGRES})
   @EnableScheduling
   @EnableSchedulerLock(defaultLockAtMostFor = "PT30S")
   public class SchedulerConfiguration {

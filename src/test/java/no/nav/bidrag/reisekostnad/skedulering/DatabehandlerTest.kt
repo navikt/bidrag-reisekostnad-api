@@ -1,7 +1,7 @@
 package no.nav.bidrag.reisekostnad.skedulering
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.ninjasquad.springmockk.MockkBean
+import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import no.nav.bidrag.reisekostnad.BidragReisekostnadApiTestapplikasjon
 import no.nav.bidrag.reisekostnad.Testperson
@@ -41,7 +41,7 @@ import jakarta.persistence.EntityManager
 @DisplayName("DatabehandlerTest")
 class DatabehandlerTest {
 
-    @MockkBean
+    @MockK
     lateinit var brukernotifikasjonkonsument: Brukernotifikasjonkonsument
 
     @Autowired

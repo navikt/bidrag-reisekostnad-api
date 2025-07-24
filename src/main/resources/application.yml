@@ -1,15 +1,12 @@
 logging.config: classpath:logback-spring.xml
 spring.main.banner-mode: off
 spring:
-  config.activate.on-profile: i-sky
-  cloud.gcp.sql:
-    database-name: ${DB_DATABASE}
-    instance-connection-name: ${POSTGRES_INSTANSEURL}
+  config.activate.on-profile: nais
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?user=${DB_USERNAME}&password=${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
     hikari:
       idle-timeout: 10001
       max-lifetime: 30001
@@ -20,9 +17,6 @@ spring:
     enabled: false
     locations: classpath:/db/migration
   jpa:
-    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
-    properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
 
 no.nav.security.jwt:
@@ -52,7 +46,7 @@ no.nav.security.jwt:
 management:
   endpoints.web:
     exposure.include: info, health, metrics, prometheus
-    base-path: /internal/actuator
+    base-path: /actuator
   endpoint.health.show-details: always
 
 ---
