@@ -12,10 +12,10 @@ replicas:
   max: 2
 limits:
   memory: 2048Mi
-  cpu: 400m
+  cpu: 800m
 requests:
   memory: 1024Mi
-  cpu: 200m
+  cpu: 400m
 env:
   SPRING_PROFILES_ACTIVE: prod, nais
   BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
