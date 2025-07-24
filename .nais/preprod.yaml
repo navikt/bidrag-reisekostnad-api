@@ -15,7 +15,7 @@ limits:
   cpu: 800m
 requests:
   memory: 1024Mi
-  cpu: 400m
+  cpu: 200m
 env:
   SPRING_PROFILES_ACTIVE: preprod, nais
   JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
