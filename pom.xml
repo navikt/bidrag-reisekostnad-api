@@ -28,7 +28,7 @@
 
     <!-- annet -->
     <avro.version>1.12.0</avro.version>
-    <bidrag-felles.version>2025.06.19.155924</bidrag-felles.version>
+    <bidrag-felles.version>2025.07.28.150314</bidrag-felles.version>
     <brukernotifikasjon-schemas.version>2.6.0</brukernotifikasjon-schemas.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <flyway.version>11.9.1</flyway.version>
