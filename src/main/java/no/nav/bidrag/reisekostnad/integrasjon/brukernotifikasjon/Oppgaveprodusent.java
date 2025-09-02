@@ -1,21 +1,17 @@
 package no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon;
 
-import static no.nav.bidrag.reisekostnad.konfigurasjon.Brukernotifikasjonskonfig.NAMESPACE_BIDRAG;
-
 import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Egenskaper;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
-import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder;
-import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder;
-import no.nav.brukernotifikasjon.schemas.input.NokkelInput;
-import no.nav.brukernotifikasjon.schemas.input.OppgaveInput;
+import no.nav.tms.varsel.action.Sensitivitet;
+import no.nav.tms.varsel.action.Varseltype;
+import no.nav.tms.varsel.builder.OpprettVarselBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @Slf4j
@@ -27,52 +23,55 @@ public class Oppgaveprodusent {
   private URL reisekostnadUrl;
   private Egenskaper egenskaper;
 
-  public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst,
-      boolean medEksternVarsling) {
+  public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst, String varselId) {
 
-    var nokkel = new NokkelInputBuilder()
-        .withEventId(UUID.randomUUID().toString())
-        .withGrupperingsId(egenskaper.getBrukernotifikasjon().getGrupperingsidReisekostnad())
-        .withFodselsnummer(personidentMotpart)
-        .withAppnavn(egenskaper.getAppnavnReisekostnad())
-        .withNamespace(NAMESPACE_BIDRAG)
-        .build();
-
-    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), medEksternVarsling, reisekostnadUrl);
+    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), reisekostnadUrl, personidentMotpart, varselId);
     var motpartsAktiveSamtykkeoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
     if (motpartsAktiveSamtykkeoppgaver.isEmpty()) {
       log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
 
       if (egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
-        oppretteOppgave(nokkel, melding);
+        oppretteOppgave(varselId, melding);
         log.info("Samtykkeoppgave opprettet for forespørsel med id {}.", idForespørsel);
-        databasetjeneste.lagreNyOppgavebestilling(idForespørsel, nokkel.getEventId());
+        databasetjeneste.lagreNyOppgavebestilling(idForespørsel, varselId);
       } else {
         log.warn("Brukernotifikasjoner er skrudd av - oppgavebestilling ble derfor ikke sendt.");
       }
     }
   }
 
-  private void oppretteOppgave(NokkelInput nokkel, OppgaveInput melding) {
+  private void oppretteOppgave(String varselId, String melding) {
     try {
-      kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneOppgave(), nokkel, melding);
+      kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), varselId, melding);
     } catch (Exception e) {
       e.printStackTrace();
       throw new InternFeil(Feilkode.BRUKERNOTIFIKASJON_OPPRETTE_OPPGAVE, e);
     }
   }
 
-  private OppgaveInput oppretteOppgave(String oppgavetekst, boolean medEksternVarsling, URL reisekostnadUrl) {
+  private String oppretteOppgave(String oppgavetekst, URL reisekostnadUrl, String fodselsnummer, String varselId) {
 
-    return new OppgaveInputBuilder()
-        .withTidspunkt(ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime())
-        .withEksternVarsling(medEksternVarsling)
-        .withLink(reisekostnadUrl)
-        .withSikkerhetsnivaa(egenskaper.getBrukernotifikasjon().getSikkerhetsnivaaOppgave())
-        .withSynligFremTil(
-            ZonedDateTime.now(ZoneId.of("UTC")).plusDays(egenskaper.getBrukernotifikasjon().getLevetidOppgaveAntallDager())
-                .toLocalDateTime())
-        .withTekst(oppgavetekst).build();
+    return OpprettVarselBuilder.newInstance()
+        .withType(Varseltype.Oppgave)
+        .withVarselId(varselId)
+        .withSensitivitet(
+            Sensitivitet.valueOf(
+                egenskaper.getBrukernotifikasjon().getSikkerhetsnivaaOppgave()))
+        .withIdent(fodselsnummer)
+        .withTekst("nb", oppgavetekst, true)
+        .withLink(reisekostnadUrl.toString())
+        .withAktivFremTil(
+            ZonedDateTime.now(ZoneId.of("UTC"))
+                .plusDays(
+                    egenskaper
+                        .getBrukernotifikasjon()
+                        .getLevetidOppgaveAntallDager()))
+        //        .withEksternVarsling()
+        .withProdusent(
+            egenskaper.getCluster(),
+            egenskaper.getNamespace(),
+            egenskaper.getAppnavn())
+        .build();
   }
 }

@@ -19,7 +19,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 @EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"},
-    topics = {"aapen-brukernotifikasjon-nyBeskjed-v1", "aapen-brukernotifikasjon-done-v1", "aapen-brukernotifikasjon-nyOppgave-v1"})
+    topics = {"aapen-brukervarsel-v1"})
 @ComponentScan(excludeFilters = {
     @ComponentScan.Filter(type = ASSIGNABLE_TYPE, value = {BidragReiesekostnadApiApplikasjon.class})})
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})

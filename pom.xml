@@ -27,14 +27,11 @@
     <jsoup.version>1.20.1</jsoup.version>
 
     <!-- annet -->
-    <avro.version>1.12.0</avro.version>
     <bidrag-felles.version>2025.06.19.155924</bidrag-felles.version>
-    <brukernotifikasjon-schemas.version>2.6.0</brukernotifikasjon-schemas.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <flyway.version>11.9.1</flyway.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
     <java.version>21</java.version>
-    <kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
     <modelmapper.version>3.2.3</modelmapper.version>
     <nimbus.oauth2-oidc-sdk.version>11.26</nimbus.oauth2-oidc-sdk.version>
     <plexus.version>4.0.2</plexus.version>
@@ -46,6 +43,7 @@
     <mockk.version>1.14.2</mockk.version>
     <kotest.version>5.9.1</kotest.version>
     <google-cloud-libraries-bom.version>26.61.0</google-cloud-libraries-bom.version>
+    <tms-varsel.version>2.1.1</tms-varsel.version>
   </properties>
 
 
@@ -74,11 +72,6 @@
   </repositories>
 
   <dependencies>
-    <dependency>
-      <groupId>org.apache.avro</groupId>
-      <artifactId>avro</artifactId>
-      <version>${avro.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
@@ -152,17 +145,6 @@
 
     <!-- navikt -->
     <dependency>
-      <groupId>no.nav.tms</groupId>
-      <artifactId>brukernotifikasjon-schemas</artifactId>
-      <version>${brukernotifikasjon-schemas.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.avro</groupId>
-          <artifactId>avro</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>no.nav.security</groupId>
       <artifactId>token-client-spring</artifactId>
       <version>${token-support.version}</version>
@@ -177,6 +159,12 @@
           <artifactId>tomcat-embed-core</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>no.nav.tms.varsel</groupId>
+      <artifactId>java-builder</artifactId>
+      <version>${tms-varsel.version}</version>
     </dependency>
 
     <!-- datakilde -->
@@ -236,17 +224,6 @@
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc-openapi-ui.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.confluent</groupId>
-      <artifactId>kafka-avro-serializer</artifactId>
-      <version>${kafka-avro-serializer.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>io.swagger.core.v3</groupId>
-          <artifactId>swagger-annotations</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate.validator</groupId>
