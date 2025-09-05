@@ -23,7 +23,7 @@ public class Beskjedprodusent {
 
   public void oppretteBeskjedTilBruker(String personidentForelder, DynamiskMelding meldingTilBruker, boolean medEksternVarsling, String varselId) {
 
-    var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), reisekostnadForside, varselId, personidentForelder);
+    var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), reisekostnadForside, varselId, personidentForelder, medEksternVarsling);
 
     if (!egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
       log.warn("Brukernotifikasjoner er skrudd av - {} ble derfor ikke sendt.", meldingTilBruker.getMelding());
@@ -44,9 +44,9 @@ public class Beskjedprodusent {
         medEllerUten, varselId, personidentForelder);
   }
 
-  private String oppretteBeskjed(String meldingTilBruker, URL lenke, String varselId, String fodselsnummer) {
+  private String oppretteBeskjed(String meldingTilBruker, URL lenke, String varselId, String fodselsnummer, Boolean medEksternVarsling) {
 
-    return OpprettVarselBuilder.newInstance()
+    OpprettVarselBuilder builder = OpprettVarselBuilder.newInstance()
         .withType(Varseltype.Beskjed)
         .withVarselId(varselId)
         .withSensitivitet(
@@ -62,11 +62,15 @@ public class Beskjedprodusent {
                     egenskaper
                         .getBrukernotifikasjon()
                         .getSynlighetBeskjedAntallMaaneder()))
-        //        .withEksternVarsling()
         .withProdusent(
             egenskaper.getCluster(),
             egenskaper.getNamespace(),
-            egenskaper.getAppnavn())
-        .build();
+            egenskaper.getAppnavn());
+
+    if (medEksternVarsling) {
+      builder = builder.withEksternVarsling();
+    }
+
+    return builder.build();
   }
 }

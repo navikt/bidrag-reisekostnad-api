@@ -67,7 +67,7 @@ public class Oppgaveprodusent {
                     egenskaper
                         .getBrukernotifikasjon()
                         .getLevetidOppgaveAntallDager()))
-        //        .withEksternVarsling()
+        .withEksternVarsling()
         .withProdusent(
             egenskaper.getCluster(),
             egenskaper.getNamespace(),
