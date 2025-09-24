@@ -26,6 +26,7 @@ public class Oppgaveprodusent {
   public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst, String varselId) {
 
     var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), reisekostnadUrl, personidentMotpart, varselId);
+    log.info("Melding opprettet: {}", melding);
     var motpartsAktiveSamtykkeoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
     if (motpartsAktiveSamtykkeoppgaver.isEmpty()) {
@@ -45,7 +46,8 @@ public class Oppgaveprodusent {
     try {
       kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), varselId, melding);
     } catch (Exception e) {
-      e.printStackTrace();
+//      e.printStackTrace();
+      log.error("msg", e);
       throw new InternFeil(Feilkode.BRUKERNOTIFIKASJON_OPPRETTE_OPPGAVE, e);
     }
   }

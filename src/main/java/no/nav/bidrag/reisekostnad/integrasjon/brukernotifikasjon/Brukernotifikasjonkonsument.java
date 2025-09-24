@@ -90,7 +90,8 @@ public class Brukernotifikasjonkonsument {
       oppgaveprodusent.oppretteOppgaveOmSamtykke(idForespørsel, personidentMotpart, new DynamiskMelding(MELDING_OM_VENTENDE_FORESPØRSEL),
           UUID.randomUUID().toString());
     } catch (InternFeil internFeil) {
-      log.error("En feil inntraff ved opprettelse av samtykkeoppgave til motpart i forespørsels med id {}", idForespørsel);
+      log.error("En feil inntraff ved opprettelse av samtykkeoppgave til motpart i forespørsels med id {}. Feilmelding: {}. Stacktrace: {}",
+          idForespørsel, internFeil.getMessage(), internFeil.getStackTrace());
     }
   }
 
