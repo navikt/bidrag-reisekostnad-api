@@ -80,6 +80,7 @@ public class Brukernotifikasjonskonfig {
     return configProps;
   }
 
+  @Bean
   public KafkaTemplate<String, String> kafkaTemplateBrukernotifikasjon() {
     return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(getKafkaConfigProps()));
   }
