@@ -45,6 +45,7 @@ public class Beskjedprodusent {
   }
 
   private String oppretteBeskjed(String meldingTilBruker, URL lenke, String varselId, String fodselsnummer, Boolean medEksternVarsling) {
+    log.info("Oppretter beskjed med varselId {} og melding {}", varselId, meldingTilBruker);
 
     OpprettVarselBuilder builder = OpprettVarselBuilder.newInstance()
         .withType(Varseltype.Beskjed)

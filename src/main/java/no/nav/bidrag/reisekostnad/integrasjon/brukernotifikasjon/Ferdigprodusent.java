@@ -43,6 +43,8 @@ public class Ferdigprodusent {
   }
 
   private String oppretteDone(String varselId) {
+    log.info("Inaktiverer varsel med varselId {}", varselId);
+
     return InaktiverVarselBuilder.newInstance()
         .withVarselId(varselId)
         .withProdusent(

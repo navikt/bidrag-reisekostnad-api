@@ -53,6 +53,7 @@ public class Oppgaveprodusent {
   }
 
   private String oppretteOppgave(String oppgavetekst, URL reisekostnadUrl, String fodselsnummer, String varselId) {
+    log.info("Oppretter oppgave med varselId {} og melding {}", varselId, oppgavetekst);
 
     return OpprettVarselBuilder.newInstance()
         .withType(Varseltype.Oppgave)
