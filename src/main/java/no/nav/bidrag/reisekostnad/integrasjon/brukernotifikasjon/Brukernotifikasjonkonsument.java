@@ -95,10 +95,10 @@ public class Brukernotifikasjonkonsument {
     }
   }
 
-  public boolean ferdigstilleSamtykkeoppgave(String eventId, String personidentMotpart) {
+  public boolean ferdigstilleSamtykkeoppgave(String eventId) {
     log.info("Ferdigstiller samtykkeoppgave med eventId {}", eventId);
     try {
-      ferdigprodusent.ferdigstilleSamtykkeoppgave(UUID.randomUUID().toString());
+      ferdigprodusent.ferdigstilleSamtykkeoppgave(eventId);
       return true;
     } catch (InternFeil internFeilException) {
       log.error("En feil oppstod ved sending av ferdigmelding for oppgave med eventId {}.", eventId);

@@ -6,9 +6,6 @@ import io.kotest.matchers.date.shouldHaveSameYearAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
-import io.mockk.verify
-import no.nav.bidrag.reisekostnad.model.hovedpartIdent
-import no.nav.bidrag.reisekostnad.model.motpartIdent
 import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørsel
 import no.nav.bidrag.reisekostnad.verifiserDokumentArkivertForForespørselAntallGanger
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +20,7 @@ class BarnFylt15årTest : DatabehandlerTest() {
     @BeforeEach
     fun setup() {
         every { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) } returns Unit
-        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns true
+        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any()) } returns true
     }
 
     @Test
