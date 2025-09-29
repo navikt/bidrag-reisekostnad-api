@@ -23,9 +23,9 @@ public class Oppgaveprodusent {
   private URL reisekostnadUrl;
   private Egenskaper egenskaper;
 
-  public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst, String varselId) {
+  public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst, String eventId) {
 
-    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), reisekostnadUrl, personidentMotpart, varselId);
+    var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), reisekostnadUrl, personidentMotpart, eventId);
     log.info("Melding opprettet: {}", melding);
     var motpartsAktiveSamtykkeoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
@@ -33,31 +33,30 @@ public class Oppgaveprodusent {
       log.info("Oppretter oppgave om samtykke til motpart i forespørsel med id {}", idForespørsel);
 
       if (egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
-        oppretteOppgave(varselId, melding);
+        oppretteOppgave(eventId, melding);
         log.info("Samtykkeoppgave opprettet for forespørsel med id {}.", idForespørsel);
-        databasetjeneste.lagreNyOppgavebestilling(idForespørsel, varselId);
+        databasetjeneste.lagreNyOppgavebestilling(idForespørsel, eventId);
       } else {
         log.warn("Brukernotifikasjoner er skrudd av - oppgavebestilling ble derfor ikke sendt.");
       }
     }
   }
 
-  private void oppretteOppgave(String varselId, String melding) {
+  private void oppretteOppgave(String eventId, String melding) {
     try {
-      kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), varselId, melding);
+      kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), eventId, melding);
     } catch (Exception e) {
-//      e.printStackTrace();
-      log.error("msg", e);
+      log.error("Opprettelse av oppgave {} til forelder feilet!", melding, e);
       throw new InternFeil(Feilkode.BRUKERNOTIFIKASJON_OPPRETTE_OPPGAVE, e);
     }
   }
 
-  private String oppretteOppgave(String oppgavetekst, URL reisekostnadUrl, String fodselsnummer, String varselId) {
-    log.info("Oppretter oppgave med varselId {} og melding {}", varselId, oppgavetekst);
+  private String oppretteOppgave(String oppgavetekst, URL reisekostnadUrl, String fodselsnummer, String eventId) {
+    log.info("Oppretter oppgave med eventId {} og melding {}", eventId, oppgavetekst);
 
     return OpprettVarselBuilder.newInstance()
         .withType(Varseltype.Oppgave)
-        .withVarselId(varselId)
+        .withVarselId(eventId)
         .withSensitivitet(
             Sensitivitet.valueOf(
                 egenskaper.getBrukernotifikasjon().getSikkerhetsnivaaOppgave()))

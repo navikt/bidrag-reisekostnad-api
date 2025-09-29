@@ -21,9 +21,9 @@ public class Beskjedprodusent {
   URL reisekostnadForside;
   Egenskaper egenskaper;
 
-  public void oppretteBeskjedTilBruker(String personidentForelder, DynamiskMelding meldingTilBruker, boolean medEksternVarsling, String varselId) {
+  public void oppretteBeskjedTilBruker(String personidentForelder, DynamiskMelding meldingTilBruker, boolean medEksternVarsling, String eventId) {
 
-    var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), reisekostnadForside, varselId, personidentForelder, medEksternVarsling);
+    var beskjed = oppretteBeskjed(meldingTilBruker.hentFormatertMelding(), reisekostnadForside, eventId, personidentForelder, medEksternVarsling);
 
     if (!egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
       log.warn("Brukernotifikasjoner er skrudd av - {} ble derfor ikke sendt.", meldingTilBruker.getMelding());
@@ -31,25 +31,25 @@ public class Beskjedprodusent {
     }
 
     try {
-      kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), varselId, beskjed);
+      kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), eventId, beskjed);
     } catch (Exception e) {
       log.error("Opprettelse av beskjed {} til forelder feilet!", meldingTilBruker.getMelding(), e);
       SIKKER_LOGG.error("Opprettelse av beskjed {} til forelder med personident {} feilet!", meldingTilBruker.getMelding(), personidentForelder);
     }
 
     var medEllerUten = medEksternVarsling ? "med" : "uten";
-    log.info("Beskjed {}, {} ekstern varsling og varselId {} er sendt til forelder.", meldingTilBruker.getMelding(), medEllerUten,
-        varselId);
-    SIKKER_LOGG.info("Beskjed {}, {} ekstern varsling og varselId {} er sendt til forelder med personid {}.", meldingTilBruker.getMelding(),
-        medEllerUten, varselId, personidentForelder);
+    log.info("Beskjed {}, {} ekstern varsling og eventId {} er sendt til forelder.", meldingTilBruker.getMelding(), medEllerUten,
+        eventId);
+    SIKKER_LOGG.info("Beskjed {}, {} ekstern varsling og eventId {} er sendt til forelder med personid {}.", meldingTilBruker.getMelding(),
+        medEllerUten, eventId, personidentForelder);
   }
 
-  private String oppretteBeskjed(String meldingTilBruker, URL lenke, String varselId, String fodselsnummer, Boolean medEksternVarsling) {
-    log.info("Oppretter beskjed med varselId {} og melding {}", varselId, meldingTilBruker);
+  private String oppretteBeskjed(String meldingTilBruker, URL lenke, String eventId, String fodselsnummer, Boolean medEksternVarsling) {
+    log.info("Oppretter beskjed med eventId {} og melding {}", eventId, meldingTilBruker);
 
     OpprettVarselBuilder builder = OpprettVarselBuilder.newInstance()
         .withType(Varseltype.Beskjed)
-        .withVarselId(varselId)
+        .withVarselId(eventId)
         .withSensitivitet(
             Sensitivitet.valueOf(
                 egenskaper.getBrukernotifikasjon().getSikkerhetsnivaaBeskjed()))

@@ -35,9 +35,9 @@ public class Brukernotifikasjonkonsument {
   }
 
   public void varsleForeldreOmManglendeSamtykke(String personidentHovedpart, String personidentMotpart, LocalDate opprettetDato) {
-    log.info("Informerer foreldre om mangldende samtykke for forespørsel opprettet den {}.",
+    log.info("Informerer foreldre om manglende samtykke for forespørsel opprettet den {}.",
         opprettetDato.format(DateTimeFormatter.ofPattern("ddMMyyy")));
-    SIKKER_LOGG.info("Informerer foreldre (hovedpart: {}, motpart: {}) om mangldende samtykke for forespørsel opprettet den {}", personidentHovedpart,
+    SIKKER_LOGG.info("Informerer foreldre (hovedpart: {}, motpart: {}) om manglende samtykke for forespørsel opprettet den {}", personidentHovedpart,
         personidentMotpart, opprettetDato);
 
     var dato = opprettetDato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
@@ -90,7 +90,7 @@ public class Brukernotifikasjonkonsument {
       oppgaveprodusent.oppretteOppgaveOmSamtykke(idForespørsel, personidentMotpart, new DynamiskMelding(MELDING_OM_VENTENDE_FORESPØRSEL),
           UUID.randomUUID().toString());
     } catch (InternFeil internFeil) {
-      log.error("En feil inntraff ved opprettelse av samtykkeoppgave til motpart i forespørsels med id {}. Feilmelding: {}. Stacktrace: {}",
+      log.error("En feil inntraff ved opprettelse av samtykkeoppgave til motpart i forespørsel med id {}. Feilmelding: {}. Stacktrace: {}",
           idForespørsel, internFeil.getMessage(), internFeil.getStackTrace());
     }
   }

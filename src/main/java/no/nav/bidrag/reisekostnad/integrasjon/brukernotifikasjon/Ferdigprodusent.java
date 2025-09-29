@@ -19,9 +19,9 @@ public class Ferdigprodusent {
   OppgavebestillingDao oppgavebestillingDao;
   Egenskaper egenskaper;
 
-  public void ferdigstilleSamtykkeoppgave(String varselId) {
+  public void ferdigstilleSamtykkeoppgave(String eventId) {
 
-    var oppgaveSomSkalFerdigstilles = oppgavebestillingDao.henteOppgavebestilling(varselId);
+    var oppgaveSomSkalFerdigstilles = oppgavebestillingDao.henteOppgavebestilling(eventId);
 
     if (!egenskaper.getBrukernotifikasjon().getSkruddPaa()) {
       log.warn("Brukernotifikasjoner er skrudd av - ferdigbestilling av oppgave ble derfor ikke sendt.");
@@ -29,24 +29,24 @@ public class Ferdigprodusent {
     }
 
     if (oppgaveSomSkalFerdigstilles.isPresent() && oppgaveSomSkalFerdigstilles.get().getFerdigstilt() == null) {
-      var melding = oppretteDone(varselId);
+      var melding = oppretteDone(eventId);
       try {
-        kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), varselId, melding);
+        kafkaTemplate.send(egenskaper.getBrukernotifikasjon().getEmneBrukernotifikasjon(), eventId, melding);
       } catch (Exception e) {
         throw new InternFeil(Feilkode.BRUKERNOTIFIKASJON_OPPRETTE_OPPGAVE, e);
       }
-      log.info("Ferdigmelding ble sendt for oppgave med varselId {}.", varselId);
-      databasetjeneste.setteOppgaveTilFerdigstilt(varselId);
+      log.info("Ferdigmelding ble sendt for oppgave med eventId {}.", eventId);
+      databasetjeneste.setteOppgaveTilFerdigstilt(eventId);
     } else {
-      log.warn("Fant ingen aktiv oppgavebestilling for varselId {}. Bestiller derfor ikke ferdigstilling.", varselId);
+      log.warn("Fant ingen aktiv oppgavebestilling for eventId {}. Bestiller derfor ikke ferdigstilling.", eventId);
     }
   }
 
-  private String oppretteDone(String varselId) {
-    log.info("Inaktiverer varsel med varselId {}", varselId);
+  private String oppretteDone(String eventId) {
+    log.info("Inaktiverer varsel med eventId {}", eventId);
 
     return InaktiverVarselBuilder.newInstance()
-        .withVarselId(varselId)
+        .withVarselId(eventId)
         .withProdusent(
             egenskaper.getCluster(),
             egenskaper.getNamespace(),
