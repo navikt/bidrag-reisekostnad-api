@@ -5,6 +5,7 @@ import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE;
+import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_GODKJENT_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_HOVEDPART_OM_TRUKKET_FORESPØRSEL;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE;
 import static no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Melding.MELDING_TIL_MOTPART_OM_TRUKKET_FORESPØRSEL;
@@ -74,6 +75,12 @@ public class Brukernotifikasjonkonsument {
     beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE), true,
         UUID.randomUUID().toString());
     beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE), false,
+        UUID.randomUUID().toString());
+  }
+
+  public void varsleOmJaTilSamtykke(String personidentHovedpart) {
+    log.info("Varsler brukere om godkjent signering");
+    beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_TIL_HOVEDPART_OM_GODKJENT_SAMTYKKE), true,
         UUID.randomUUID().toString());
   }
 

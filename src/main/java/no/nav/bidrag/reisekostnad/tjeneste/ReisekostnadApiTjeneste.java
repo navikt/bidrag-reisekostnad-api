@@ -81,7 +81,7 @@ public class ReisekostnadApiTjeneste {
   public HttpResponse<Void> oppdatereForespørselMedSamtykke(int idForespørsel, String personidentMotpart) {
     // Kaster Valideringsfeil dersom forespørsel ikke finnes eller oppdatering av samtykke  feiler
     databasetjeneste.giSamtykke(idForespørsel, personidentMotpart);
-    sletteSamtykkeoppgave(idForespørsel, personidentMotpart);
+    sletteSamtykkeoppgave(idForespørsel, personidentMotpart, true);
     arkiveringstjeneste.arkivereForespørsel(idForespørsel);
     return HttpResponse.Companion.from(HttpStatus.OK, null);
   }
@@ -100,18 +100,23 @@ public class ReisekostnadApiTjeneste {
     }
 
     // Motparts samtykkeoppgave skal slettes uavhengig av om det er hovedpart eller motpart som trekker forespørselen
-    sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident());
+    sletteSamtykkeoppgave(deaktivertForespørsel.getId(), deaktivertForespørsel.getMotpart().getPersonident(), false);
 
     countReisekostnadTrukket();
     return HttpResponse.Companion.from(HttpStatus.OK, null);
   }
 
-  private void sletteSamtykkeoppgave(int idForespørsel, String personidentMotpart) {
+  private void sletteSamtykkeoppgave(int idForespørsel, String personidentMotpart, Boolean harSamtykket) {
     var aktiveOppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
     log.info("Fant {} aktive brukernotifikasjonsoppgaver knyttet til motpart i forespørsel med id {}", aktiveOppgaver.size(), idForespørsel);
     for (Oppgavebestilling oppgave : aktiveOppgaver) {
       brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(oppgave.getEventId());
       log.info("Slettet oppgave med eventId {} knyttet til forespørsel {}", oppgave.getEventId(), idForespørsel);
+      if (harSamtykket) {
+        var forespørsel = databasetjeneste.henteAktivForespørsel(idForespørsel);
+        brukernotifikasjonkonsument.varsleOmJaTilSamtykke(forespørsel.getHovedpart().getPersonident());
+        log.info("Sender beskjed til hovedpart om at motpart har samtykket til forespørsel med id {}", idForespørsel);
+      }
     }
   }
 

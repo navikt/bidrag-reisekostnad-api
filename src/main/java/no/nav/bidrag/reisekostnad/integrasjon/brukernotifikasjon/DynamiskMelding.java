@@ -33,9 +33,10 @@ enum Melding {
   MELDING_TIL_HOVEDPART_OM_TRUKKET_FORESPØRSEL("Du har trukket tilbake en forespørsel om fordeling av reisekostnader."),
   MELDING_TIL_MOTPART_OM_TRUKKET_FORESPØRSEL("En forespørsel om fordeling av reisekostnader ble trukket tilbake av den andre forelderen."),
   MELDING_TIL_HOVEDPART_OM_AVSLÅTT_SAMTYKKE("Den andre forelderen samtykket ikke til at Nav skal behandle fordeling av reisekostnader"),
+  MELDING_TIL_HOVEDPART_OM_GODKJENT_SAMTYKKE("Den andre forelderen samtykket til at Nav skal behandle fordeling av reisekostnader"),
   MELDING_TIL_HOVEDPART_OM_FORESPØRSEL_SOM_VENTER_PÅ_SAMTYKKE(
       "Du har sendt forespørsel om fordeling av reisekostnader for barn under 15 år. Forespørselen venter på samtykke fra den andre forelderen."),
-  MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE("NDu har avslått en forespørsel om fordeling av reisekostnader.");
+  MELDING_TIL_MOTPART_OM_AVSLÅTT_SAMTYKKE("Du har avslått en forespørsel om fordeling av reisekostnader.");
 
   private String tekst;
 
