@@ -49,8 +49,7 @@ class Databehandler(
                 arkiveringstjeneste.arkivereForespørsel(nyForespørsel.id)
                 log.info("Antall barn i forespørselen som nettopp har fylt 15 år: {}", nyForespørsel.barn.size)
                 brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
-                    nyForespørsel.hovedpartIdent, nyForespørsel.motpartIdent, nyForespørsel.barn.stream().findFirst().get().fødselsdato
-                )
+                    nyForespørsel.hovedpartIdent, nyForespørsel.motpartIdent)
             } catch (e: Exception) {
                 log.error(
                     "Det skjedde en feil ved behandling av forespørsel ${originalForespørsel.id} som inneholder barn som har nylig fylt 15 år. Rullet tilbake alle endringer",

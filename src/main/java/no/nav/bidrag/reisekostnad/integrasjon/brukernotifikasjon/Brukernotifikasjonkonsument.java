@@ -48,11 +48,11 @@ public class Brukernotifikasjonkonsument {
     beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, melding, true, UUID.randomUUID().toString());
   }
 
-  public void varsleOmAutomatiskInnsending(String personidentHovedpart, String personidentMotpart, LocalDate fødselsdatoBarn) {
-    log.info("Varsler foreldre om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år", fødselsdatoBarn);
+  public void varsleOmAutomatiskInnsending(String personidentHovedpart, String personidentMotpart) {
+    log.info("Varsler foreldre om automatisk innsending av forespørsel etter at barn fylte 15 år");
     SIKKER_LOGG.info(
-        "Varsler foreldre (hovedpart: {} og motpart: {}) om automatisk innsending av forespørsel etter at barn med fødselsdato {} fylte 15 år",
-        personidentHovedpart, personidentMotpart, fødselsdatoBarn);
+        "Varsler foreldre (hovedpart: {} og motpart: {}) om automatisk innsending av forespørsel etter at barn fylte 15 år",
+        personidentHovedpart, personidentMotpart);
     beskjedprodusent.oppretteBeskjedTilBruker(personidentHovedpart, new DynamiskMelding(MELDING_OM_AUTOMATISK_INNSENDING), true,
         UUID.randomUUID().toString());
     beskjedprodusent.oppretteBeskjedTilBruker(personidentMotpart, new DynamiskMelding(MELDING_OM_AUTOMATISK_INNSENDING), true,

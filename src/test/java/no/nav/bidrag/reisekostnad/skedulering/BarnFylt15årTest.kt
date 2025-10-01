@@ -19,7 +19,7 @@ class BarnFylt15årTest : DatabehandlerTest() {
 
     @BeforeEach
     fun setup() {
-        every { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any(), any()) } returns Unit
+        every { brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(any(), any()) } returns Unit
         every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any()) } returns true
     }
 

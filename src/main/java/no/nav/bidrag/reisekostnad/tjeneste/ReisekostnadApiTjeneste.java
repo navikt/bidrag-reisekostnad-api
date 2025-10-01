@@ -155,6 +155,7 @@ public class ReisekostnadApiTjeneste {
 
     if (barnOver15År.size() > 0) {
       lagreNyForespørsel(personidentHovedpart, personidentMotpart, barnOver15År, false);
+      brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(personidentHovedpart, personidentMotpart);
     }
 
     if (barnUnder15År.size() > 0) {
