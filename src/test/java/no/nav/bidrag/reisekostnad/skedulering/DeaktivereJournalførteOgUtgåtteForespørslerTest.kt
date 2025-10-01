@@ -2,15 +2,15 @@ package no.nav.bidrag.reisekostnad.skedulering
 
 import io.kotest.assertions.assertSoftly
 import io.mockk.every
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
 import no.nav.bidrag.reisekostnad.database.datamodell.Oppgavebestilling
 import no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.*
 
 @DisplayName("DeaktivereJournalførteOgUtgåtteForespørslerTest")
 class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
@@ -18,7 +18,7 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
     @BeforeEach
     fun setup() {
         every { brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(any(), any(), any()) } returns Unit
-        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns true
+        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any()) } returns true
     }
 
     @Test
@@ -36,7 +36,7 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
         val lagretForespørsel = forespørselDao.save(journalførtForespørsel)
 
         every { brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(any(), any(), any()) } returns Unit
-        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns true
+        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any()) } returns true
 
         // hvis
         databehandler.deaktivereJournalførteOgUtgåtteForespørsler()
@@ -89,7 +89,7 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
         // gitt
         val forespørselMedFeilOgUtløptSamtykkefrist = opppretteForespørsel(true)
         forespørselMedFeilOgUtløptSamtykkefrist.barn = mutableSetOf(testpersonBarn11, testpersonBarn15_2)
-        forespørselMedFeilOgUtløptSamtykkefrist.hovedpart.personident = "123"
+        forespørselMedFeilOgUtløptSamtykkefrist.hovedpart.personident = "12312312312"
         forespørselMedFeilOgUtløptSamtykkefrist.opprettet =
             LocalDate.now().minusDays(FORESPØRSLER_SYNLIGE_I_ANTALL_DAGER_ETTER_SISTE_STATUSOPPDATERING + 1)
                 .atStartOfDay()
@@ -103,7 +103,7 @@ class DeaktivereJournalførteOgUtgåtteForespørslerTest : DatabehandlerTest() {
         oppgavebestillingDao.save(samtykkeoppgave)
 
         every { brukernotifikasjonkonsument.varsleForeldreOmManglendeSamtykke(any(), any(), any()) } returns Unit
-        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any(), any()) } returns false
+        every { brukernotifikasjonkonsument.ferdigstilleSamtykkeoppgave(any()) } returns false
 
         // hvis
         databehandler.deaktivereJournalførteOgUtgåtteForespørsler()

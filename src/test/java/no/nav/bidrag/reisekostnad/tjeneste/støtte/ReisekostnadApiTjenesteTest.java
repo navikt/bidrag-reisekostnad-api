@@ -147,7 +147,7 @@ public class ReisekostnadApiTjenesteTest {
 
     // så
     assertAll(() -> assertThat(respons.is2xxSuccessful()),
-        () -> verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId", motpart.getIdent()));
+        () -> verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId"));
   }
 
   @Test
@@ -170,7 +170,7 @@ public class ReisekostnadApiTjenesteTest {
 
     // så
     assertAll(() -> assertThat(respons.is2xxSuccessful()),
-        () -> verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId", motpart.getIdent()));
+        () -> verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId"));
   }
 
   @Test
@@ -226,7 +226,7 @@ public class ReisekostnadApiTjenesteTest {
 
     // så
     assertThat(respons.is2xxSuccessful());
-    verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId", motpart.getIdent());
+    verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId");
     verify(brukernotifikasjonkonsument, times(1)).varsleOmNeiTilSamtykke(hovedpart.getIdent(), motpart.getIdent());
   }
 
@@ -250,7 +250,7 @@ public class ReisekostnadApiTjenesteTest {
 
     // så
     assertThat(respons.is2xxSuccessful());
-    verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId", motpart.getIdent());
+    verify(brukernotifikasjonkonsument, times(1)).ferdigstilleSamtykkeoppgave("eventId");
     verify(brukernotifikasjonkonsument, times(1)).varsleOmTrukketForespørsel(hovedpart.getIdent(), motpart.getIdent());
   }
 

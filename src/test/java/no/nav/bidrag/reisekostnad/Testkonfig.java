@@ -1,6 +1,5 @@
 package no.nav.bidrag.reisekostnad;
 
-import com.google.common.net.HttpHeaders;
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
@@ -10,6 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 @Profile(Profil.TEST)

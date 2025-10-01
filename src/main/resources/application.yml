@@ -72,11 +72,9 @@ egenskaper:
   appnavn-reisekostnad: bidrag-reisekostnad
   url-reisekostnad: ${BIDRAG_REISEKOSTNAD_UI_URL}
   brukernotifikasjon:
-    emne-beskjed: "min-side.aapen-brukernotifikasjon-beskjed-v1"
-    emne-ferdig: "min-side.aapen-brukernotifikasjon-done-v1"
-    emne-oppgave: "min-side.aapen-brukernotifikasjon-oppgave-v1"
+    emne-brukernotifikasjon: "min-side.aapen-brukervarsel-v1"
     grupperingsid-reisekostnad: reisekostnad,
     synlighet-beskjed-antall-maaneder: 1
     levetid-oppgave-antall-dager: 30
-    sikkerhetsnivaa-beskjed: 3
-    sikkerhetsnivaa-oppgave: 3
+    sikkerhetsnivaa-beskjed: Substantial
+    sikkerhetsnivaa-oppgave: Substantial
