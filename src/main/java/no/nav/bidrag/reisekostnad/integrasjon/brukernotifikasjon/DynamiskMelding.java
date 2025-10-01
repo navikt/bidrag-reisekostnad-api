@@ -26,7 +26,7 @@ public class DynamiskMelding {
 enum Melding {
 
   MELDING_OM_AUTOMATISK_INNSENDING(
-      "Forespørsel om fordeling av reisekostnader for barn med fødselsdato %s ble automatisk sendt til behandling da barnet fylte femten år"),
+      "Forespørsel om fordeling av reisekostnader for barn over 15 år ble automatisk sendt til Nav for behandling."),
   MELDING_OM_VENTENDE_FORESPØRSEL("Trykk her for å se en forespørsel du har fått om fordeling av reisekostnader for barn."),
   MELDING_TIL_FORELDRE_OM_UTLØPT_SAMTYKKEFRIST(
       "Forespørselen om fordeling av reisekostnader kan ikke behandles av Nav. Dette er fordi vi ikke har mottatt samtykke til dette."),
