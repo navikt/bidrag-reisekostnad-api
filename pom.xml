@@ -15,7 +15,7 @@
   <description>bidrag-reiesekostnader-api</description>
 
   <properties>
-    <kotlin.version>2.1.21</kotlin.version>
+    <kotlin.version>2.2.0</kotlin.version>
     <!-- bygg -->
     <build-helper-maven.version>3.6.0</build-helper-maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
