@@ -7,8 +7,8 @@ FROM gcr.io/distroless/java21
 LABEL maintainer="Team Bidrag" \
       email="bidrag@nav.no"
 
-COPY --from=busybox /bin/sh /bin/sh
-COPY --from=busybox /bin/printenv /bin/printenv
+COPY --from=busybox:1.35.0-glibc /bin/sh /bin/sh
+COPY --from=busybox:1.35.0-glibc /bin/printenv /bin/printenv
 
 # Copy locale files from the locales stage
 COPY --from=locales /usr/lib/locale/ /usr/lib/locale/
