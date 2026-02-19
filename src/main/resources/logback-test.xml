@@ -5,6 +5,11 @@
     </encoder>
   </appender>
 
+  <!-- Suppress WireMock verbose logging to avoid logging sensitive data like Bearer tokens -->
+  <logger name="WireMock" level="WARN" />
+  <logger name="wiremock" level="WARN" />
+  <logger name="com.github.tomakehurst.wiremock" level="WARN" />
+
   <root level="info">
     <appender-ref ref="STDOUT" />
   </root>

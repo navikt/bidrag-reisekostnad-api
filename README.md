@@ -17,7 +17,12 @@ med andre prosjekter til teamet.
 
 Én kan sjekke om prosjektet får tak i nødvendige avhengigheter og bygger ved å 
 kjøre følgende kommando i terminalen i root-mappen til prosjektet:
-> JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn clean install -DskipTests
+```bash
+JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn clean install # -DskipTests
+```
+### Oppsett med lokal database-instans og WireMock API-simulering
+
+Rask oppsett uten å være avhengig av eksterne tjenester.
 
 Ved lokal kjøring brukes Spring-boot-instansen 
 [BidragReisekostnadApiLokalTestapplikasjon](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalTestapplikasjon.java).
@@ -25,60 +30,76 @@ For lokal kjøring må Spring-profil settes til enten <b>lokal-h2</b> eller
 <b>lokal-postgres</b> avhengig av hvilken database-teknologi én ønsker å 
 teste med. Til <b>lokal-postgres</b>-profilen kreves det en lokal Postgres-instans.
 
+#### Lokal H2 instans
+
 Eksempel på kommando for å starte applikasjonen lokalt med H2-database:
-> JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn test-compile exec:java \
+```bash
+JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn clean test-compile exec:java \
 -Dexec.mainClass="no.nav.bidrag.reisekostnad.BidragReisekostnadApiLokalTestapplikasjon" \
 -Dexec.classpathScope=test \
 -Dspring.profiles.active=lokal-h2
+```
 
-H2-databasen er satt opp in memory og kan enklest nås på 
+H2-databasen er satt opp in-memory og kan enklest nås på 
 http://localhost:8080/h2-console/login.jsp med "jdbc:h2:mem:default" JDBC 
 URL og blankt passord.
 
-BidragReisekostnadApiLokalTestapplikasjon er satt opp med
-token-supports test-token, og benytter wiremock for
-bidrag-person-endepunktene /motpartBarnRelasjon og /informasjon.
+#### Lokal Postgres instans
 
-### Flyt for testing av endepunktene brukerinformasjon
+Installasjon av Postgres via Homebrew på MacOS:
+```bash
+brew install postgresql
+```
+Oppstart av Postgres-tjenesten:
+```bash
+brew services start postgresql
+```
 
-     1. Generer test-token for issuer tokenx og legg dette til nettleser cookie som Swagger kan bruke: 
-        http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
-     2. Trykk execute for brukerinformasjon-endepunktet
+#### Oppsett av test-token og API-simulering
 
-### Flyt for testing av endepunktene brukerinformasjon med Råtass som innlogget bruker
+[BidragReisekostnadApiLokalTestapplikasjon](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalTestapplikasjon.java)
+er satt opp til å bruke et test-token generert av [token-support](https://github.com/navikt/token-support), og
+benytter wiremock til `/bidrag-person/motpartbarnrelasjon` og 
+`/bidrag-person/informasjon`, dvs. for å simulere endepunktene til 
+bidrag-person appen.
 
-     1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke:
-        http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=55555678910
-     2. Trykk execute for brukerinformasjon-endepunktet
+##### Teste brukerinformasjon endepunktet i lokal Swagger
 
-### Flyt for testing av forespoersel/ny-endepunktet fra lokal Swagger:
+1. Generer et test-token for _tokenx_ issuer og _aud-localhost_ audience for å 
+sette tokenet i en cookie som Swagger kan bruke for autentisering:
 
-     1. Generere test-token for issuer tokenx og legge dette til nettleser cookie som Swagger kan bruke:
-        http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
-     2. Se test/java/resources/mapping/bidrag-person-*****.json for testpersoner som figurerer i eksisterende bidrag-person-mocker.
-     3. Bruk personidentene fra steg 2 til å opprette ny forespørse.
+    > Generer token for Gråtass bruker
+    >
+    > http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=12345678910
 
-#### Ta i bruk lokal Postgres-instans
+    > Generer token for Råtass bruker
+    >
+    > http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=55555678910
 
-* Installere Postgres via Homebrew på MacOS:
+    > Generer token for Streng
+    >
+    > http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=11111122222
 
-  > brew install postgresql
+2. Autentiser som én av ovenfor valgte brukerne, se etter Authorize-knappen 
+øverst til høyre i Swagger UI og lim inn det genererte tokenet:
+    > http://localhost:8080/swagger-ui/index.html
 
-* Starte Postgres-tjenesten:
-  > brew services start postgresql
+3. Test ut endepunktet for _brukerinformasjon_ i Swagger.
 
+##### Teste forespoersel/ny endepunktet i lokal Swagger
+
+Følg steg 1 og 2 i forrige seksjon for å generere token og autentisere i 
+Swagger UI. Se etter "fellesBarn" og "ident" til innlogget testperson 
+i test/java/resources/mapping/bidrag-person-relasjon-*****.json. Test ut 
+endepunktet for _forespørsel/ny_ i Swagger.
+
+Tips:
 Problem ved lokal kjøring fra Intellij:
 _Finner ikke sti til wiremock-mappings under classpath:/mappings_.
 Løsning:
 Verifiser at test/resources har type 'Test Resources' i 'project structure'.
 
-#### Ressurser
-
-- Swagger-ui: http://localhost:8080/swagger-ui/index.html
-- Sette cookie med tokenx som issuer for
-  Swagger: http://localhost:8080/local/cookie?issuerId=tokenx&audience=aud-localhost
-
-## Kjøre lokalt mot sky
+## Oppsett av lokalt utviklingsmiljø mot sky
 
 Kjør følgende kommandoer fra terminalvinduet i root mappen til
 `bidrag-reisekostnad-api` prosjektet:
