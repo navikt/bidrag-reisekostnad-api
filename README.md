@@ -20,9 +20,11 @@ kjøre følgende kommando i terminalen i root-mappen til prosjektet:
 ```bash
 JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn clean install # -DskipTests
 ```
+
 ### Oppsett med lokal database-instans og WireMock API-simulering
 
-Rask oppsett uten å være avhengig av eksterne tjenester.
+Dette er et raskt og minimalt krevende oppsett uten å være avhengig av eksterne 
+tjenester.
 
 Ved lokal kjøring brukes Spring-boot-instansen 
 [BidragReisekostnadApiLokalTestapplikasjon](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalTestapplikasjon.java).
@@ -40,9 +42,13 @@ JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn clean test-compile exec:java \
 -Dspring.profiles.active=lokal-h2
 ```
 
-H2-databasen er satt opp in-memory og kan enklest nås på 
+H2-databasen er satt opp in-memory som betyr at den kun kan nås på 
 http://localhost:8080/h2-console/login.jsp med "jdbc:h2:mem:default" JDBC 
-URL og blankt passord.
+URL og blankt passord. Det er ingen data i H2-databasen ved oppstart, men 
+legges inn ved eksempelvis bruk av endepunktene via Swagger UI som forklart 
+nedenfor.
+
+Innstillinger og logging nivået er satt i [application-lokal-h2.yml](src/main/resources/application-lokal-h2.yml).
 
 #### Lokal Postgres instans
 
@@ -59,7 +65,7 @@ brew services start postgresql
 
 [BidragReisekostnadApiLokalTestapplikasjon](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalTestapplikasjon.java)
 er satt opp til å bruke et test-token generert av [token-support](https://github.com/navikt/token-support), og
-benytter wiremock til `/bidrag-person/motpartbarnrelasjon` og 
+benytter WireMock til `/bidrag-person/motpartbarnrelasjon` og 
 `/bidrag-person/informasjon`, dvs. for å simulere endepunktene til 
 bidrag-person appen.
 
@@ -90,12 +96,14 @@ sette tokenet i en cookie som Swagger kan bruke for autentisering:
 
 Følg steg 1 og 2 i forrige seksjon for å generere token og autentisere i 
 Swagger UI. Se etter "fellesBarn" og "ident" til innlogget testperson 
-i test/java/resources/mapping/bidrag-person-relasjon-*****.json. Test ut 
+i test/java/resources/mappings/bidrag-person-relasjon-*****.json. Test ut 
 endepunktet for _forespørsel/ny_ i Swagger.
 
 Tips:
-Problem ved lokal kjøring fra Intellij:
-_Finner ikke sti til wiremock-mappings under classpath:/mappings_.
+
+Problem ved lokal kjøring fra Intellij: _Finner ikke sti til 
+WireMock-mappings under classpath:/mappings_.
+
 Løsning:
 Verifiser at test/resources har type 'Test Resources' i 'project structure'.
 
