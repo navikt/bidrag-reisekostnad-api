@@ -14,6 +14,14 @@ wiremock.server:
   port: 0
   stubs: "file:src/test/java/resources/mappings"
 
+logging:
+  level:
+    WireMock: WARN
+    wiremock: WARN
+    com.github.tomakehurst.wiremock: WARN
+    org.springframework.web: INFO # DEBUG
+    no.nav.security.token.support: INFO # DEBUG
+
 AZURE_APP_TENANT_ID: tokenx
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
 
@@ -31,11 +39,6 @@ no.nav.security.jwt:
     tokenx:
       discoveryurl: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}/.well-known/openid-configuration
       accepted_audience: aud-localhost
-
-logging:
-  level:
-    org.springframework.web: INFO # DEBUG
-    no.nav.security.token.support: INFO # DEBUG
 
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
