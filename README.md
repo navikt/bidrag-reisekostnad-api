@@ -61,6 +61,8 @@ Oppstart av Postgres-tjenesten:
 brew services start postgresql
 ```
 
+Gå bort fra. Docker.
+
 #### Oppsett av test-token og API-simulering
 
 [BidragReisekostnadApiLokalTestapplikasjon](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalTestapplikasjon.java)
@@ -96,8 +98,8 @@ sette tokenet i en cookie som Swagger kan bruke for autentisering:
 
 Følg steg 1 og 2 i forrige seksjon for å generere token og autentisere i 
 Swagger UI. Se etter "fellesBarn" og "ident" til innlogget testperson 
-i test/java/resources/mappings/bidrag-person-relasjon-*****.json. Test ut 
-endepunktet for _forespørsel/ny_ i Swagger.
+i [test/java/resources/mappings/bidrag-person-relasjon-*****.json](src/test/java/resources/mappings/).
+Test ut endepunktet for _forespørsel/ny_ i Swagger.
 
 Tips:
 
@@ -115,10 +117,14 @@ Kjør følgende kommandoer fra terminalvinduet i root mappen til
 ```bash
 # Logg inn i GCP
 gcloud auth login --update-adc
+```
 
+```bash
 # Still inn kubectl cluster til dev-gcp
 kubectl config use-context dev-gcp
+```
 
+```bash
 # Sett namespace til bidrag
 kubectl config set-context --current --namespace=bidrag
 ```
@@ -127,8 +133,8 @@ kubectl config set-context --current --namespace=bidrag
 # Eksporter variabler til src/main/resources/application-lokal-sky-secrets.properties slik at appen kan autentisere i dev-gcp.
 # Filen application-lokal-sky-secrets.properties skal aldri committes til Git og skal slettes etter bruk.
 # Filen application-lokal-sky-secrets.properties er lagt til i .gitignore for å unngå at den committes ved en feil.
-export $(kubectl exec -n bidrag deployment/bidrag-reisekostnad-api -- printenv | grep -E 'AZURE_APP_CLIENT_ID|AZURE_APP_CLIENT_SECRET|TOKEN_X|BIDRAG_PERSON_URL|BIDRAG_DOKUMENT_URL|SCOPE|AZURE_OPENID_CONFIG_TOKEN_ENDPOINT|AZURE_APP_TENANT_ID|AZURE_APP_WELL_KNOWN_URL')
-```
+ kubectl exec -n bidrag deployment/bidrag-reisekostnad-api -- printenv | grep -E 'AZURE_APP_CLIENT_ID|AZURE_APP_CLIENT_SECRET|TOKEN_X|BIDRAG_PERSON_URL|BIDRAG_DOKUMENT_URL|SCOPE|AZURE_OPENID_CONFIG_TOKEN_ENDPOINT|AZURE_APP_TENANT_ID|AZURE_APP_WELL_KNOWN_URL' > src/main/resources/application-lokal-sky-secrets.properties
+ ```
 
 Kjør [BidragReisekostnadApiLokalSky](src/test/java/no/nav/bidrag/reisekostnad/BidragReisekostnadApiLokalSky.java).
 Dette vil starte opp applikasjonen lokalt med `H2` database.
