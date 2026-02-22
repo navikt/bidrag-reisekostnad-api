@@ -28,7 +28,7 @@
 
     <!-- annet -->
     <bidrag-felles.version>2026.02.20.125615</bidrag-felles.version>
-    <commons-compress.version>1.27.1</commons-compress.version>
+    <commons-compress.version>1.28.0</commons-compress.version>
     <flyway.version>11.9.1</flyway.version>
     <java.version>21</java.version>
     <modelmapper.version>3.2.3</modelmapper.version>
