@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -52,9 +52,9 @@ public class MapperTest {
     private @Autowired ForelderDao forelderDao;
     private @Autowired ForespørselDao forespørselDao;
 
-    private @MockBean BidragPersonkonsument bidragPersonkonsument;
+    private @MockitoBean BidragPersonkonsument bidragPersonkonsument;
 
-    private @MockBean TokenValidationContextHolder tokenValidationContextHolder;
+    private @MockitoBean TokenValidationContextHolder tokenValidationContextHolder;
 
     private static final Testperson HOVEDPART = new Testperson("10001", "Pegasus", 35);
     private static final Testperson MOTPART = new Testperson("11111", "Zuez", 43);

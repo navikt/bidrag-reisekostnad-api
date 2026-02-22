@@ -29,7 +29,7 @@ class Databehandler(
         log.info { "Fant totalt ${idForespørslerForInnsending.size} forespørsler som vil bli forsøkt oversendt til dokumentarkivet" }
         idForespørslerForInnsending.forEach {
             arkiveringstjeneste.arkivereForespørsel(it)
-            log.info("Arkivering av forespørsel med id $it ble utført.")
+            log.info { "Arkivering av forespørsel med id $it ble utført." }
         }
         log.info { "Arkivering av alle de ${idForespørslerForInnsending.size} forespørslene er utført" }
     }
@@ -47,14 +47,13 @@ class Databehandler(
                     )
                     else databasetjeneste.overførBarnSomHarFylt15årTilNyForespørsel(originalForespørsel.id)
                 arkiveringstjeneste.arkivereForespørsel(nyForespørsel.id)
-                log.info("Antall barn i forespørselen som nettopp har fylt 15 år: {}", nyForespørsel.barn.size)
+                log.info { "${"Antall barn i forespørselen som nettopp har fylt 15 år: {}"} ${nyForespørsel.barn.size}" }
                 brukernotifikasjonkonsument.varsleOmAutomatiskInnsending(
                     nyForespørsel.hovedpartIdent, nyForespørsel.motpartIdent)
             } catch (e: Exception) {
                 log.error(
-                    "Det skjedde en feil ved behandling av forespørsel ${originalForespørsel.id} som inneholder barn som har nylig fylt 15 år. Rullet tilbake alle endringer",
                     e
-                )
+                ) { "${"Det skjedde en feil ved behandling av forespørsel ${originalForespørsel.id} som inneholder barn som har nylig fylt 15 år. Rullet tilbake alle endringer"}" }
             }
         }
         log.info { "Behandlet alle forespørsler ${forespørslerOver15År.size} som inneholder barn som har nylig fylt 15 år" }
@@ -110,7 +109,8 @@ class Databehandler(
 
         journalførteAktiveForespørsler.forEach { id -> databasetjeneste.deaktivereForespørsel(id, null); }
 
-        if (journalførteAktiveForespørsler.size > 0) log.info("Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert.")
+        if (journalførteAktiveForespørsler.size > 0)
+            log.info { "Alle de ${journalførteAktiveForespørsler.size} journalførte forespørslene ble deaktivert." }
     }
 
     private fun deaktivereForespørslerMedUtgåttSamtykkefrist() {
