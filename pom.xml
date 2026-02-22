@@ -27,7 +27,7 @@
     <jsoup.version>1.20.1</jsoup.version>
 
     <!-- annet -->
-    <bidrag-felles.version>2025.06.19.155924</bidrag-felles.version>
+    <bidrag-felles.version>2026.02.20.125615</bidrag-felles.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <flyway.version>11.9.1</flyway.version>
     <hibernate-validator.parent>8.0.0.Final</hibernate-validator.parent>
@@ -44,8 +44,8 @@
     <kotest.version>5.9.1</kotest.version>
     <google-cloud-libraries-bom.version>26.61.0</google-cloud-libraries-bom.version>
     <tms-varsel.version>2.1.1</tms-varsel.version>
+    <swagger.version>2.2.40</swagger.version>
   </properties>
-
 
   <dependencyManagement>
     <dependencies>
@@ -58,8 +58,13 @@
       </dependency>
       <dependency>
         <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-annotations</artifactId>
-        <version>2.2.30</version>
+        <version>${swagger.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
