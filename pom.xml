@@ -44,7 +44,7 @@
     <kotest.version>5.9.1</kotest.version>
     <google-cloud-libraries-bom.version>26.61.0</google-cloud-libraries-bom.version>
     <tms-varsel.version>2.1.1</tms-varsel.version>
-    <swagger.version>2.2.40</swagger.version>
+    <swagger.version>2.2.42</swagger.version>
   </properties>
 
   <dependencyManagement>
