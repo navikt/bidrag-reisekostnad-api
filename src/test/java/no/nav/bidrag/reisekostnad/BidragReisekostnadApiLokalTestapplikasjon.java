@@ -89,6 +89,8 @@ class LocalCookieController {
       "11111122222"   // Streng
   );
 
+  private static final String ALLOWED_ISSUER = "tokenx";
+
   @Unprotected
   @GetMapping("/local/cookie")
   public String getCookie(
@@ -99,6 +101,9 @@ class LocalCookieController {
 
     if (!ALLOWED_SUBJECTS.contains(subject)) {
       return "Invalid subject. Allowed values: " + ALLOWED_SUBJECTS;
+    }
+    if (!ALLOWED_ISSUER.equals(issuerId)) {
+      return "Invalid issuerId. Allowed value: " + ALLOWED_ISSUER;
     }
 
     var token = mockOAuth2Server.issueToken(
