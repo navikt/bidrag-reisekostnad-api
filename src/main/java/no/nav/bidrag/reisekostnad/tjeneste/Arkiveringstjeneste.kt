@@ -38,7 +38,7 @@ class Arkiveringstjeneste(
             forespørsel.idJournalpost = respons.journalpostId
             log.info { "Arkivert dokument for forespørsel $idForespørsel med journalpostid ${respons.journalpostId}" }
         } catch (e: Exception){
-            log.error("Det skjedde en feil ved arkivering av dokument for forespørsel $idForespørsel", e)
+            log.error(e) { "${"Det skjedde en feil ved arkivering av dokument for forespørsel $idForespørsel"}" }
         }
     }
 
