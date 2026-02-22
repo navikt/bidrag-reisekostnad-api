@@ -14,6 +14,14 @@ wiremock.server:
   port: 0
   stubs: "file:src/test/java/resources/mappings"
 
+logging:
+  level:
+    WireMock: WARN
+    wiremock: WARN
+    com.github.tomakehurst.wiremock: WARN
+    org.springframework.web: INFO # DEBUG
+    no.nav.security.token.support: INFO # DEBUG
+
 AZURE_APP_TENANT_ID: tokenx
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:${mock-oauth2-server.port}/${AZURE_APP_TENANT_ID}
 

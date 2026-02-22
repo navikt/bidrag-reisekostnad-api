@@ -5,12 +5,18 @@
 
   <servers>
     <server>
-      <id>github-package-registry-navikt</id>
+      <!-- bidrag-commons -->
+      <id>github</id>
       <username>${GITHUB_USERNAME}</username>
       <password>${GITHUB_TOKEN}</password>
     </server>
     <server>
-      <id>github</id>
+      <id>github-package-registry-navikt-maven-release</id>
+      <username>${GITHUB_USERNAME}</username>
+      <password>${GITHUB_TOKEN}</password>
+    </server>
+    <server>
+      <id>github-package-registry-navikt-tms-varsel</id>
       <username>${GITHUB_USERNAME}</username>
       <password>${GITHUB_TOKEN}</password>
     </server>
@@ -29,16 +35,17 @@
           <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
         </repository>
         <repository>
-          <id>github-package-registry-navikt</id>
-          <url>https://maven.pkg.github.com/navikt/maven-release</url>
-        </repository>
-        <repository>
           <id>github-package-registry-mirror-navikt</id>
           <url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
         </repository>
         <repository>
-          <id>github-tms</id>
+          <id>github-package-registry-navikt-tms-varsel</id>
           <url>https://maven.pkg.github.com/navikt/tms-varsel-authority</url>
+        </repository>
+        <!-- public artifacts from maven-release -->
+        <repository>
+          <id>github-package-registry-navikt-maven-release</id>
+          <url>https://maven.pkg.github.com/navikt/maven-release</url>
         </repository>
         <repository>
           <id>jitpack.io</id>
