@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpEntity;
@@ -65,7 +65,7 @@ public class KontrollerTest {
 
   @Autowired
   protected @Qualifier("api") HttpHeaderTestRestTemplate httpHeaderTestRestTemplateApi;
-  protected @MockBean OAuth2AccessTokenService oAuth2AccessTokenService;
+  protected @MockitoBean OAuth2AccessTokenService oAuth2AccessTokenService;
   protected @Autowired ForespørselDao forespørselDao;
   protected @Autowired ForelderDao forelderDao;
   protected @Autowired BarnDao barnDao;
