@@ -125,6 +125,12 @@
       <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-commons-felles</artifactId>
       <version>${bidrag-felles.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>no.nav.bidrag</groupId>
+          <artifactId>bidrag-generer-testdata-felles</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- Nav domain models and entities -->
     <dependency>
@@ -341,6 +347,7 @@
       <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-commons-test-felles</artifactId>
       <version>${bidrag-felles.version}</version>
+      <scope>test</scope>
     </dependency>
     <!-- Spring Boot test support (JUnit, Mockito, AssertJ) -->
     <dependency>
