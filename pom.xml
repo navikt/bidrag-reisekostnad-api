@@ -32,7 +32,7 @@
     <!-- Nav Internal Libraries -->
     <bidrag-felles.version>2026.02.20.125615</bidrag-felles.version>
     <tms-varsel.version>2.1.1</tms-varsel.version>
-    <token-support.version>5.0.40</token-support.version>
+    <token-support.version>6.0.3</token-support.version>
 
     <!-- Database -->
     <flyway.version>11.9.1</flyway.version>
