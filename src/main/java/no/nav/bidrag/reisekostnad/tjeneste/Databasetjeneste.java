@@ -299,7 +299,7 @@ public class Databasetjeneste {
 
     private boolean harAktivOppgave(Forelder forelder) {
         var aktiveOppgaver = oppgavebestillingDao.henteAktiveOppgaver(forelder.getPersonident());
-        log.info("Fant {} aktive oppgaver for forelder med id {}", forelder.getId());
+        log.info("Fant {} aktive oppgaver for forelder med id {}", aktiveOppgaver.size(), forelder.getId());
         return aktiveOppgaver.size() > 0;
     }
 
