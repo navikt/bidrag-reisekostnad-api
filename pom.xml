@@ -24,7 +24,7 @@
     <java.version>21</java.version>
 
     <!-- PDF Generation Libraries -->
-    <apache-pdfbox.version>2.0.29</apache-pdfbox.version>
+    <apache-pdfbox.version>2.0.35</apache-pdfbox.version>
     <openhtml.version>1.0.10</openhtml.version>
     <jsoup.version>1.20.1</jsoup.version>
 
