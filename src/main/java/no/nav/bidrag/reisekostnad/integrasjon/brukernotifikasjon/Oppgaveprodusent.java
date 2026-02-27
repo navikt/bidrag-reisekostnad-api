@@ -1,5 +1,7 @@
 package no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon;
 
+import static no.nav.bidrag.reisekostnad.konfigurasjon.Applikasjonskonfig.SIKKER_LOGG;
+
 import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -26,7 +28,8 @@ public class Oppgaveprodusent {
   public void oppretteOppgaveOmSamtykke(int idForespørsel, String personidentMotpart, DynamiskMelding oppgavetekst, String eventId) {
 
     var melding = oppretteOppgave(oppgavetekst.hentFormatertMelding(), reisekostnadUrl, personidentMotpart, eventId);
-    log.info("Melding opprettet: {}", melding);
+    log.info("Brukernotifikasjon melding opprettet");
+    SIKKER_LOGG.info("Brukernotifikasjon melding opprettet: {}", melding);
     var motpartsAktiveSamtykkeoppgaver = databasetjeneste.henteAktiveOppgaverMotpart(idForespørsel, personidentMotpart);
 
     if (motpartsAktiveSamtykkeoppgaver.isEmpty()) {
