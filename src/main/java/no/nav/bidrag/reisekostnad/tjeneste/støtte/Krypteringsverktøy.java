@@ -37,9 +37,6 @@ public class Krypteringsverktøy {
     this.krypteringsPassord = krypteringsPassord;
   }
 
-  static String password = "baeldung";
-  static String salt = "12345678";
-
   public static String kryptere(String ikkeKryptertStreng) {
     try {
       var cipher = Cipher.getInstance(TRANSFORMERINGSALGORITME);
