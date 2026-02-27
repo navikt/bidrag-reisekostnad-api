@@ -19,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import org.hibernate.validator.HibernateValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,7 +31,11 @@ public class Krypteringsverktøy {
 
   private static final String KRYPTERINGSSALT = "iwianRpIjoiZDBhN2YyNWEtNGI2ZS00MDQyL";
 
-  private static final String PASSORD = "The owls Are N0T what tHey seeM";
+  private static String krypteringsPassord;
+
+  private Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}") String krypteringsPassord) {
+    this.krypteringsPassord = krypteringsPassord;
+  }
 
   static String password = "baeldung";
   static String salt = "12345678";
@@ -68,7 +73,7 @@ public class Krypteringsverktøy {
   private static SecretKey henteHemmeligNøkkel() {
     try {
       var factory = SecretKeyFactory.getInstance(KRYPTERINGSALGORITME);
-      var spec = new PBEKeySpec(PASSORD.toCharArray(), KRYPTERINGSSALT.getBytes(), 65536, 256);
+      var spec = new PBEKeySpec(krypteringsPassord.toCharArray(), KRYPTERINGSSALT.getBytes(), 65536, 256);
       return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ALGORITME_ADVANECD_EMCRYPTION_STANDARD);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new InternFeil(Feilkode.KRYPTERING, e);

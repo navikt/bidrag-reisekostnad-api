@@ -43,6 +43,8 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
 
+KRYPTERINGSPASSORD: "The owls Are N0T what tHey seeM"
+
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
 BIDRAG_PERSON_URL: ${WIREMOCK_URL}

@@ -15,6 +15,8 @@ spec:
       destinations:
         - id: loki
         - id: elastic
+  envFrom:
+    - secret: bidrag-reisekostnad-api-secrets
   azure:
     application:
       enabled: true

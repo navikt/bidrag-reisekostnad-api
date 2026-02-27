@@ -43,6 +43,8 @@ no.nav.security.jwt:
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
 
+KRYPTERINGSPASSORD: "The owls Are N0T what tHey seeM"
+
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
 integrasjon.bidrag:
