@@ -34,7 +34,7 @@
     <token-support.version>5.0.40</token-support.version>
 
     <!-- Database -->
-    <flyway.version>11.9.1</flyway.version>
+    <flyway.version>12.0.1</flyway.version>
 
     <!-- API Documentation -->
     <springdoc-openapi-ui.version>2.8.9</springdoc-openapi-ui.version>
