@@ -3,9 +3,7 @@ package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -18,7 +16,6 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
-import org.hibernate.validator.HibernateValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +30,7 @@ public class Krypteringsverktøy {
 
   private static String krypteringsPassord;
 
-  private Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}") String krypteringsPassord) {
+  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}") String krypteringsPassord) {
     this.krypteringsPassord = krypteringsPassord;
   }
 
