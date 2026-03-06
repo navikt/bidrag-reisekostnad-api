@@ -30,7 +30,10 @@ public class Krypteringsverktøy {
 
   private static String krypteringsPassord;
 
-  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}") String krypteringsPassord) {
+  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}:MISSING") String krypteringsPassord) {
+    if ("MISSING".equals(krypteringsPassord)) {
+      throw new IllegalStateException("KRYPTERINGSPASSORD was not found in the environment!");
+    }
     this.krypteringsPassord = krypteringsPassord;
   }
 
