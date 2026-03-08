@@ -25,16 +25,16 @@ public class Krypteringsverktøy {
   private static final String ALGORITME_ADVANECD_EMCRYPTION_STANDARD = "AES";
   private static final String KRYPTERINGSALGORITME = "PBKDF2WithHmacSHA256";
   private static final String TRANSFORMERINGSALGORITME = ALGORITME_ADVANECD_EMCRYPTION_STANDARD + "/CBC/PKCS5Padding";
-
-  private static final String KRYPTERINGSSALT = "iwianRpIjoiZDBhN2YyNWEtNGI2ZS00MDQyL";
-
   private static String krypteringsPassord;
+  private static String krypteringsSalt;
 
-  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}:MISSING") String krypteringsPassord) {
-    if ("MISSING".equals(krypteringsPassord)) {
-      throw new IllegalStateException("KRYPTERINGSPASSORD was not found in the environment!");
+  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}:MISSING") String krypteringsPassord,
+                            @Value("${KRYPTERINGSSALT}:MISSING") String krypteringsSalt) {
+    if ("MISSING".equals(krypteringsPassord) || "MISSING".equals(krypteringsSalt)) {
+      throw new IllegalStateException("KRYPTERINGSPASSORD or KRYPTERINGSSALT was not found in the environment!");
     }
     this.krypteringsPassord = krypteringsPassord;
+    this.krypteringsSalt = krypteringsSalt;
   }
 
   public static String kryptere(String ikkeKryptertStreng) {
@@ -70,7 +70,7 @@ public class Krypteringsverktøy {
   private static SecretKey henteHemmeligNøkkel() {
     try {
       var factory = SecretKeyFactory.getInstance(KRYPTERINGSALGORITME);
-      var spec = new PBEKeySpec(krypteringsPassord.toCharArray(), KRYPTERINGSSALT.getBytes(), 65536, 256);
+      var spec = new PBEKeySpec(krypteringsPassord.toCharArray(), krypteringsSalt.getBytes(), 65536, 256);
       return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ALGORITME_ADVANECD_EMCRYPTION_STANDARD);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new InternFeil(Feilkode.KRYPTERING, e);

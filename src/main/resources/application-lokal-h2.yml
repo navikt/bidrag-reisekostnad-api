@@ -44,6 +44,7 @@ integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
 
 KRYPTERINGSPASSORD: "The owls Are N0T what tHey seeM"
+KRYPTERINGSSALT: "iwianRpIjoiZDBhN2YyNWEtNGI2ZS00MDQyL"
 
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}

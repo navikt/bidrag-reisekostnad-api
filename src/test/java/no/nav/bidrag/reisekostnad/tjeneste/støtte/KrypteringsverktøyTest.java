@@ -23,13 +23,15 @@ public class KrypteringsverktøyTest {
 
   @Value("${KRYPTERINGSPASSORD}") // Reads from application-test.yml
   private String krypteringsPassord;
+  @Value("${KRYPTERINGSSALT}") // Reads from application-test.yml
+  private String krypteringsSalt;
 
   private Krypteringsverktøy krypteringsverktøy;
 
   @BeforeEach
   void setUp() {
     // Now you manually inject the loaded value into your constructor
-    krypteringsverktøy = new Krypteringsverktøy(krypteringsPassord);
+    krypteringsverktøy = new Krypteringsverktøy(krypteringsPassord, krypteringsSalt);
   }
 
   @Test
