@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Krypteringsverktøy {
 
-  private static final String ALGORITME_ADVANECD_EMCRYPTION_STANDARD = "AES";
+  private static final String ADVANCED_ENCRYPTION_STANDARD_ALGORITME = "AES";
   private static final String KRYPTERINGSALGORITME = "PBKDF2WithHmacSHA256";
-  private static final String TRANSFORMERINGSALGORITME = ALGORITME_ADVANECD_EMCRYPTION_STANDARD + "/CBC/PKCS5Padding";
+  private static final String TRANSFORMERINGSALGORITME = ADVANCED_ENCRYPTION_STANDARD_ALGORITME + "/CBC/PKCS5Padding";
   private static String krypteringsPassord;
   private static String krypteringsSalt;
 
@@ -71,7 +71,7 @@ public class Krypteringsverktøy {
     try {
       var factory = SecretKeyFactory.getInstance(KRYPTERINGSALGORITME);
       var spec = new PBEKeySpec(krypteringsPassord.toCharArray(), krypteringsSalt.getBytes(), 65536, 256);
-      return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ALGORITME_ADVANECD_EMCRYPTION_STANDARD);
+      return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ADVANCED_ENCRYPTION_STANDARD_ALGORITME);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new InternFeil(Feilkode.KRYPTERING, e);
     }
