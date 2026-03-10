@@ -33,8 +33,8 @@ public class Krypteringsverktøy {
     if ("MISSING".equals(krypteringsPassord) || "MISSING".equals(krypteringsSalt)) {
       throw new IllegalStateException("KRYPTERINGSPASSORD or KRYPTERINGSSALT was not found in the environment!");
     }
-    this.krypteringsPassord = krypteringsPassord;
-    this.krypteringsSalt = krypteringsSalt;
+    this.krypteringsPassord = krypteringsPassord.strip();
+    this.krypteringsSalt = krypteringsSalt.strip();
   }
 
   public static String kryptere(String ikkeKryptertStreng) {
