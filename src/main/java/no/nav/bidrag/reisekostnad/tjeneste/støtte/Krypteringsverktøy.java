@@ -1,5 +1,6 @@
 package no.nav.bidrag.reisekostnad.tjeneste.støtte;
 
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +42,7 @@ public class Krypteringsverktøy {
     try {
       var cipher = Cipher.getInstance(TRANSFORMERINGSALGORITME);
       cipher.init(Cipher.ENCRYPT_MODE, henteHemmeligNøkkel(), generereIv());
-      return Base64.getEncoder().encodeToString(cipher.doFinal(ikkeKryptertStreng.getBytes()));
+      return Base64.getEncoder().encodeToString(cipher.doFinal(ikkeKryptertStreng.getBytes(StandardCharsets.UTF_8)));
     } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException |
              IllegalBlockSizeException e) {
       e.printStackTrace();
@@ -63,14 +64,14 @@ public class Krypteringsverktøy {
 
   private static IvParameterSpec generereIv() {
     var bytes = new byte[16];
-    bytes = "bW2IK20bbZ_UW-CV".getBytes();
+    bytes = "bW2IK20bbZ_UW-CV".getBytes(StandardCharsets.UTF_8);
     return new IvParameterSpec(bytes);
   }
 
   private static SecretKey henteHemmeligNøkkel() {
     try {
       var factory = SecretKeyFactory.getInstance(KRYPTERINGSALGORITME);
-      var spec = new PBEKeySpec(krypteringsPassord.toCharArray(), krypteringsSalt.getBytes(), 65536, 256);
+      var spec = new PBEKeySpec(krypteringsPassord.toCharArray(), krypteringsSalt.getBytes(StandardCharsets.UTF_8), 65536, 256);
       return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ADVANCED_ENCRYPTION_STANDARD_ALGORITME);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new InternFeil(Feilkode.KRYPTERING, e);
