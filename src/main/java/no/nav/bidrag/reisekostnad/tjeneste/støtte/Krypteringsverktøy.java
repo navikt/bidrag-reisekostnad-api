@@ -31,8 +31,8 @@ public class Krypteringsverktøy {
   private static String krypteringsPassord;
   private static String krypteringsSalt;
 
-  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD}:MISSING") String krypteringsPassord,
-                            @Value("${KRYPTERINGSSALT}:MISSING") String krypteringsSalt) {
+  public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD:MISSING}") String krypteringsPassord,
+                            @Value("${KRYPTERINGSSALT:MISSING}") String krypteringsSalt) {
     if ("MISSING".equals(krypteringsPassord) || "MISSING".equals(krypteringsSalt)) {
       throw new IllegalStateException("KRYPTERINGSPASSORD or KRYPTERINGSSALT was not found in the environment!");
     }
