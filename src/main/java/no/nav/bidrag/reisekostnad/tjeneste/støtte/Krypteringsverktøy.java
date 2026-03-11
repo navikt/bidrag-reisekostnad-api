@@ -15,11 +15,13 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode;
 import no.nav.bidrag.reisekostnad.feilhåndtering.InternFeil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class Krypteringsverktøy {
 
@@ -34,6 +36,8 @@ public class Krypteringsverktøy {
     if ("MISSING".equals(krypteringsPassord) || "MISSING".equals(krypteringsSalt)) {
       throw new IllegalStateException("KRYPTERINGSPASSORD or KRYPTERINGSSALT was not found in the environment!");
     }
+    log.info("Krypteringsverktøy initialized with provided password and salt.");
+    log.info("KRYPTERINGSPASSORD: " + krypteringsPassord);
     this.krypteringsPassord = krypteringsPassord.strip();
     this.krypteringsSalt = krypteringsSalt.strip();
   }
