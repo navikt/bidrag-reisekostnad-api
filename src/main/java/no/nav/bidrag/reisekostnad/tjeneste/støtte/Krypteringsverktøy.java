@@ -34,10 +34,9 @@ public class Krypteringsverktøy {
   public Krypteringsverktøy(@Value("${KRYPTERINGSPASSORD:MISSING}") String krypteringsPassord,
                             @Value("${KRYPTERINGSSALT:MISSING}") String krypteringsSalt) {
     if ("MISSING".equals(krypteringsPassord) || "MISSING".equals(krypteringsSalt)) {
+      log.error("KRYPTERINGSPASSORD or KRYPTERINGSSALT was not found in the environment!");
       throw new IllegalStateException("KRYPTERINGSPASSORD or KRYPTERINGSSALT was not found in the environment!");
     }
-    log.info("Krypteringsverktøy initialized with provided password and salt.");
-    log.info("KRYPTERINGSPASSORD: " + krypteringsPassord);
     this.krypteringsPassord = krypteringsPassord.strip();
     this.krypteringsSalt = krypteringsSalt.strip();
   }
