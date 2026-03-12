@@ -26,12 +26,11 @@ public class KrypteringsverktøyTest {
   @Value("${KRYPTERINGSSALT}") // Reads from application-test.yml
   private String krypteringsSalt;
 
-  private Krypteringsverktøy krypteringsverktøy;
-
   @BeforeEach
   void setUp() {
-    // Now you manually inject the loaded value into your constructor
-    krypteringsverktøy = new Krypteringsverktøy(krypteringsPassord, krypteringsSalt);
+    // Now need for manual constructor initialization as Spring will inject the values
+    // into the fields because proper annotation makes it an integration test that
+    // starts a Spring ApplicationContext.
   }
 
   @Test
