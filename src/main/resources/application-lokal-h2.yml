@@ -43,6 +43,12 @@ no.nav.security.jwt:
 integrasjon.bidrag.person.url: ${BIDRAG_PERSON_URL}
 KJOEREPLAN_ARKIVERING: "0 0 7 * * ?"
 
+# Encryption settings used by Krypteringsverktøy to protect sensitive identifiers
+# before they are stored, archived or sent to other systems. These values are test/dev
+# only and must be treated as secrets and overridden with secure values in real environments.
+KRYPTERINGSPASSORD: "The owls Are N0T what tHey seeM"
+KRYPTERINGSSALT: "iwianRpIjoiZDBhN2YyNWEtNGI2ZS00MDQyL"
+
 #### Mocks
 WIREMOCK_URL: http://localhost:${wiremock.server.port}
 integrasjon.bidrag:
