@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
@@ -43,33 +44,49 @@ public class Krypteringsverktøy {
 
   public static String kryptere(String ikkeKryptertStreng) {
     try {
+      var iv = new byte[16];
+      new SecureRandom().nextBytes(iv);
+      var ivSpec = new IvParameterSpec(iv);
+
       var cipher = Cipher.getInstance(TRANSFORMERINGSALGORITME);
-      cipher.init(Cipher.ENCRYPT_MODE, henteHemmeligNøkkel(), generereIv());
-      return Base64.getEncoder().encodeToString(cipher.doFinal(ikkeKryptertStreng.getBytes(StandardCharsets.UTF_8)));
+      cipher.init(Cipher.ENCRYPT_MODE, henteHemmeligNøkkel(), ivSpec);
+      var kryptert = cipher.doFinal(ikkeKryptertStreng.getBytes(StandardCharsets.UTF_8));
+
+      // Prepend the random IV to the ciphertext so dekryptere() can extract it
+      var kombinert = new byte[iv.length + kryptert.length];
+      System.arraycopy(iv, 0, kombinert, 0, iv.length);
+      System.arraycopy(kryptert, 0, kombinert, iv.length, kryptert.length);
+
+      return Base64.getEncoder().encodeToString(kombinert);
     } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException |
              IllegalBlockSizeException e) {
-      e.printStackTrace();
+      log.error("Feil ved kryptering", e);
       throw new InternFeil(Feilkode.KRYPTERING, e);
     }
   }
 
   public static String dekryptere(String kryptertStreng) {
     try {
+      var dekodet = Base64.getDecoder().decode(kryptertStreng);
+
+      // Extract the 16-byte IV from the beginning of the payload
+      var iv = new byte[16];
+      System.arraycopy(dekodet, 0, iv, 0, iv.length);
+      var ivSpec = new IvParameterSpec(iv);
+
+      var kryptert = new byte[dekodet.length - iv.length];
+      System.arraycopy(dekodet, iv.length, kryptert, 0, kryptert.length);
+
       var cipher = Cipher.getInstance(TRANSFORMERINGSALGORITME);
-      cipher.init(Cipher.DECRYPT_MODE, henteHemmeligNøkkel(), generereIv());
-      return new String(cipher.doFinal(Base64.getDecoder().decode(kryptertStreng)));
+      cipher.init(Cipher.DECRYPT_MODE, henteHemmeligNøkkel(), ivSpec);
+      return new String(cipher.doFinal(kryptert), StandardCharsets.UTF_8);
     } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException |
              IllegalBlockSizeException e) {
-      e.printStackTrace();
+      log.error("Feil ved dekryptering", e);
       throw new InternFeil(Feilkode.KRYPTERING, e);
     }
   }
 
-  private static IvParameterSpec generereIv() {
-    var bytes = new byte[16];
-    bytes = "bW2IK20bbZ_UW-CV".getBytes(StandardCharsets.UTF_8);
-    return new IvParameterSpec(bytes);
-  }
 
   private static SecretKey henteHemmeligNøkkel() {
     try {
