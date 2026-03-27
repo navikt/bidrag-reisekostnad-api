@@ -49,7 +49,7 @@
     <!-- Utilities -->
     <commons-compress.version>1.28.0</commons-compress.version>
     <modelmapper.version>3.2.6</modelmapper.version>
-    <plexus.version>4.0.2</plexus.version>
+    <plexus.version>4.0.3</plexus.version>
 
     <!-- Kotlin Libraries -->
     <kotlin-logging-jvm.version>7.0.7</kotlin-logging-jvm.version>
