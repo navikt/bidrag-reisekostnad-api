@@ -52,4 +52,8 @@
   <logger name="secureLogger" level="INFO" additivity="false" >
     <appender-ref ref="team-logs" />
   </logger>
+
+<!-- Unngå sensitive data (databasepassord) i loggene ved å redusere loggnivå for -->
+<!-- hibernate connection pooling. Dette overstyrer root level loggnivå for pooling. -->
+  <logger name="org.hibernate.orm.connections.pooling" level="warn"/>
 </configuration>
