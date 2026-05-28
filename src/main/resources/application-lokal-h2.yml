@@ -10,9 +10,6 @@ spring:
 ---
 spring:
   config.activate.on-profile: (lokal-h2 | lokal-postgres) & !lokal-sky
-wiremock.server:
-  port: 0
-  stubs: "file:src/test/java/resources/mappings"
 
 logging:
   level:
