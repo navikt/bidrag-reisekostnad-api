@@ -43,6 +43,8 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
 
+springdoc:
+  show-login-endpoint: false
 # Encryption settings for tests. Used by Krypteringsverktøy to encrypt/decrypt
 # sensitive identifiers (such as personident) so that test data follows the
 # same code paths as production. These values are only for local/testing.

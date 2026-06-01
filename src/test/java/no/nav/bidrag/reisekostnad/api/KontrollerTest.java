@@ -40,12 +40,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext;
+import org.wiremock.spring.EnableWireMock;
+import org.wiremock.spring.ConfigureWireMock;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -55,8 +56,11 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(Profil.TEST)
 @EnableMockOAuth2Server
 @AutoConfigureTestDatabase(replace = Replace.ANY)
-@AutoConfigureWireMock(stubs = "file:src/test/java/resources/mappings", port = 0)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {BidragReisekostnadApiTestapplikasjon.class, Testkonfig.class})
+@EnableWireMock(
+    @ConfigureWireMock(port = 0)//, filesUnderDirectory = "src/test/resources/mappings")
+)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = {BidragReisekostnadApiTestapplikasjon.class, Testkonfig.class})
 @DisplayName("ReisekostnadApiKontrollerTest")
 public class KontrollerTest {
 

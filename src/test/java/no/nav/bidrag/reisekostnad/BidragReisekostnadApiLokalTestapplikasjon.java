@@ -3,6 +3,8 @@ package no.nav.bidrag.reisekostnad;
 import static no.nav.bidrag.reisekostnad.konfigurasjon.Profil.DATABASES_AND_NOT_LOKAL_SKY;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +15,15 @@ import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import no.nav.security.token.support.core.api.Unprotected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.wiremock.spring.EnableWireMock;
+import org.wiremock.spring.ConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,17 +40,34 @@ import java.util.Set;
 
 @Slf4j
 @Profile({Profil.LOKAL_H2, Profil.LOKAL_POSTGRES})
-@AutoConfigureWireMock(port = 0)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableJwtTokenValidation(ignore = {"org.springdoc", "org.springframework"})
 @EntityScan("no.nav.bidrag.reisekostnad.database.datamodell")
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"},
     topics = {"aapen-brukervarsel-v1"})
 @ComponentScan(excludeFilters = {
     @ComponentScan.Filter(type = ASSIGNABLE_TYPE, value = {BidragReiesekostnadApiApplikasjon.class})})
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = {
+    SecurityAutoConfiguration.class,
+    ManagementWebSecurityAutoConfiguration.class,
+    UserDetailsServiceAutoConfiguration.class,
+    ServletWebSecurityAutoConfiguration.class,
+    org.springdoc.core.configuration.SpringDocSecurityConfiguration.class,
+})
 public class BidragReisekostnadApiLokalTestapplikasjon {
 
   public static void main(String... args) {
+    // Initialize and start WireMock manually on port 8080 (or your preferred local port)
+    WireMockServer wireMockServer = new WireMockServer(
+        WireMockConfiguration.wireMockConfig()
+            .port(10002)
+            // Points to your mapping files tree
+            .usingFilesUnderClasspath("mappings")
+    );
+    wireMockServer.start();
+    System.out.println("### Local WireMock server started running on port: " + wireMockServer.port());
+    // Set the property so Spring can resolve ${wiremock.server.port}
+    System.setProperty("wiremock.server.port", String.valueOf(wireMockServer.port()));
     SpringApplication app = new SpringApplication(BidragReisekostnadApiLokalTestapplikasjon.class);
     app.run(args);
   }
@@ -126,7 +149,7 @@ class LocalCookieController {
 
     log.info("Cookie set with token for issuer: {}, audience: {}", issuerId, audience);
     return "Cookie set with token for issuer: " + issuerId + ", audience: " + audience +
-           "\n\nToken (for Authorization header): Bearer " + tokenString;
+        "\n\nToken (for Authorization header): Bearer " + tokenString;
   }
 }
 

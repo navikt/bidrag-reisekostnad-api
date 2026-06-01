@@ -6,10 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -22,7 +24,13 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
     topics = {"aapen-brukervarsel-v1"})
 @ComponentScan(excludeFilters = {
     @ComponentScan.Filter(type = ASSIGNABLE_TYPE, value = {BidragReiesekostnadApiApplikasjon.class})})
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
+@SpringBootApplication(
+    exclude = {
+SecurityAutoConfiguration.class,
+ManagementWebSecurityAutoConfiguration.class,
+UserDetailsServiceAutoConfiguration.class,
+ServletWebSecurityAutoConfiguration.class,
+    })
 public class BidragReisekostnadApiLokalSky {
 
   public static void main(String... args) {
