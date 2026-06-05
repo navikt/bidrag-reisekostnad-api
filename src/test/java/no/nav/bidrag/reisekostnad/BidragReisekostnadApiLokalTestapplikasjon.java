@@ -57,12 +57,11 @@ import java.util.Set;
 public class BidragReisekostnadApiLokalTestapplikasjon {
 
   public static void main(String... args) {
-    // Initialize and start WireMock manually on port 8080 (or your preferred local port)
+    // Initialize and start WireMock manually on a random port
     WireMockServer wireMockServer = new WireMockServer(
         WireMockConfiguration.wireMockConfig()
-            .port(10002)
-            // Points to your mapping files tree
-            .usingFilesUnderClasspath("mappings")
+            .port(0)
+            .usingFilesUnderDirectory("src/test/resources")
     );
     wireMockServer.start();
     System.out.println("### Local WireMock server started running on port: " + wireMockServer.port());
