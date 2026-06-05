@@ -414,6 +414,12 @@
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- H2 web console (moved to separate module in Spring Boot 4) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-h2console</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- Mock OAuth2 server for local development and tests -->
     <dependency>
       <groupId>no.nav.security</groupId>
