@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.5</version>
+    <version>4.0.6</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -29,7 +29,7 @@
     <jsoup.version>1.20.1</jsoup.version>
 
     <!-- Nav Internal Libraries -->
-    <bidrag-felles.version>2026.05.22.134705-SB4</bidrag-felles.version>
+    <bidrag-felles.version>2026.06.05.195300</bidrag-felles.version>
     <tms-varsel.version>2.1.1</tms-varsel.version>
     <token-support.version>6.0.6</token-support.version>
 
