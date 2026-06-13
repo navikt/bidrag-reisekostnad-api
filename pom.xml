@@ -149,11 +149,6 @@
       <artifactId>httpclient5</artifactId>
     </dependency>
     <!-- Spring Boot -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-properties-migrator</artifactId>
-      <scope>runtime</scope>
-    </dependency>
     <!-- Secures API endpoints and integrates with Nav token validation (TokenX, ID-porten) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
