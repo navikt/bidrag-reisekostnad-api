@@ -53,7 +53,7 @@ management:
 
 springdoc:
   packages-to-scan: { no.nav.bidrag.reisekostnad.api}
-  show-login-endpoint: true
+  show-login-endpoint: false
   swagger-ui:
     path: /swagger-ui.html
     url: /v3/api-docs
