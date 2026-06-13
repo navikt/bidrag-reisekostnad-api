@@ -37,6 +37,8 @@ import no.nav.bidrag.reisekostnad.integrasjon.brukernotifikasjon.Brukernotifikas
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste;
 import no.nav.bidrag.reisekostnad.tjeneste.ReisekostnadApiTjeneste;
+import no.nav.bidrag.reisekostnad.konfigurasjon.Profil;
+import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -45,8 +47,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
+@ContextConfiguration(classes = Krypteringsverktøy.class, initializers = ConfigDataApplicationContextInitializer.class)
+@ActiveProfiles(Profil.TEST)
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class ReisekostnadApiTjenesteTest {
 
