@@ -49,7 +49,7 @@ class ArkiveringTjenesteTest {
     private lateinit var databasetjeneste: Databasetjeneste
 
     @MockK
-    lateinit var mapper: Mapper
+    private lateinit var mapper: Mapper
 
     @InjectMockKs
     lateinit var arkiveringstjeneste: Arkiveringstjeneste
