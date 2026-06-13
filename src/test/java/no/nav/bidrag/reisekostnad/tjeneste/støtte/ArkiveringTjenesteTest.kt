@@ -19,16 +19,28 @@ import no.nav.bidrag.reisekostnad.feilhåndtering.Arkiveringsfeil
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.pdf.PdfGenerator
+import no.nav.bidrag.reisekostnad.konfigurasjon.Profil
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@ExtendWith(MockKExtension::class)
+@ExtendWith(MockKExtension::class, SpringExtension::class)
+// Manage Krypteringsverktøy and load and parse application-test.yml
+@ContextConfiguration(
+    classes = [Krypteringsverktøy::class],
+    initializers = [ConfigDataApplicationContextInitializer::class]
+)
+// Specifically load application-test.yml
+@ActiveProfiles(Profil.TEST)
 class ArkiveringTjenesteTest {
     @MockK
     private lateinit var bidragDokument: BidragDokumentkonsument
