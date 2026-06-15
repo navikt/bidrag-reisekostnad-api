@@ -39,7 +39,7 @@ integrasjon.bidrag:
   dokument.url: ${WIREMOCK_URL}
   person.url: ${WIREMOCK_URL}
 
-### Brukernotifkasjoner
+### Brukernotifikasjoner
 KAFKA_BROKERS: 127.0.0.1:9092
 KAFKA_SCHEMA_REGISTRY: http://localhost:8081
 KAFKA_TRUSTSTORE_PATH: classpath:cert/server-selfsigned.jks
