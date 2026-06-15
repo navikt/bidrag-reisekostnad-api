@@ -8,6 +8,7 @@ import no.nav.bidrag.reisekostnad.api.dto.ut.MotpartDto;
 import no.nav.bidrag.reisekostnad.api.dto.ut.PersonDto;
 import no.nav.bidrag.reisekostnad.database.dao.ForespørselDao;
 import no.nav.bidrag.reisekostnad.database.datamodell.Barn;
+import no.nav.bidrag.reisekostnad.database.datamodell.Forelder;
 import no.nav.bidrag.reisekostnad.database.datamodell.Forespørsel;
 import no.nav.bidrag.reisekostnad.database.datamodell.Person;
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.BidragPersonkonsument;
@@ -55,6 +56,8 @@ public class Mapper {
         this.modelMapper.createTypeMap(Forespørsel.class, ForespørselDto.class);
         this.modelMapper.createTypeMap(ForespørselDto.class, Forespørsel.class);
         this.modelMapper.createTypeMap(Person.class, PersonDto.class);
+        this.modelMapper.createTypeMap(Forelder.class, PersonDto.class)
+            .setConverter(ctx -> tilPersonDto(ctx.getSource().getPersonident()));
     }
 
     public BrukerinformasjonDto tilDto(HentFamilieRespons familieRespons) {
