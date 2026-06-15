@@ -50,7 +50,7 @@ management:
   endpoint.health.show-details: always
 
 ---
-
+### Alle andre profiler enn "nais" ###
 springdoc:
   packages-to-scan: { no.nav.bidrag.reisekostnad.api}
   show-login-endpoint: false
