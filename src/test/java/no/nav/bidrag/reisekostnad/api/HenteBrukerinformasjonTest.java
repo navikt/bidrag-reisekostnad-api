@@ -29,7 +29,6 @@ import no.nav.bidrag.reisekostnad.integrasjon.bidrag.person.api.Kjønn;
 import no.nav.bidrag.reisekostnad.tjeneste.støtte.Krypteringsverktøy;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
