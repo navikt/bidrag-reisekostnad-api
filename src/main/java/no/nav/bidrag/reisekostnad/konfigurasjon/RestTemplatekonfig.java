@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.context.annotation.Lazy;
-
 @Configuration
 public class RestTemplatekonfig {
 
