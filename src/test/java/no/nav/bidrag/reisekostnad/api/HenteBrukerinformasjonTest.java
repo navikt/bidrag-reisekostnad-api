@@ -366,7 +366,6 @@ public class HenteBrukerinformasjonTest extends KontrollerTest {
   }
 
   @Test
-  @Disabled("String.class, getting 500 instead of 403")
   void skalGi403ForDødPerson() {
 
     // gitt
