@@ -98,7 +98,7 @@ sette tokenet i en cookie som Swagger kan bruke for autentisering:
 
 Følg steg 1 og 2 i forrige seksjon for å generere token og autentisere i 
 Swagger UI. Se etter "fellesBarn" og "ident" til innlogget testperson 
-i [test/java/resources/mappings/bidrag-person-relasjon-*****.json](src/test/java/resources/mappings/).
+i [test/resources/mappings/bidrag-person-relasjon-*****.json](src/test/resources/mappings/).
 Test ut endepunktet for _forespørsel/ny_ i Swagger.
 
 Tips:

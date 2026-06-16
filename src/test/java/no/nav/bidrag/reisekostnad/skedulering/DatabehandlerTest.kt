@@ -20,9 +20,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
+import org.wiremock.spring.EnableWireMock
+import org.wiremock.spring.ConfigureWireMock
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDate
@@ -32,7 +33,9 @@ import jakarta.persistence.EntityManager
 @ActiveProfiles(value = [Profil.TEST, Profil.HENDELSE])
 @EnableMockOAuth2Server
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@AutoConfigureWireMock(stubs = ["file:src/test/java/resources/mappings"], port = 0)
+@EnableWireMock(
+    ConfigureWireMock(port = 0)//, filesUnderDirectory = ["src/test/resources/mappings"])
+)
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     classes = [BidragReisekostnadApiTestapplikasjon::class]

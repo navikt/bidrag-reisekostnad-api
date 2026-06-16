@@ -10,9 +10,6 @@ spring:
 ---
 spring:
   config.activate.on-profile: (lokal-h2 | lokal-postgres) & !lokal-sky
-wiremock.server:
-  port: 0
-  stubs: "file:src/test/java/resources/mappings"
 
 logging:
   level:
@@ -55,7 +52,7 @@ integrasjon.bidrag:
   dokument.url: ${WIREMOCK_URL}
   person.url: ${WIREMOCK_URL}
 
-### brukernotifkasjoner
+### Brukernotifikasjoner
 KAFKA_BROKERS: 127.0.0.1:9092
 KAFKA_SCHEMA_REGISTRY: http://localhost:8081
 KAFKA_TRUSTSTORE_PATH: src/test/java/resources/cert/server-selfsigned.jks
@@ -70,9 +67,9 @@ BIDRAG_REISEKOSTNAD_UI_URL: https://bidrag-reisekostnad.ekstern.dev.nav.no
 egenskaper.brukernotifikasjon.skruddPaa: false
 
 ---
+### H2 profile ###
 spring:
   config.activate.on-profile: lokal-h2
-  ### H2 ###
   flyway.enabled: false
   datasource.url: jdbc:h2:mem:default
   spring.init-mode: always
@@ -82,8 +79,7 @@ spring:
   jpa.database-platform: org.hibernate.dialect.H2Dialect
 
 ---
-
-### POSTGRES ###
+### POSTGRES profile ###
 spring:
   config.activate.on-profile: lokal-postgres
   # Oppsett for flyway med hikari og postgres

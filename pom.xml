@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.11</version>
+    <version>4.0.6</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav.bidrag.reisekostnader</groupId>
@@ -29,9 +29,9 @@
     <jsoup.version>1.20.1</jsoup.version>
 
     <!-- Nav Internal Libraries -->
-    <bidrag-felles.version>2026.02.20.125615</bidrag-felles.version>
+    <bidrag-felles.version>2026.06.05.195300</bidrag-felles.version>
     <tms-varsel.version>2.1.1</tms-varsel.version>
-    <token-support.version>5.0.40</token-support.version>
+    <token-support.version>6.0.6</token-support.version>
 
     <!-- Database -->
     <flyway.version>11.9.1</flyway.version>
@@ -55,7 +55,7 @@
     <kotlin-logging-jvm.version>7.0.7</kotlin-logging-jvm.version>
 
     <!-- Testing -->
-    <spring-cloud-contract-wiremock.version>4.3.0</spring-cloud-contract-wiremock.version>
+    <spring-cloud-contract-wiremock.version>5.0.2</spring-cloud-contract-wiremock.version>
     <mockk.version>1.14.9</mockk.version>
     <kotest.version>5.9.1</kotest.version>
 
@@ -144,7 +144,16 @@
       <version>${bidrag-felles.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+    </dependency>
     <!-- Spring Boot -->
+    <!-- Secures API endpoints and integrates with Nav token validation (TokenX, ID-porten) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
     <!-- Health checks, metrics, and monitoring endpoints -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -354,23 +363,56 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Spring REST client test support for testing REST clients (RestTemplate, WebClient) provides RestTemplateBuilder -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-restclient</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Spring MVC test support for testing controllers and REST endpoints provides TestRestTemplate -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-resttestclient</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Spring Data JPA test support (in-memory database, repositories) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- Embedded Kafka for integration tests -->
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- WireMock for mocking external HTTP services -->
+    <!-- WireMock standalone for mocking external HTTP services in tests -->
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-contract-wiremock</artifactId>
-      <version>${spring-cloud-contract-wiremock.version}</version>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock-standalone</artifactId>
+      <version>3.13.2</version> <!-- Or matches version provided transitively by wiremock-spring-boot -->
+      <scope>test</scope>
+    </dependency>
+    <!-- WireMock for mocking external HTTP services in tests -->
+    <dependency>
+      <groupId>org.wiremock.integrations</groupId>
+      <artifactId>wiremock-spring-boot</artifactId>
+      <version>4.2.1</version>
       <scope>test</scope>
     </dependency>
     <!-- In-memory database for tests -->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- H2 web console (moved to separate module in Spring Boot 4) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-h2console</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- Mock OAuth2 server for local development and tests -->
@@ -413,7 +455,6 @@
             </goals>
             <configuration>
               <sourceDirs>
-                <source>src/main/java</source>
               </sourceDirs>
             </configuration>
           </execution>
@@ -458,6 +499,18 @@
             <version>${kotlin.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
