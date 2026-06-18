@@ -140,7 +140,8 @@ Kjør [BidragReisekostnadApiLokalSky](src/test/java/no/nav/bidrag/reisekostnad/B
 Dette vil starte opp applikasjonen lokalt med `H2` database.
 
 Api kall kan testes ved å først hente `reisekostnad_api_token` token fra
-[https://bidrag-reisekostnad.ekstern.dev.nav.no/api/dev/session](https://bidrag-reisekostnad.ekstern.dev.nav.no/api/dev/session).
+[https://bidrag-reisekostnad.intern.dev.nav.no/api/dev/session]
+(https://bidrag-reisekostnad.intern.dev.nav.no/api/dev/session).
 Testbruker hentes fra [Dolly](https://dolly.ekstern.dev.nav.no/).
 
 Deretter kan tokenet brukes til å logge inn på swagger-ui
