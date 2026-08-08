@@ -26,7 +26,7 @@
     <!-- PDF Generation Libraries -->
     <apache-pdfbox.version>2.0.35</apache-pdfbox.version>
     <openhtml.version>1.0.10</openhtml.version>
-    <jsoup.version>1.20.1</jsoup.version>
+    <jsoup.version>1.23.1</jsoup.version>
 
     <!-- Nav Internal Libraries -->
     <bidrag-felles.version>2026.06.05.195300</bidrag-felles.version>
