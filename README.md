@@ -1,5 +1,10 @@
 # Bidrag Reisekostnad
 
+## ⚠️ DETTE REPOET ER FLYTTET
+
+> **Dette repoet er flyttet til [navikt/bidrag-backend](https://github.com/navikt/bidrag-backend).**
+> Bruk det nye repoet for videre utvikling — dette repoet oppdateres ikke lenger.
+
 ## bidrag-reisekostnad-api
 
 Backend for å [fordele reisekostnader ved samvær med barn](https://www.nav.no/fordele-reisekostnader).
