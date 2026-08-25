@@ -19,16 +19,28 @@ import no.nav.bidrag.reisekostnad.feilhåndtering.Arkiveringsfeil
 import no.nav.bidrag.reisekostnad.feilhåndtering.Feilkode
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.BidragDokumentkonsument
 import no.nav.bidrag.reisekostnad.integrasjon.bidrag.doument.pdf.PdfGenerator
+import no.nav.bidrag.reisekostnad.konfigurasjon.Profil
 import no.nav.bidrag.reisekostnad.tjeneste.Arkiveringstjeneste
 import no.nav.bidrag.reisekostnad.tjeneste.Databasetjeneste
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@ExtendWith(MockKExtension::class)
+@ExtendWith(MockKExtension::class, SpringExtension::class)
+// Manage Krypteringsverktøy and load and parse application-test.yml
+@ContextConfiguration(
+    classes = [Krypteringsverktøy::class],
+    initializers = [ConfigDataApplicationContextInitializer::class]
+)
+// Specifically load application-test.yml
+@ActiveProfiles(Profil.TEST)
 class ArkiveringTjenesteTest {
     @MockK
     private lateinit var bidragDokument: BidragDokumentkonsument
@@ -37,7 +49,7 @@ class ArkiveringTjenesteTest {
     private lateinit var databasetjeneste: Databasetjeneste
 
     @MockK
-    lateinit var mapper: Mapper
+    private lateinit var mapper: Mapper
 
     @InjectMockKs
     lateinit var arkiveringstjeneste: Arkiveringstjeneste
@@ -45,17 +57,17 @@ class ArkiveringTjenesteTest {
     // TESTDATA
     private val hovedpartFodselsdato = LocalDate.parse("2022-01-02")
     private val motpartFodselsdato = LocalDate.parse("2022-01-02")
-    private val identHovedpart = "123213213";
-    private val identMotpart = "3541555";
+    private val identHovedpart = "123213213"
+    private val identMotpart = "3541555"
 
     private val identBarn1 = "565551251"
     private val identBarn2 = "41244124"
     private val barn = setOf(Barn.builder().personident(identBarn1).build(), Barn.builder().personident(identBarn2).build())
 
-    private val barn1Dto = PersonDto(Krypteringsverktøy.kryptere(identBarn1), null, null, motpartFodselsdato)
-    private val barn2Dto = PersonDto(Krypteringsverktøy.kryptere(identBarn2), null, null, motpartFodselsdato)
-    private val hovedpartDto = PersonDto(Krypteringsverktøy.kryptere(identHovedpart), null, null, hovedpartFodselsdato)
-    private val motpartDto = PersonDto(Krypteringsverktøy.kryptere(identMotpart), null, null, motpartFodselsdato)
+    private val barn1Dto by lazy { PersonDto(Krypteringsverktøy.kryptere(identBarn1), null, null, motpartFodselsdato) }
+    private val barn2Dto by lazy { PersonDto(Krypteringsverktøy.kryptere(identBarn2), null, null, motpartFodselsdato) }
+    private val hovedpartDto by lazy { PersonDto(Krypteringsverktøy.kryptere(identHovedpart), null, null, hovedpartFodselsdato) }
+    private val motpartDto by lazy { PersonDto(Krypteringsverktøy.kryptere(identMotpart), null, null, motpartFodselsdato) }
     private val produsertDokument = "Produsert dokument".toByteArray()
 
     @BeforeEach

@@ -73,7 +73,7 @@ public class Brukernotifikasjonskonfig {
     configProps.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keyStorePath);
     configProps.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, trustStorePwd);
     configProps.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, sslKeyPassword);
-    configProps.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "PKCS12");
+    configProps.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, "PKCS12");
     configProps.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "JKS");
     configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
     configProps.put("reconnect.backoff.ms", 100);

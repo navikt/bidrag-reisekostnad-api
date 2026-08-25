@@ -5,7 +5,7 @@ import org.springframework.cache.interceptor.SimpleKeyGenerator
 import java.lang.reflect.Method
 
 class UserCacheKeyGenerator : SimpleKeyGenerator() {
-    override fun generate(target: Any, method: Method, vararg params: Any): Any {
+    override fun generate(target: Any, method: Method, vararg params: Any?): Any {
         return toUserCacheKey(super.generate(target, method, *params))
     }
 

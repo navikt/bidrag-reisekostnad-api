@@ -98,7 +98,7 @@ sette tokenet i en cookie som Swagger kan bruke for autentisering:
 
 Følg steg 1 og 2 i forrige seksjon for å generere token og autentisere i 
 Swagger UI. Se etter "fellesBarn" og "ident" til innlogget testperson 
-i [test/java/resources/mappings/bidrag-person-relasjon-*****.json](src/test/java/resources/mappings/).
+i [test/resources/mappings/bidrag-person-relasjon-*****.json](src/test/resources/mappings/).
 Test ut endepunktet for _forespørsel/ny_ i Swagger.
 
 Tips:
@@ -140,7 +140,8 @@ Kjør [BidragReisekostnadApiLokalSky](src/test/java/no/nav/bidrag/reisekostnad/B
 Dette vil starte opp applikasjonen lokalt med `H2` database.
 
 Api kall kan testes ved å først hente `reisekostnad_api_token` token fra
-[https://bidrag-reisekostnad.ekstern.dev.nav.no/api/dev/session](https://bidrag-reisekostnad.ekstern.dev.nav.no/api/dev/session).
+[https://bidrag-reisekostnad.intern.dev.nav.no/api/dev/session]
+(https://bidrag-reisekostnad.intern.dev.nav.no/api/dev/session).
 Testbruker hentes fra [Dolly](https://dolly.ekstern.dev.nav.no/).
 
 Deretter kan tokenet brukes til å logge inn på swagger-ui
