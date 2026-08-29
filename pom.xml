@@ -41,7 +41,7 @@
     <swagger.version>2.2.42</swagger.version>
 
     <!-- Scheduling -->
-    <shedlock.version>6.9.0</shedlock.version>
+    <shedlock.version>7.6.0</shedlock.version>
 
     <!-- Security / OAuth -->
     <nimbus.oauth2-oidc-sdk.version>11.26</nimbus.oauth2-oidc-sdk.version>
